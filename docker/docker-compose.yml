@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+    api:
+        build:
+            context: /home/admin/EcoRide
+            dockerfile: docker/Dockerfile.back
+        container_name: ecoride_api
+        restart: unless-stopped
+        networks:
+            - ecoride_net
+        expose:
+            - "9002"
+        ports:
+            - "9002:9002"
+        volumes:
+            - ../backend_ecoride/public/images:/var/www/api/public/images
+
+    front:
+        build:
+            context: /home/admin/EcoRide
+            dockerfile: docker/Dockerfile.front
+        container_name: ecoride_front
+        restart: unless-stopped
+        ports:
+            - "3002:80"
+        networks:
+            - ecoride_net
+
+networks:
+    ecoride_net:
+        driver: bridge

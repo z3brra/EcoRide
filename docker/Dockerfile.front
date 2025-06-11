@@ -1,0 +1,22 @@
+# Étape de build
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+# Copier package.json et package-lock.json (ou yarn.lock) depuis frontend_ecoride
+COPY frontend_ecoride/package*.json ./
+RUN npm install
+# Copier l'intégralité du code du front
+COPY frontend_ecoride/ ./
+RUN npm run build
+
+RUN ls -la /app/dist
+
+# Phase de production : servir le build avec Nginx
+FROM nginx:alpine
+
+COPY docker/nginx.front.conf /etc/nginx/conf.d/default.conf
+# Attention : on utilise le nom de l'étape "builder" (et non "build")
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
