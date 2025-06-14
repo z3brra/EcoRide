@@ -27,7 +27,7 @@ class LoginUserService
         $this->validationService->validate($userLoginDTO, ['login']);
 
         $user = $this->userRepository->findOneByEmail($userLoginDTO->username);
-        if (!$user || $this->passwordHasher->isPasswordValid($user, $userLoginDTO->password)) {
+        if (!$user || !$this->passwordHasher->isPasswordValid($user, $userLoginDTO->password)) {
             throw new BadCredentialsException("Invalid credentials.");
         }
 
