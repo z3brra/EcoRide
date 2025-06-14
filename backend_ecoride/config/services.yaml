@@ -22,6 +22,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\EventListener\ValidationExceptionListener:
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+
     App\Command\CreateAdminCommand:
         arguments:
             $defaultPassword: '%admin_default_password%'
