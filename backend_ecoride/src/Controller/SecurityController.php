@@ -83,6 +83,18 @@ final class SecurityController extends AbstractController
 
             return $response;
 
+        } catch (TooManyRequestsHttpException $e) {
+            $headers = $e->getHeaders();
+            $retryAfter = $headers['Retry-After'] ?? null;
+
+            return new JsonResponse(
+                data: [
+                    'error' => $e->getMessage(),
+                    'retryAfter' => $retryAfter
+                ],
+                status: JsonResponse::HTTP_TOO_MANY_REQUESTS,
+                headers: ['Retry-After' => $retryAfter]
+            );
         } catch (BadCredentialsException $e) {
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
