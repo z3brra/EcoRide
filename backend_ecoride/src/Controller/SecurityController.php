@@ -88,6 +88,11 @@ final class SecurityController extends AbstractController
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_UNAUTHORIZED
             );
+        } catch (BadRequestException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
+            );
         }
     }
 
