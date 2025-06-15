@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
-use Symfony\Component\HttpKernel\Exception\{BadRequestHttpException, TooManyRequestsHttpException};
+use Symfony\Component\HttpKernel\Exception\{AccessDeniedHttpException, BadRequestHttpException, TooManyRequestsHttpException};
 use Symfony\Component\RateLimiter\Exception\RateLimitExceededException;
 
 use DateTimeImmutable;
@@ -87,6 +87,36 @@ final class SecurityController extends AbstractController
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_UNAUTHORIZED
+            );
+        }
+    }
+
+    #[Route('/logout', name: 'logout', methods: 'POST')]
+    public function logout(): JsonResponse
+    {
+        try {
+            $user = $this->getUser();
+            if (!$user) {
+                throw new AccessDeniedHttpException("User is not authenticated");
+            }
+
+            $cookie = Cookie::create('access_token')
+                ->withValue('')
+                ->withExpires(new DateTimeImmutable('-1 hour'))
+                ->withHttpOnly(true)
+                ->withSecure(true)
+                ->withSameSite('strict');
+
+            $response = new JsonResponse(
+                data: ['message' => 'User successfully logged out'],
+                status: JsonResponse::HTTP_OK
+            );
+            $response->headers->setCookie($cookie);
+            return $response;
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
             );
         }
     }
