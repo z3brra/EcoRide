@@ -2,11 +2,11 @@
 
 namespace App\Controller;
 
-use App\DTO\User\UserLoginDTO;
-use App\DTO\User\UserReadDTO;
+use App\DTO\User\{UserLoginDTO, UserRegisterDTO, UserReadDTO};
 
 use App\Service\User\{
-    LoginUserService
+    LoginUserService,
+    RegisterUserService,
 };
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +16,12 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
-use Symfony\Component\HttpKernel\Exception\{AccessDeniedHttpException, BadRequestHttpException, TooManyRequestsHttpException};
+use Symfony\Component\HttpKernel\Exception\{
+    AccessDeniedHttpException,
+    BadRequestHttpException,
+    TooManyRequestsHttpException,
+    ConflictHttpException
+};
 
 use DateTimeImmutable;
 
@@ -98,15 +103,58 @@ final class SecurityController extends AbstractController
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_UNAUTHORIZED
             );
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_FORBIDDEN
+            );
         } catch (BadRequestHttpException $e) {
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_BAD_REQUEST
             );
-        } catch (AccessDeniedHttpException $e) {
+        }
+    }
+
+    #[Route('/register', name: 'register', methods: 'POST')]
+    public function register(
+        Request $request,
+        RegisterUserService $registerService
+    ): JsonResponse {
+        try {
+            try {
+                $userRegisterDTO = $this->serializer->deserialize(
+                    data: $request->getContent(),
+                    type: UserRegisterDTO::class,
+                    format: 'json'
+                );
+            } catch (\Exception $e) {
+                throw new BadRequestHttpException("Invalid JSON format");
+            }
+
+            $userReadDTO = $registerService->handleRegister($userRegisterDTO);
+
+            $responseData = $this->serializer->serialize(
+                data: $userReadDTO,
+                format: 'json',
+                context: ['groups' => ['user:read']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_CREATED,
+                json: true
+            );
+
+        } catch (ConflictHttpException $e) {
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
-                status: JsonResponse::HTTP_FORBIDDEN
+                status: JsonResponse::HTTP_CONFLICT
+            );
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
             );
         }
     }
