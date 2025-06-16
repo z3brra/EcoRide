@@ -11,14 +11,12 @@ use App\Service\User\{
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{Request, JsonResponse, Cookie};
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\HttpKernel\Exception\{AccessDeniedHttpException, BadRequestHttpException, TooManyRequestsHttpException};
-use Symfony\Component\RateLimiter\Exception\RateLimitExceededException;
 
 use DateTimeImmutable;
 
@@ -53,7 +51,7 @@ final class SecurityController extends AbstractController
                     format: 'json'
                 );
             } catch (\Exception $e) {
-                throw new BadRequestException("Invalid JSON format");
+                throw new BadRequestHttpException("Invalid JSON format");
             }
 
             $userReadDTO = $loginUserService->handleLogin($userLoginDTO);
@@ -100,10 +98,15 @@ final class SecurityController extends AbstractController
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_UNAUTHORIZED
             );
-        } catch (BadRequestException $e) {
+        } catch (BadRequestHttpException $e) {
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_FORBIDDEN
             );
         }
     }
