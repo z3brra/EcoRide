@@ -12,7 +12,7 @@ class UserDTO
         minMessage: "Pseudo must have at least 2 caracters.",
         max: 64,
         maxMessage: "Pseudo may not exceed 64 caracters.",
-        groups: ['create', 'update']
+        groups: ['create']
     )]
     public ?string $pseudo = null;
 
