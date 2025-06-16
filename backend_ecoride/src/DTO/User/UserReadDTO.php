@@ -36,6 +36,9 @@ class UserReadDTO
     #[Groups(['user:read'])]
     public string $apiToken;
 
+    #[Groups(['user:create'])]
+    public ?string $plainPassword;
+
     public function __construct(
         string $uuid,
         string $pseudo,
@@ -46,6 +49,7 @@ class UserReadDTO
         DateTimeImmutable $createdAt,
         ?DateTimeImmutable $updatedAt = null,
         string $apiToken,
+        ?string $plainPassword,
     )
     {
         $this->uuid = $uuid;
@@ -57,9 +61,10 @@ class UserReadDTO
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
         $this->apiToken = $apiToken;
+        $this->plainPassword = $plainPassword;
     }
 
-    public static function fromEntity(User $user): self
+    public static function fromEntity(User $user, ?string $plainPassword = null): self
     {
         $userDTO = new self(
             uuid: $user->getUuid(),
@@ -70,7 +75,8 @@ class UserReadDTO
             isBanned: $user->isBanned(),
             createdAt: $user->getCreatedAt(),
             updatedAt: $user->getUpdatedAt(),
-            apiToken: $user->getApiToken()
+            apiToken: $user->getApiToken(),
+            plainPassword: $plainPassword,
         );
 
         return $userDTO;
