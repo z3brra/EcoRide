@@ -2,12 +2,13 @@
 
 namespace App\Controller;
 
-use App\DTO\User\{UserLoginDTO, UserRegisterDTO, UserReadDTO};
+use App\DTO\User\{UserLoginDTO, UserRegisterDTO};
 
 use App\Service\User\{
     LoginUserService,
     RegisterUserService,
 };
+use App\Service\AuthCookieService;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{Request, JsonResponse, Cookie};
@@ -30,7 +31,8 @@ use DateTimeImmutable;
 final class SecurityController extends AbstractController
 {
     public function __construct(
-        private SerializerInterface $serializer
+        private SerializerInterface $serializer,
+        private AuthCookieService $cookieService
     ) {}
 
     #[Route('/login', name: 'login', methods: 'POST')]
@@ -63,12 +65,7 @@ final class SecurityController extends AbstractController
 
             $token = $userReadDTO->apiToken;
 
-            $cookie = Cookie::create('access_token')
-                ->withValue($token)
-                ->withHttpOnly(true)
-                ->withSecure($request->isSecure())
-                ->withSameSite('strict')
-                ->withExpires(new DateTimeImmutable('+7 days'));
+            $cookie = $this->cookieService->createAccessTokenCookie($token, $request);
 
             $responseData = $this->serializer->serialize(
                 data: $userReadDTO,
@@ -134,17 +131,22 @@ final class SecurityController extends AbstractController
 
             $userReadDTO = $registerService->handleRegister($userRegisterDTO);
 
+            $cookie = $this->cookieService->createAccessTokenCookie($userReadDTO->apiToken, $request);
+
             $responseData = $this->serializer->serialize(
                 data: $userReadDTO,
                 format: 'json',
                 context: ['groups' => ['user:read']]
             );
 
-            return new JsonResponse(
+            $response = new JsonResponse(
                 data: $responseData,
                 status: JsonResponse::HTTP_CREATED,
                 json: true
             );
+            $response->headers->setCookie($cookie);
+
+            return $response;
 
         } catch (ConflictHttpException $e) {
             return new JsonResponse(
@@ -168,12 +170,7 @@ final class SecurityController extends AbstractController
                 throw new AccessDeniedHttpException("User is not authenticated");
             }
 
-            $cookie = Cookie::create('access_token')
-                ->withValue('')
-                ->withExpires(new DateTimeImmutable('-1 hour'))
-                ->withHttpOnly(true)
-                ->withSecure(true)
-                ->withSameSite('strict');
+            $cookie = $this->cookieService->revokeAccessTokenCookie();
 
             $response = new JsonResponse(
                 data: ['message' => 'User successfully logged out'],
