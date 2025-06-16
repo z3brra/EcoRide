@@ -7,6 +7,7 @@ use App\Repository\UserRepository;
 use App\Service\ValidationService;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 
@@ -29,6 +30,10 @@ class LoginUserService
         $user = $this->userRepository->findOneByEmail($userLoginDTO->username);
         if (!$user || !$this->passwordHasher->isPasswordValid($user, $userLoginDTO->password)) {
             throw new BadCredentialsException("Invalid credentials.");
+        }
+
+        if ($user->isBanned()) {
+            throw new AccessDeniedHttpException("This account is banned");
         }
 
         return UserReadDTO::fromEntity($user);
