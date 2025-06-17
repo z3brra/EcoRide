@@ -2,10 +2,11 @@
 
 namespace App\Controller;
 
-use App\DTO\User\{UserReadDTO};
+use App\DTO\User\{UserEditDTO};
 
 use App\Service\User\{
-    ReadUserProfileService
+    ReadUserProfileService,
+    EditUserProfileService
 };
 use Exception;
 use LogicException;
@@ -14,7 +15,8 @@ use Symfony\Component\HttpFoundation\{Request, JsonResponse};
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\{AccessDeniedHttpException, BadRequestHttpException};
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
 #[Route('/api/user', name: 'app_api_user_')]
 final class UserController extends AbstractController
@@ -58,6 +60,65 @@ final class UserController extends AbstractController
                 ['error' => $e->getMessage()],
                 JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             );
+        }
+    }
+
+    #[Route('', name: 'edit', methods: 'PUT')]
+    public function edit(
+        Request $request,
+        EditUserProfileService $editUserService
+    ): JsonResponse {
+        try {
+            $user = $this->getUser();
+            if (!$user) {
+                throw new AccessDeniedHttpException("User is not authenticated");
+            }
+
+            try {
+                $userEditDTO = $this->serializer->deserialize(
+                    data: $request->getContent(),
+                    type: UserEditDTO::class,
+                    format: 'json'
+                );
+            } catch (\Exception $e) {
+                throw new BadRequestHttpException("Invalid JSON format");
+            }
+
+            $userReadDTO = $editUserService->editUser($user, $userEditDTO);
+
+            $responseData = $this->serializer->serialize(
+                data: $userReadDTO,
+                format: 'json',
+                context: ['groups' => ['user:read']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+
+
+        } catch (BadCredentialsException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_UNAUTHORIZED
+            );
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_BAD_REQUEST
+            );
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (LogicException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
         } catch (\Exception $e) {
             return new JsonResponse(
                 data: ['error' => "An internal server error as occured"],
@@ -66,6 +127,5 @@ final class UserController extends AbstractController
         }
     }
 }
-
 
 ?>
