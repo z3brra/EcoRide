@@ -156,7 +156,6 @@ final class UserController extends AbstractController
             $response->headers->setCookie($cookie);
             return $response;
 
-
         } catch (AccessDeniedHttpException $e) {
             return new JsonResponse(
                 ['error' => $e->getMessage()],

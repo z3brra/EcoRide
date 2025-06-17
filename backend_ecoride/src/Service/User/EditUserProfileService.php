@@ -3,7 +3,6 @@
 namespace App\Service\User;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
 use App\DTO\User\{UserEditDTO, UserReadDTO};
 
 use App\Service\ValidationService;

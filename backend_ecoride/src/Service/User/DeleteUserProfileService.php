@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 use LogicException;
-use Symfony\Component\HttpKernel\Exception\{AccessDeniedHttpException, BadRequestHttpException};
+use Symfony\Component\HttpKernel\Exception\{AccessDeniedHttpException};
 
 class DeleteUserProfileService
 {
