@@ -20,7 +20,6 @@ class EditUserProfileService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private UserRepository $userRepository,
         private UserPasswordHasherInterface $passwordHasher,
         private ValidationService $validationService
     ) {}

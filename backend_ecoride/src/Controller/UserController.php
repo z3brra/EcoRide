@@ -6,8 +6,10 @@ use App\DTO\User\{UserEditDTO};
 
 use App\Service\User\{
     ReadUserProfileService,
-    EditUserProfileService
+    EditUserProfileService,
+    DeleteUserProfileService
 };
+use App\Service\AuthCookieService;
 use Exception;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +24,8 @@ use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 final class UserController extends AbstractController
 {
     public function __construct(
-        private SerializerInterface $serializer
+        private SerializerInterface $serializer,
+        private AuthCookieService $cookieService
     ) {}
 
     #[Route('', name: 'me', methods: 'GET')]
@@ -59,6 +62,11 @@ final class UserController extends AbstractController
             return new JsonResponse(
                 ['error' => $e->getMessage()],
                 JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                data: ['error' => "An internal server error as occured"],
+                status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -109,6 +117,46 @@ final class UserController extends AbstractController
                 ['error' => $e->getMessage()],
                 JsonResponse::HTTP_BAD_REQUEST
             );
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (LogicException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+        // catch (\Exception $e) {
+        //     return new JsonResponse(
+        //         data: ['error' => "An internal server error as occured"],
+        //         status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+        //     );
+        // }
+    }
+
+    #[Route('', name: 'remove', methods: 'DELETE')]
+    public function delete(
+        DeleteUserProfileService $deleteUserService
+    ): JsonResponse {
+        try {
+            $user = $this->getUser();
+            if (!$user) {
+                throw new AccessDeniedHttpException("User is not authenticated");
+            }
+
+            $deleteUserService->deleteUser($user);
+            $cookie = $this->cookieService->revokeAccessTokenCookie();
+
+            $response = new JsonResponse(
+                data: ['message' => 'User successfully deleted'],
+                status: JsonResponse::HTTP_OK
+            );
+            $response->headers->setCookie($cookie);
+            return $response;
+
+
         } catch (AccessDeniedHttpException $e) {
             return new JsonResponse(
                 ['error' => $e->getMessage()],
