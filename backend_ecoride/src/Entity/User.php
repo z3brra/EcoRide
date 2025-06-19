@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -54,11 +56,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $apiToken = null;
 
+    /**
+     * @var Collection<int, Vehicle>
+     */
+    #[ORM\OneToMany(targetEntity: Vehicle::class, mappedBy: 'owner', orphanRemoval: true)]
+    private Collection $vehicles;
+
     /** @throws Exception */
     public function __construct()
     {
         $this->uuid = Uuid::uuid7()->toString();
         $this->apiToken = bin2hex(random_bytes(20));
+        $this->vehicles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -214,6 +223,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setApiToken(string $apiToken): static
     {
         $this->apiToken = $apiToken;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Vehicle>
+     */
+    public function getVehicles(): Collection
+    {
+        return $this->vehicles;
+    }
+
+    public function addVehicle(Vehicle $vehicle): static
+    {
+        if (!$this->vehicles->contains($vehicle)) {
+            $this->vehicles->add($vehicle);
+            $vehicle->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVehicle(Vehicle $vehicle): static
+    {
+        if ($this->vehicles->removeElement($vehicle)) {
+            // set the owning side to null (unless already changed)
+            if ($vehicle->getOwner() === $this) {
+                $vehicle->setOwner(null);
+            }
+        }
 
         return $this;
     }
