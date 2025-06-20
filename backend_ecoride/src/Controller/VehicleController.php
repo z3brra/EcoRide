@@ -5,7 +5,8 @@ namespace App\Controller;
 use App\DTO\Vehicle\{VehicleDTO};
 
 use App\Service\Vehicle\{
-    CreateVehicleService
+    CreateVehicleService,
+    ReadVehicleService,
 };
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,7 +15,12 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 use LogicException;
-use Symfony\Component\HttpKernel\Exception\{AccessDeniedHttpException, BadRequestHttpException, ConflictHttpException};
+use Symfony\Component\HttpKernel\Exception\{
+    NotFoundHttpException,
+    AccessDeniedHttpException,
+    BadRequestHttpException,
+    ConflictHttpException
+};
 
 #[Route('/api/vehicle', name: 'app_api_vehicle_')]
 final class VehicleController extends AbstractController
@@ -79,6 +85,40 @@ final class VehicleController extends AbstractController
             );
         }
     }
+
+    #[Route('/{uuid}', name: 'read', methods: 'GET')]
+    public function read(
+        string $uuid,
+        ReadVehicleService $readVehicleService
+    ): JsonResponse {
+        try {
+            $vehicleReadDTO = $readVehicleService->getVehicle($uuid);
+
+            $responseData = $this->serializer->serialize(
+                data: $vehicleReadDTO,
+                format: 'json',
+                context: ['groups' => ['vehicle:read']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                data: ['error' => "An internal server error as occured"],
+                status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
 
 }
 
