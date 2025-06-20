@@ -7,6 +7,7 @@ use App\DTO\Vehicle\{VehicleDTO};
 use App\Service\Vehicle\{
     CreateVehicleService,
     ReadVehicleService,
+    UpdateVehicleService,
 };
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -78,7 +79,7 @@ final class VehicleController extends AbstractController
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_CONFLICT
             );
-        }catch (BadRequestHttpException $e) {
+        } catch (BadRequestHttpException $e) {
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_BAD_REQUEST
@@ -117,6 +118,64 @@ final class VehicleController extends AbstractController
                 status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
+    }
+
+    #[Route('/{uuid}', name: 'update', methods: 'PUT')]
+    public function update(
+        string $uuid,
+        Request $request,
+        UpdateVehicleService $updateVehicleService,
+    ): JsonResponse {
+        try {
+            $user = $this->getUser();
+            if (!$user) {
+                throw new AccessDeniedHttpException("User is not authenticated");
+            }
+
+            try {
+                $vehicleUpdateDTO = $this->serializer->deserialize(
+                    data: $request->getContent(),
+                    type: VehicleDTO::class,
+                    format: 'json'
+                );
+            } catch (\Exception $e) {
+                throw new BadRequestHttpException("Invalid JSON format");
+            }
+
+            $vehicleReadDTO = $updateVehicleService->updateVehicle($user, $uuid, $vehicleUpdateDTO);
+            $responseData = $this->serializer->serialize(
+                data: $vehicleReadDTO,
+                format: 'json',
+                context: ['groups' => ['vehicle:read']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (LogicException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        } 
     }
 
 
