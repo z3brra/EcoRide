@@ -26,6 +26,7 @@ class DeleteUserProfileService
         }
 
         $this->entityManager->remove($user);
+        $this->entityManager->flush();
     }
 }
 

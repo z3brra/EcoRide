@@ -6,6 +6,7 @@ use App\DTO\Vehicle\{VehicleDTO};
 
 use App\Service\Vehicle\{
     CreateVehicleService,
+    DeleteVehicleService,
     ReadVehicleService,
     UpdateVehicleService,
 };
@@ -176,6 +177,47 @@ final class VehicleController extends AbstractController
                 status: JsonResponse::HTTP_BAD_REQUEST
             );
         } 
+    }
+
+    #[Route('/{uuid}', name: 'delete', methods: 'DELETE')]
+    public function delete(
+        string $uuid,
+        DeleteVehicleService $deleteVehicleService
+    ): JsonResponse {
+        try {
+            $user = $this->getUser();
+            if (!$user) {
+                throw new AccessDeniedHttpException("User is not authenticated");
+            }
+
+            $deleteVehicleService->deleteVehicle($user, $uuid);
+
+            return new JsonResponse(
+                data: ['message' => 'Vehicle successfully deleted'],
+                status: JsonResponse::HTTP_OK,
+            );
+
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (LogicException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                data: ['error' => "An internal server error as occured"],
+                status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
 
