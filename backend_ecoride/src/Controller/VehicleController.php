@@ -12,6 +12,8 @@ use App\Service\Vehicle\{
     ListVehiclePaginatedService,
 };
 
+use App\Service\Access\AccessControlService;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{Request, JsonResponse};
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,6 +32,7 @@ final class VehicleController extends AbstractController
 {
     public function __construct(
         private SerializerInterface $serializer,
+        private AccessControlService $accessControl,
     ) {}
 
     #[Route('', name: 'create', methods: 'POST')]
@@ -38,10 +41,11 @@ final class VehicleController extends AbstractController
         CreateVehicleService $createVehicleService
     ): JsonResponse {
         try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+            $this->accessControl->denyUnlessDriver();
+
             $user = $this->getUser();
-            if (!$user) {
-                throw new AccessDeniedHttpException("User is not authenticated");
-            }
 
             try {
                 $vehicleCreateDTO = $this->serializer->deserialize(
@@ -70,11 +74,6 @@ final class VehicleController extends AbstractController
             return new JsonResponse(
                 ['error' => $e->getMessage()],
                 JsonResponse::HTTP_FORBIDDEN
-            );
-        } catch (LogicException $e) {
-            return new JsonResponse(
-                ['error' => $e->getMessage()],
-                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         } catch (ConflictHttpException $e) {
             return new JsonResponse(
@@ -129,10 +128,11 @@ final class VehicleController extends AbstractController
         UpdateVehicleService $updateVehicleService,
     ): JsonResponse {
         try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+            $this->accessControl->denyUnlessDriver();
+
             $user = $this->getUser();
-            if (!$user) {
-                throw new AccessDeniedHttpException("User is not authenticated");
-            }
 
             try {
                 $vehicleUpdateDTO = $this->serializer->deserialize(
@@ -143,7 +143,6 @@ final class VehicleController extends AbstractController
             } catch (\Exception $e) {
                 throw new BadRequestHttpException("Invalid JSON format");
             }
-
             $vehicleReadDTO = $updateVehicleService->updateVehicle($user, $uuid, $vehicleUpdateDTO);
             $responseData = $this->serializer->serialize(
                 data: $vehicleReadDTO,
@@ -161,11 +160,6 @@ final class VehicleController extends AbstractController
             return new JsonResponse(
                 ['error' => $e->getMessage()],
                 JsonResponse::HTTP_FORBIDDEN
-            );
-        } catch (LogicException $e) {
-            return new JsonResponse(
-                ['error' => $e->getMessage()],
-                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         } catch (NotFoundHttpException $e) {
             return new JsonResponse(
@@ -186,12 +180,11 @@ final class VehicleController extends AbstractController
         DeleteVehicleService $deleteVehicleService
     ): JsonResponse {
         try {
-            $user = $this->getUser();
-            if (!$user) {
-                throw new AccessDeniedHttpException("User is not authenticated");
-            }
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+            $this->accessControl->denyUnlessDriver();
 
-            $deleteVehicleService->deleteVehicle($user, $uuid);
+            $deleteVehicleService->deleteVehicle($uuid);
 
             return new JsonResponse(
                 data: ['message' => 'Vehicle successfully deleted'],
@@ -202,11 +195,6 @@ final class VehicleController extends AbstractController
             return new JsonResponse(
                 ['error' => $e->getMessage()],
                 JsonResponse::HTTP_FORBIDDEN
-            );
-        } catch (LogicException $e) {
-            return new JsonResponse(
-                ['error' => $e->getMessage()],
-                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         } catch (NotFoundHttpException $e) {
             return new JsonResponse(
@@ -230,10 +218,11 @@ final class VehicleController extends AbstractController
             $page = max(1, (int) $request->query->get('page', 1));
             $limit = max(1, (int) $request->query->get('limit', 10));
 
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+            $this->accessControl->denyUnlessDriver();
+
             $user = $this->getUser();
-            if (!$user) {
-                throw new AccessDeniedHttpException("User is not authenticated");
-            }
 
             $vehiclePaginated = $listVehicleService->listVehiclePaginatedByUser($user, $page, $limit);
 
