@@ -14,8 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 use DateTimeImmutable;
 
-use LogicException;
-use Symfony\Component\HttpKernel\Exception\{AccessDeniedHttpException, BadRequestHttpException, ConflictHttpException};
+use Symfony\Component\HttpKernel\Exception\{BadRequestHttpException, ConflictHttpException};
 
 
 class CreateVehicleService
@@ -28,14 +27,6 @@ class CreateVehicleService
 
     public function createVehicle(UserInterface $user, VehicleDTO $vehicleCreateDTO): VehicleReadDTO
     {
-        if (!$user instanceof User) {
-            throw new LogicException("Invalid user type");
-        }
-
-        if ($user->isBanned()) {
-            throw new AccessDeniedHttpException("This account is banned");
-        }
-
         if ($vehicleCreateDTO->isEmpty()) {
             throw new BadRequestHttpException("No data to update");
         }

@@ -6,7 +6,7 @@ use App\Entity\User;
 
 use App\Repository\VehicleRepository;
 use App\DTO\Vehicle\{VehicleDTO, VehicleReadDTO};
-
+use App\Service\Access\AccessControlService;
 use App\Service\ValidationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -26,30 +26,21 @@ class UpdateVehicleService
     public function __construct(
         private EntityManagerInterface $entityManager,
         private VehicleRepository $vehicleRepository,
-        private ValidationService $validationService
+        private ValidationService $validationService,
+        private AccessControlService $accessControl
     ) {}
 
-    public function updateVehicle(UserInterface $user, string $uuid, VehicleDTO $vehicleUpdateDTO): VehicleReadDTO
+    public function updateVehicle(User $user, string $uuid, VehicleDTO $vehicleUpdateDTO): VehicleReadDTO
     {
-        if (!$user instanceof User) {
-            throw new LogicException("Invalid user type");
-        }
-
-        if ($user->isBanned()) {
-            throw new AccessDeniedHttpException("This account is banned");
-        }
-
         $vehicle = $this->vehicleRepository->findOneByUuid($uuid);
         if (!$vehicle) {
             throw new NotFoundHttpException("Vehicle not found or does not exist");
         }
 
+        $this->accessControl->denyUnlessOwnerByRelation($vehicle);
+
         if ($vehicleUpdateDTO->isEmpty()) {
             throw new BadRequestHttpException("No data to update");
-        }
-
-        if ($user->getUuid() !== $vehicle->getOwner()->getUuid()) {
-            throw new AccessDeniedHttpException("This vehicle does not belong to the current user");
         }
 
         $this->validationService->validate($vehicleUpdateDTO, ['update']);
