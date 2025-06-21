@@ -62,6 +62,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Vehicle::class, mappedBy: 'owner', orphanRemoval: true)]
     private Collection $vehicles;
 
+    #[ORM\OneToOne(mappedBy: 'owner', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private ?FixedDriverPreference $fixedDriverPreference = null;
+
     /** @throws Exception */
     public function __construct()
     {
@@ -253,6 +256,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $vehicle->setOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getFixedDriverPreference(): ?FixedDriverPreference
+    {
+        return $this->fixedDriverPreference;
+    }
+
+    public function setFixedDriverPreference(FixedDriverPreference $fixedDriverPreference): static
+    {
+        // set the owning side of the relation if necessary
+        if ($fixedDriverPreference->getOwner() !== $this) {
+            $fixedDriverPreference->setOwner($this);
+        }
+
+        $this->fixedDriverPreference = $fixedDriverPreference;
 
         return $this;
     }
