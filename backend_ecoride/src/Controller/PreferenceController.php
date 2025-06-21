@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use App\DTO\Preference\AggregatedPrefDTO;
 use App\DTO\Preference\CustomDriverPreferenceDTO;
 use App\Service\Preference\{
     CreateDriverPreferenceService,
     ReadDriverPreferenceService,
-
+    UpdateDriverPreferenceService,
 };
 
 use App\Service\Access\AccessControlService;
@@ -81,7 +82,7 @@ final class PreferenceController extends AbstractController
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_BAD_REQUEST
             );
-        }
+        } 
     }
 
     #[Route('', name: 'read', methods: 'GET')]
@@ -123,6 +124,60 @@ final class PreferenceController extends AbstractController
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        }
+    }
+
+    #[Route('', name: 'update', methods: 'PUT')]
+    public function update(
+        Request $request,
+        UpdateDriverPreferenceService $updatePrefService
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyUnlessDriver();
+            $this->accessControl->denyIfBanned();
+
+            $user = $this->accessControl->getUser();
+
+            try {
+                $updatePrefDTO = $this->serializer->deserialize(
+                    data: $request->getContent(),
+                    type: AggregatedPrefDTO::class,
+                    format: 'json'
+                );
+            } catch (\Exception $e) {
+                throw new BadRequestHttpException("Invalid JSON format");
+            }
+
+            $readPrefDTO = $updatePrefService->update($user, $updatePrefDTO);
+
+            $responseData = $this->serializer->serialize(
+                data: $readPrefDTO,
+                format: 'json',
+                context: ['groups' => 'pref:read']
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
             );
         }
     }

@@ -6,6 +6,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class CustomDriverPreferenceDTO
 {
+    #[Assert\NotBlank(message: "Label is required", groups: ['update'])]
+    public ?string $uuid = null;
+
     #[Assert\NotBlank(message: "Label is required", groups: ['create'])]
     #[Assert\Length(
         min: 2,
@@ -18,7 +21,8 @@ class CustomDriverPreferenceDTO
 
     public function isEmpty(): bool
     {
-        return $this->label === null;
+        return $this->uuid  === null &&
+               $this->label === null;
     }
 }
 
