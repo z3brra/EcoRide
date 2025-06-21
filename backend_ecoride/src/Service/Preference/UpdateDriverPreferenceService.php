@@ -8,7 +8,6 @@ use App\Entity\CustomDriverPreference;
 use App\DTO\Preference\{
     AggregatedPrefDTO,
     AggregatedPrefReadDTO,
-    CustomDriverPreferenceDTO
 };
 
 use App\Repository\CustomDriverPreferenceRepository;

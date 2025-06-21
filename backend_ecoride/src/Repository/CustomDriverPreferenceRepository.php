@@ -16,6 +16,11 @@ class CustomDriverPreferenceRepository extends ServiceEntityRepository
         parent::__construct($registry, CustomDriverPreference::class);
     }
 
+    public function findOneByUuid(string $uuid): ?CustomDriverPreference
+    {
+        return $this->findOneBy(['uuid' => $uuid]);
+    }
+
     //    /**
     //     * @return CustomDriverPreference[] Returns an array of CustomDriverPreference objects
     //     */
