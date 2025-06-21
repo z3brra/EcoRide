@@ -184,9 +184,7 @@ final class VehicleController extends AbstractController
             $this->accessControl->denyIfBanned();
             $this->accessControl->denyUnlessDriver();
 
-            $user = $this->getUser();
-
-            $deleteVehicleService->deleteVehicle($user, $uuid);
+            $deleteVehicleService->deleteVehicle($uuid);
 
             return new JsonResponse(
                 data: ['message' => 'Vehicle successfully deleted'],

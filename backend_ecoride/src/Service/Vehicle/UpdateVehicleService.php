@@ -9,16 +9,12 @@ use App\DTO\Vehicle\{VehicleDTO, VehicleReadDTO};
 use App\Service\Access\AccessControlService;
 use App\Service\ValidationService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 use DateTimeImmutable;
 
-use LogicException;
 use Symfony\Component\HttpKernel\Exception\{
     NotFoundHttpException,
-    AccessDeniedHttpException,
     BadRequestHttpException,
-    ConflictHttpException,
 };
 
 class UpdateVehicleService
