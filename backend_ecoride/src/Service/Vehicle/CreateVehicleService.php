@@ -46,7 +46,7 @@ class CreateVehicleService
                 ->setCreatedAt(new DateTimeImmutable())
                 ->setOwner($user);
 
-                $this->entityManager->persist($vehicle);
+        $this->entityManager->persist($vehicle);
         $this->entityManager->flush();
 
         return VehicleReadDTO::fromEntity($vehicle);

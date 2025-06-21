@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\CustomDriverPreferenceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+use Ramsey\Uuid\Uuid;
+
 #[ORM\Entity(repositoryClass: CustomDriverPreferenceRepository::class)]
 class CustomDriverPreference
 {
@@ -28,6 +30,12 @@ class CustomDriverPreference
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    /** @throws Exception */
+    public function __construct()
+    {
+        $this->uuid = Uuid::uuid7()->toString();
+    }
 
     public function getId(): ?int
     {
