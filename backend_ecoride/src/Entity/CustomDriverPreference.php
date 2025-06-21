@@ -13,6 +13,9 @@ class CustomDriverPreference
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(length: 36)]
+    private ?string $uuid = null;
+
     #[ORM\ManyToOne(inversedBy: 'customDriverPreferences')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?User $owner = null;
@@ -29,6 +32,18 @@ class CustomDriverPreference
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): static
+    {
+        $this->uuid = $uuid;
+
+        return $this;
     }
 
     public function getOwner(): ?User
