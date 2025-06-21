@@ -65,12 +65,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'owner', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private ?FixedDriverPreference $fixedDriverPreference = null;
 
+    /**
+     * @var Collection<int, CustomDriverPreference>
+     */
+    #[ORM\OneToMany(targetEntity: CustomDriverPreference::class, mappedBy: 'owner', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $customDriverPreferences;
+
     /** @throws Exception */
     public function __construct()
     {
         $this->uuid = Uuid::uuid7()->toString();
         $this->apiToken = bin2hex(random_bytes(20));
         $this->vehicles = new ArrayCollection();
+        $this->customDriverPreferences = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -273,6 +280,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->fixedDriverPreference = $fixedDriverPreference;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CustomDriverPreference>
+     */
+    public function getCustomDriverPreferences(): Collection
+    {
+        return $this->customDriverPreferences;
+    }
+
+    public function addCustomDriverPreference(CustomDriverPreference $customDriverPreference): static
+    {
+        if (!$this->customDriverPreferences->contains($customDriverPreference)) {
+            $this->customDriverPreferences->add($customDriverPreference);
+            $customDriverPreference->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomDriverPreference(CustomDriverPreference $customDriverPreference): static
+    {
+        if ($this->customDriverPreferences->removeElement($customDriverPreference)) {
+            // set the owning side to null (unless already changed)
+            if ($customDriverPreference->getOwner() === $this) {
+                $customDriverPreference->setOwner(null);
+            }
+        }
 
         return $this;
     }
