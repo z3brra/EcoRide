@@ -16,14 +16,19 @@ class AccessControlService
         private AuthorizationCheckerInterface $authChecker,
     ) {}
 
-    public function getUser(): ?UserInterface
+    public function getUser(): User
+    {
+        return $this->getInternUser();
+    }
+
+    private function getInternUser(): ?UserInterface
     {
         return $this->tokenStorage->getToken()?->getUser();
     }
 
     public function isLogged(): bool
     {
-        return $this->getUser() instanceof User;
+        return $this->getInternUser() instanceof User;
     }
 
     public function isAdmin(): bool
@@ -38,19 +43,19 @@ class AccessControlService
 
     public function isBanned(): bool
     {
-        $user = $this->getUser();
+        $user = $this->getInternUser();
         return $user instanceof User && $user->isBanned();
     }
 
     public function isOwnerByEntityRelation(mixed $subject): bool
     {
-        $user = $this->getUser();
+        $user = $this->getInternUser();
         return $subject->getOwner() === $user;
     }
 
     public function isOwnerByUuid(string $subjectOwnerUuid): bool
     {
-        $user = $this->getUser();
+        $user = $this->getInternUser();
         return $user instanceof User && $subjectOwnerUuid === $user->getUUid();
     }
 

@@ -7,11 +7,14 @@ use App\DTO\User\{UserEditDTO};
 use App\Service\User\{
     ReadUserProfileService,
     EditUserProfileService,
-    DeleteUserProfileService
+    DeleteUserProfileService,
+    BecomeDriverService,
 };
 use App\Service\AuthCookieService;
+
+use App\Service\Access\AccessControlService;
+
 use Exception;
-use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{Request, JsonResponse};
 use Symfony\Component\Routing\Attribute\Route;
@@ -25,7 +28,8 @@ final class UserController extends AbstractController
 {
     public function __construct(
         private SerializerInterface $serializer,
-        private AuthCookieService $cookieService
+        private AuthCookieService $cookieService,
+        private AccessControlService $accessControl,
     ) {}
 
     #[Route('', name: 'me', methods: 'GET')]
@@ -34,10 +38,10 @@ final class UserController extends AbstractController
     ): JsonResponse {
         try {
 
-            $user = $this->getUser();
-            if (!$user) {
-                throw new AccessDeniedHttpException("User is not authenticated");
-            }
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+
+            $user = $this->accessControl->getUser();
 
             $readUserDTO = $readUserService->getProfile($user);
 
@@ -58,11 +62,6 @@ final class UserController extends AbstractController
                 ['error' => $e->getMessage()],
                 JsonResponse::HTTP_FORBIDDEN
             );
-        } catch (LogicException $e) {
-            return new JsonResponse(
-                ['error' => $e->getMessage()],
-                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
         } catch (\Exception $e) {
             return new JsonResponse(
                 data: ['error' => "An internal server error as occured"],
@@ -77,10 +76,10 @@ final class UserController extends AbstractController
         EditUserProfileService $editUserService
     ): JsonResponse {
         try {
-            $user = $this->getUser();
-            if (!$user) {
-                throw new AccessDeniedHttpException("User is not authenticated");
-            }
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+
+            $user = $this->accessControl->getUser();
 
             try {
                 $userEditDTO = $this->serializer->deserialize(
@@ -122,11 +121,6 @@ final class UserController extends AbstractController
                 ['error' => $e->getMessage()],
                 JsonResponse::HTTP_FORBIDDEN
             );
-        } catch (LogicException $e) {
-            return new JsonResponse(
-                ['error' => $e->getMessage()],
-                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
         }
         // catch (\Exception $e) {
         //     return new JsonResponse(
@@ -141,10 +135,10 @@ final class UserController extends AbstractController
         DeleteUserProfileService $deleteUserService
     ): JsonResponse {
         try {
-            $user = $this->getUser();
-            if (!$user) {
-                throw new AccessDeniedHttpException("User is not authenticated");
-            }
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+
+            $user = $this->accessControl->getUser();
 
             $deleteUserService->deleteUser($user);
             $cookie = $this->cookieService->revokeAccessTokenCookie();
@@ -161,10 +155,40 @@ final class UserController extends AbstractController
                 ['error' => $e->getMessage()],
                 JsonResponse::HTTP_FORBIDDEN
             );
-        } catch (LogicException $e) {
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                data: ['error' => "An internal server error as occured"],
+                status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    #[Route('/driver', name: 'become_driver', methods: 'POST')]
+    public function becomeDriver(
+        BecomeDriverService $driverService
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+
+            $user = $this->accessControl->getUser();
+
+            $userReadDTO = $driverService->becomeDriver($user);
+
+            $responseData = $this->serializer->serialize(
+                data: $userReadDTO,
+                format: 'json',
+                context: ['groups' => ['user:read']]
+            );
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+        } catch (AccessDeniedHttpException $e) {
             return new JsonResponse(
                 ['error' => $e->getMessage()],
-                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+                JsonResponse::HTTP_FORBIDDEN
             );
         } catch (\Exception $e) {
             return new JsonResponse(
@@ -172,6 +196,7 @@ final class UserController extends AbstractController
                 status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
+
     }
 }
 

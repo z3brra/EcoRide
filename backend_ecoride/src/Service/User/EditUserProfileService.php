@@ -8,11 +8,9 @@ use App\DTO\User\{UserEditDTO, UserReadDTO};
 use App\Service\ValidationService;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-use LogicException;
-use Symfony\Component\HttpKernel\Exception\{AccessDeniedHttpException, BadRequestHttpException};
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
 class EditUserProfileService
@@ -23,16 +21,8 @@ class EditUserProfileService
         private ValidationService $validationService
     ) {}
 
-    public function editUser(UserInterface $user, UserEditDTO $userEditDTO): UserReadDTO
+    public function editUser(User $user, UserEditDTO $userEditDTO): UserReadDTO
     {
-        if (!$user instanceof User) {
-            throw new LogicException("Invalid user type");
-        }
-
-        if ($user->isBanned()) {
-            throw new AccessDeniedHttpException("This account is banned");
-        }
-
         if ($userEditDTO->isEmpty()) {
             throw new BadRequestHttpException("No data to update");
         }

@@ -9,6 +9,7 @@ use App\Service\User\{
     RegisterUserService,
 };
 use App\Service\AuthCookieService;
+use App\Service\Access\AccessControlService;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{Request, JsonResponse, Cookie};
@@ -32,7 +33,8 @@ final class SecurityController extends AbstractController
 {
     public function __construct(
         private SerializerInterface $serializer,
-        private AuthCookieService $cookieService
+        private AuthCookieService $cookieService,
+        private AccessControlService $accessControl,
     ) {}
 
     #[Route('/login', name: 'login', methods: 'POST')]
@@ -165,10 +167,7 @@ final class SecurityController extends AbstractController
     public function logout(): JsonResponse
     {
         try {
-            $user = $this->getUser();
-            if (!$user) {
-                throw new AccessDeniedHttpException("User is not authenticated");
-            }
+            $this->accessControl->denyUnlessLogged();
 
             $cookie = $this->cookieService->revokeAccessTokenCookie();
 
