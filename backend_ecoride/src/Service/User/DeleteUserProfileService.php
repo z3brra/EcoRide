@@ -4,10 +4,6 @@ namespace App\Service\User;
 use App\Entity\User;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-
-use LogicException;
-use Symfony\Component\HttpKernel\Exception\{AccessDeniedHttpException};
 
 class DeleteUserProfileService
 {
@@ -15,16 +11,8 @@ class DeleteUserProfileService
         private EntityManagerInterface $entityManager,
     ) {}
 
-    public function deleteUser(UserInterface $user): void
+    public function deleteUser(User $user): void
     {
-        if (!$user instanceof User) {
-            throw new LogicException("Invalid user type");
-        }
-
-        if ($user->isBanned()) {
-            throw new AccessDeniedHttpException("This account is banned");
-        }
-
         $this->entityManager->remove($user);
         $this->entityManager->flush();
     }
