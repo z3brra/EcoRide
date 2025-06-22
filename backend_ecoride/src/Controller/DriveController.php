@@ -9,6 +9,8 @@ use App\Service\Drive\{
     ReadDriveService,
     UpdateDriveService,
     DeleteDriveService,
+
+    StartDriveService,
 };
 
 use App\Service\Access\AccessControlService;
@@ -218,6 +220,58 @@ final class DriveController extends AbstractController
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                data: ['error' => "An internal server error as occured"],
+                status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    #[Route('/{identifier}/start', name: 'start', requirements: ['identifier' => '.+'], methods: 'POST')]
+    public function start(
+        string $identifier,
+        StartDriveService $startDriveService
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+            $this->accessControl->denyUnlessDriver();
+
+            $readDriveDTO = $startDriveService->start($identifier);
+
+            $responseData = $this->serializer->serialize(
+                data: $readDriveDTO,
+                format: 'json',
+                context: ['groups' => ['drive:read']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (ConflictHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_CONFLICT
+            );
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
             );
         } catch (\Exception $e) {
             return new JsonResponse(
