@@ -202,7 +202,7 @@ final class PreferenceController extends AbstractController
                 throw new BadRequestHttpException("Invalid JSON format");
             }
 
-            $deletedUuids = $deleteCustomPrefService->delete($deleteCustomPrefDTO);
+            $deletedUuids = $deleteCustomPrefService->deleteMany($deleteCustomPrefDTO);
             $responseData = $this->serializer->serialize(
                 data: [
                     'message' => 'Custom preferences are successfully deleted',

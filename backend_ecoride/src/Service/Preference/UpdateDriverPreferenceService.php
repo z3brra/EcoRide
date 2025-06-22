@@ -12,6 +12,7 @@ use App\DTO\Preference\{
 
 use App\Repository\CustomDriverPreferenceRepository;
 use App\Service\ValidationService;
+use App\Service\Access\AccessControlService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\{
     BadRequestHttpException,
@@ -26,6 +27,7 @@ class UpdateDriverPreferenceService
         private EntityManagerInterface $entityManager,
         private ValidationService $validationService,
         private CustomDriverPreferenceRepository $customPrefRepository,
+        private AccessControlService $accessControl,
     ) {}
 
     public function update(User $user, AggregatedPrefDTO $updateAggregatedPrefDTO): AggregatedPrefReadDTO
@@ -39,7 +41,7 @@ class UpdateDriverPreferenceService
         if ($updateAggregatedPrefDTO->fixedPref !== null) {
             $fixedPref = $user->getFixedDriverPreference();
             if (!$fixedPref) {
-                throw new BadRequestHttpException("Fixed driver preferences not found");
+                throw new NotFoundHttpException("Fixed driver preferences not found");
             }
 
             if ($updateAggregatedPrefDTO->fixedPref->animals !== null) {
@@ -59,10 +61,11 @@ class UpdateDriverPreferenceService
                 }
 
                 /** @var CustomDriverPreference $entity */
-                $entity = $this->customPrefRepository->findOneBy(['uuid' => $updateCustomDTO->uuid]);
-                if (!$entity || $entity->getOwner() !== $user) {
+                $entity = $this->customPrefRepository->findOneByUuid($updateCustomDTO->uuid);
+                if (!$entity) {
                     throw new NotFoundHttpException("Custom preference not found or does not exist");
                 }
+                $this->accessControl->denyUnlessOwnerByRelation($entity);
 
                 $entity->setLabel($updateCustomDTO->label);
                 $entity->setUpdatedAt(new DateTimeImmutable());

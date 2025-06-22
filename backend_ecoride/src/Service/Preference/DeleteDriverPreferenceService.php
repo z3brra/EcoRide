@@ -20,7 +20,7 @@ class DeleteDriverPreferenceService
         private ValidationService $validationService,
     ) {}
 
-    public function delete(array $deleteCustomPrefDTO): array
+    public function deleteMany(array $deleteCustomPrefDTO): array
     {
         $this->validationService->validateEach($deleteCustomPrefDTO, ['delete']);
 
