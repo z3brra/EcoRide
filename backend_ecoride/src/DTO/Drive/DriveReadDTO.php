@@ -10,7 +10,6 @@ use App\DTO\Vehicle\VehicleReadDTO;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 use DateTimeImmutable;
-use DateTimeInterface;
 
 class DriveReadDTO
 {
@@ -46,13 +45,13 @@ class DriveReadDTO
     public string $depart;
 
     #[Groups(['drive:read', 'drive:list'])]
-    public DateTimeInterface $departAt;
+    public DateTimeImmutable $departAt;
 
     #[Groups(['drive:read', 'drive:list'])]
     public string $arrived;
 
     #[Groups(['drive:read', 'drive:list'])]
-    public DateTimeInterface $arrivedAt;
+    public DateTimeImmutable $arrivedAt;
 
     #[Groups(['drive:read'])]
     public DateTimeImmutable $createdAt;
@@ -71,9 +70,9 @@ class DriveReadDTO
         int $price,
         float $distance,
         string $depart,
-        DateTimeInterface $departAt,
+        DateTimeImmutable $departAt,
         string $arrived,
-        DateTimeInterface $arrivedAt,
+        DateTimeImmutable $arrivedAt,
         DateTimeImmutable $createdAt,
         ?DateTimeImmutable $updatedAt = null,
     )

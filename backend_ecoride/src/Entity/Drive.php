@@ -58,20 +58,20 @@ class Drive
     #[ORM\Column(length: 255)]
     private ?string $depart = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $departAt = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private ?DateTimeImmutable $departAt = null;
 
     #[ORM\Column(length: 255)]
     private ?string $arrived = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $arrivedAt = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private ?DateTimeImmutable $arrivedAt = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {
@@ -216,12 +216,12 @@ class Drive
         return $this;
     }
 
-    public function getDepartAt(): ?\DateTimeImmutable
+    public function getDepartAt(): ?DateTimeImmutable
     {
         return $this->departAt;
     }
 
-    public function setDepartAt(\DateTimeImmutable $departAt): static
+    public function setDepartAt(DateTimeImmutable $departAt): static
     {
         $this->departAt = $departAt;
 
@@ -240,24 +240,24 @@ class Drive
         return $this;
     }
 
-    public function getArrivedAt(): ?\DateTimeImmutable
+    public function getArrivedAt(): ?DateTimeImmutable
     {
         return $this->arrivedAt;
     }
 
-    public function setArrivedAt(\DateTimeImmutable $arrivedAt): static
+    public function setArrivedAt(DateTimeImmutable $arrivedAt): static
     {
         $this->arrivedAt = $arrivedAt;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 
@@ -270,12 +270,12 @@ class Drive
         $this->createdAt = new DateTimeImmutable();
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    public function setUpdatedAt(?DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
 

@@ -16,6 +16,16 @@ class DriveRepository extends ServiceEntityRepository
         parent::__construct($registry, Drive::class);
     }
 
+    public function findOneByUuid(string $uuid): ?Drive
+    {
+        return $this->findOneBy(['uuid' => $uuid]);
+    }
+
+    public function findOneByReference(string $reference): ?Drive
+    {
+        return $this->findOneBy(['reference' => $reference]);
+    }
+
     //    /**
     //     * @return Drive[] Returns an array of Drive objects
     //     */

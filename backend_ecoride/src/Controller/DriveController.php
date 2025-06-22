@@ -6,6 +6,7 @@ use App\DTO\Drive\{DriveDTO};
 
 use App\Service\Drive\{
     CreateDriveService,
+    ReadDriveService,
 };
 
 use App\Service\Access\AccessControlService;
@@ -88,6 +89,49 @@ final class DriveController extends AbstractController
             );
         }
     }
+
+    #[Route('/{identifier}', name: 'read', requirements: ['identifier' => '.+'], methods: 'GET')]
+    public function read(
+        string $identifier,
+        ReadDriveService $readDriveService,
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+            $this->accessControl->denyUnlessDriver();
+
+            $readDriveDTO = $readDriveService->getDrive($identifier);
+
+            $responseData = $this->serializer->serialize(
+                data: $readDriveDTO,
+                format: 'json',
+                context: ['groups' => ['drive:read']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        }
+    }
+
 }
 
 ?>

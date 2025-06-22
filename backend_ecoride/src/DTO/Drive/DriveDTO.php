@@ -6,7 +6,7 @@ use App\Enum\DriveStatus;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-use DateTimeInterface;
+use DateTimeImmutable;
 
 class DriveDTO
 {
@@ -17,7 +17,6 @@ class DriveDTO
     #[Assert\PositiveOrZero(message: "Price must be a positive number or free : 0.", groups: ['create'])]
     public ?int $price = null;
 
-    // #[Assert\NotNull(message: "Available seats is required.", groups: ['create'])]
     #[Assert\Positive(message: "Available must be a positive number.", groups: ['create', 'update'])]
     public ?int $availableSeats = null;
 
@@ -36,8 +35,8 @@ class DriveDTO
     public ?string $depart = null;
 
     #[Assert\NotNull(message: "Depart at is required.", groups: ['create'])]
-    #[Assert\Type(DateTimeInterface::class, message: "Depart at must be a valid date.", groups: ['create', 'update'])]
-    public ?DateTimeInterface $departAt = null;
+    #[Assert\Type(DateTimeImmutable::class, message: "Depart at must be a valid date.", groups: ['create', 'update'])]
+    public ?DateTimeImmutable $departAt = null;
 
     #[Assert\NotBlank(message: "Arrived is required.", groups: ['create'])]
     #[Assert\Length(
@@ -50,8 +49,8 @@ class DriveDTO
     public ?string $arrived = null;
 
     #[Assert\NotNull(message: "Arrived at is required.", groups: ['create'])]
-    #[Assert\Type(DateTimeInterface::class, message: "Arrived at must be a valid date.", groups: ['create', 'update'])]
-    public ?DateTimeInterface $arrivedAt = null;
+    #[Assert\Type(DateTimeImmutable::class, message: "Arrived at must be a valid date.", groups: ['create', 'update'])]
+    public ?DateTimeImmutable $arrivedAt = null;
 
     #[Assert\Choice(
         callback: [DriveStatus::class, 'cases']
