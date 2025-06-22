@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\VehicleRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 
 #[ORM\Entity(repositoryClass: VehicleRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Vehicle
 {
     #[ORM\Id]
@@ -55,7 +57,20 @@ class Vehicle
     public function __construct()
     {
         $this->uuid = Uuid::uuid7()->toString();
+        $this->createdAt = new DateTimeImmutable();
         $this->drives = new ArrayCollection();
+    }
+
+    public function anonymize(): void
+    {
+        $suffix = '-'.Uuid::uuid7()->toString();
+        $this->licensePlate = 'deleted';
+    }
+
+    #[ORM\PreUpdate]
+    public function onUpdate(): void
+    {
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     public function getId(): ?int

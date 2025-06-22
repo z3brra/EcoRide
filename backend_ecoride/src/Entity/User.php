@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,9 +12,11 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    // Identity
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -41,20 +44,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+
+
+    /*** Account / Security ***/
     #[ORM\Column(nullable: true)]
     private ?int $credits = null;
 
     #[ORM\Column]
     private ?bool $isBanned = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $apiToken = null;
+
+
+    /*** Date / Time ***/
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $apiToken = null;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $deletedAt = null;
+
+    /*** Relations ***/
 
     /**
      * @var Collection<int, Vehicle>
@@ -83,16 +96,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Drive::class, mappedBy: 'participants')]
     private Collection $joinedDrives;
 
+
+
     /** @throws Exception */
     public function __construct()
     {
         $this->uuid = Uuid::uuid7()->toString();
         $this->apiToken = bin2hex(random_bytes(20));
+        $this->createdAt = new DateTimeImmutable();
         $this->vehicles = new ArrayCollection();
         $this->customDriverPreferences = new ArrayCollection();
         $this->drives = new ArrayCollection();
         $this->joinedDrives = new ArrayCollection();
     }
+
+    /*** Anonymisation ***/
+    public function anonymize(): void
+    {
+        if ($this->deletedAt !== null) {
+            return;
+        }
+        $suffix = '-'.Uuid::uuid7()->toString();
+        $this->pseudo = 'deleted';
+        $this->email = 'deleted@exemple.local';
+        $this->roles = ['ROLE_DELETED'];
+        $this->deletedAt = new DateTimeImmutable();
+
+        foreach ($this->vehicles as $vehicle) {
+            $vehicle->anonymize();
+        }
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deletedAt !== null;
+    }
+
+    #[ORM\PreUpdate]
+    public function onUpdate(): void
+    {
+        $this->updatedAt = new DateTimeImmutable();
+    }
+
 
     public function getId(): ?int
     {

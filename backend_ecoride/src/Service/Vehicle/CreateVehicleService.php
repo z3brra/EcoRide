@@ -43,7 +43,7 @@ class CreateVehicleService
                 ->setIsElectric($vehicleCreateDTO->isElectric)
                 ->setColor($vehicleCreateDTO->color)
                 ->setSeats($vehicleCreateDTO->seats)
-                ->setCreatedAt(new DateTimeImmutable())
+                // ->setCreatedAt(new DateTimeImmutable())
                 ->setOwner($user);
 
         $this->entityManager->persist($vehicle);

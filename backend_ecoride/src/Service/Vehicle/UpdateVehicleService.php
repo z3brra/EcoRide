@@ -58,7 +58,7 @@ class UpdateVehicleService
         if ($seats !== null) {
             $vehicle->setSeats($seats);
         }
-        $vehicle->setUpdatedAt(new DateTimeImmutable());
+        // $vehicle->setUpdatedAt(new DateTimeImmutable());
 
         $this->entityManager->flush();
 

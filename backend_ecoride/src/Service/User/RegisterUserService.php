@@ -34,7 +34,7 @@ class RegisterUserService
              ->setEmail($userRegisterDTO->email)
              ->setIsBanned(false)
              ->setCredits(20)
-             ->setCreatedAt(new DateTimeImmutable())
+            //  ->setCreatedAt(new DateTimeImmutable())
              ->setPassword($this->passwordHasher->hashPassword($user, $userRegisterDTO->password));
 
         $this->entityManager->persist($user);

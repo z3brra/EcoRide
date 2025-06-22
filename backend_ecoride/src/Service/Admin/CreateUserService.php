@@ -45,7 +45,7 @@ class CreateUserService
              ->setEmail($email)
              ->setRoles(['ROLE_EMPLOYEE'])
              ->setIsBanned(false)
-             ->setCreatedAt(new DateTimeImmutable())
+            //  ->setCreatedAt(new DateTimeImmutable())
              ->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
 
         $this->entityManager->persist($user);
