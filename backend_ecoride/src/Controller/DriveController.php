@@ -8,6 +8,7 @@ use App\Service\Drive\{
     CreateDriveService,
     ReadDriveService,
     UpdateDriveService,
+    DeleteDriveService,
 };
 
 use App\Service\Access\AccessControlService;
@@ -182,6 +183,46 @@ final class DriveController extends AbstractController
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_NOT_FOUND
+            );
+        }
+    }
+
+    #[Route('/{identifier}', name: 'delete', requirements: ['identifier' => '.+'], methods: 'DELETE')]
+    public function delete(
+        string $identifier,
+        DeleteDriveService $deleteDriveService,
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyUnlessDriver();
+            $this->accessControl->denyIfBanned();
+
+            $deleteDriveService->delete($identifier);
+
+            return new JsonResponse(
+                data: ['message' => 'Drive successfully deleted'],
+                status: JsonResponse::HTTP_OK,
+            );
+
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                data: ['error' => "An internal server error as occured"],
+                status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
     }
