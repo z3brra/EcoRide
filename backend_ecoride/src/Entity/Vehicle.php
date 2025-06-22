@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\VehicleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Ramsey\Uuid\Uuid;
@@ -15,7 +17,7 @@ class Vehicle
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 36)]
+    #[ORM\Column(length: 36, unique: true)]
     private ?string $uuid = null;
 
     #[ORM\Column(length: 20, unique: true)]
@@ -43,10 +45,17 @@ class Vehicle
     #[ORM\JoinColumn(nullable: false)]
     private ?User $owner = null;
 
+    /**
+     * @var Collection<int, Drive>
+     */
+    #[ORM\OneToMany(targetEntity: Drive::class, mappedBy: 'vehicle')]
+    private Collection $drives;
+
 
     public function __construct()
     {
         $this->uuid = Uuid::uuid7()->toString();
+        $this->drives = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -158,6 +167,36 @@ class Vehicle
     public function setOwner(?User $owner): static
     {
         $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Drive>
+     */
+    public function getDrives(): Collection
+    {
+        return $this->drives;
+    }
+
+    public function addDrive(Drive $drive): static
+    {
+        if (!$this->drives->contains($drive)) {
+            $this->drives->add($drive);
+            $drive->setVehicle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDrive(Drive $drive): static
+    {
+        if ($this->drives->removeElement($drive)) {
+            // set the owning side to null (unless already changed)
+            if ($drive->getVehicle() === $this) {
+                $drive->setVehicle(null);
+            }
+        }
 
         return $this;
     }

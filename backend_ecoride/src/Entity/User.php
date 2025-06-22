@@ -19,7 +19,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 36)]
+    #[ORM\Column(length: 36, unique: true)]
     private ?string $uuid = null;
 
 
@@ -71,6 +71,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: CustomDriverPreference::class, mappedBy: 'owner', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $customDriverPreferences;
 
+    /**
+     * @var Collection<int, Drive>
+     */
+    #[ORM\OneToMany(targetEntity: Drive::class, mappedBy: 'owner')]
+    private Collection $drives;
+
+    /**
+     * @var Collection<int, Drive>
+     */
+    #[ORM\ManyToMany(targetEntity: Drive::class, mappedBy: 'participants')]
+    private Collection $joinedDrives;
+
     /** @throws Exception */
     public function __construct()
     {
@@ -78,6 +90,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->apiToken = bin2hex(random_bytes(20));
         $this->vehicles = new ArrayCollection();
         $this->customDriverPreferences = new ArrayCollection();
+        $this->drives = new ArrayCollection();
+        $this->joinedDrives = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -309,6 +323,63 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             if ($customDriverPreference->getOwner() === $this) {
                 $customDriverPreference->setOwner(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Drive>
+     */
+    public function getDrives(): Collection
+    {
+        return $this->drives;
+    }
+
+    public function addDrive(Drive $drive): static
+    {
+        if (!$this->drives->contains($drive)) {
+            $this->drives->add($drive);
+            $drive->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDrive(Drive $drive): static
+    {
+        if ($this->drives->removeElement($drive)) {
+            // set the owning side to null (unless already changed)
+            if ($drive->getOwner() === $this) {
+                $drive->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Drive>
+     */
+    public function getJoinedDrives(): Collection
+    {
+        return $this->joinedDrives;
+    }
+
+    public function addJoinedDrive(Drive $joinedDrive): static
+    {
+        if (!$this->joinedDrives->contains($joinedDrive)) {
+            $this->joinedDrives->add($joinedDrive);
+            $joinedDrive->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJoinedDrive(Drive $joinedDrive): static
+    {
+        if ($this->joinedDrives->removeElement($joinedDrive)) {
+            $joinedDrive->removeParticipant($this);
         }
 
         return $this;
