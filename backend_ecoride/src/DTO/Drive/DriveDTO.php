@@ -14,10 +14,10 @@ class DriveDTO
     public ?string $vehicleUuid = null;
 
     #[Assert\NotNull(message: "Price is required.", groups: ['create'])]
-    #[Assert\Positive(message: "Price must be a positive number.", groups: ['create'])]
+    #[Assert\PositiveOrZero(message: "Price must be a positive number or free : 0.", groups: ['create'])]
     public ?int $price = null;
 
-    #[Assert\NotNull(message: "Available seats is required.", groups: ['create'])]
+    // #[Assert\NotNull(message: "Available seats is required.", groups: ['create'])]
     #[Assert\Positive(message: "Available must be a positive number.", groups: ['create', 'update'])]
     public ?int $availableSeats = null;
 
@@ -54,8 +54,7 @@ class DriveDTO
     public ?DateTimeInterface $arrivedAt = null;
 
     #[Assert\Choice(
-        callback: [DriveStatus::class, 'cases'],
-        groups: ['create']
+        callback: [DriveStatus::class, 'cases']
     )]
     public ?DriveStatus $status = null;
 
