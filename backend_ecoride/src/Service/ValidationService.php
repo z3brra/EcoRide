@@ -23,6 +23,16 @@ class ValidationService
             throw new ValidationException($validationErrors);
         }
     }
+
+    public function validateEach(array $dtos, array $groups): void
+    {
+        foreach ($dtos as $dto) {
+            if (!is_object($dto)) {
+                continue;
+            }
+            $this->validate($dto, $groups);
+        }
+    }
 }
 
 ?>

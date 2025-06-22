@@ -5,7 +5,7 @@ namespace App\Service\User;
 use App\Entity\User;
 
 use App\DTO\User\UserReadDTO;
-
+use App\Entity\FixedDriverPreference;
 use App\Service\Access\AccessControlService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +21,14 @@ class BecomeDriverService
     {
         $user->setRoles(['ROLE_DRIVER'])
              ->setUpdatedAt(new DateTimeImmutable());
+
+        if ($user->getFixedDriverPreference() === null) {
+            $fixedPref = new FixedDriverPreference();
+            $fixedPref->setOwner($user)
+                      ->setCreatedAt(new DateTimeImmutable());
+
+            $this->entityManager->persist($fixedPref);
+        }
 
         $this->entityManager->flush();
 
