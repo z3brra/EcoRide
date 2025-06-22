@@ -8,6 +8,7 @@ use App\Enum\DriveStatus;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 use Ramsey\Uuid\Uuid;
@@ -57,14 +58,14 @@ class Drive
     #[ORM\Column(length: 255)]
     private ?string $depart = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $departAt = null;
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $departAt = null;
 
     #[ORM\Column(length: 255)]
     private ?string $arrived = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $arrivedAt = null;
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $arrivedAt = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
