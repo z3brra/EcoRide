@@ -7,6 +7,7 @@ use App\DTO\Drive\{DriveDTO};
 use App\Service\Drive\{
     CreateDriveService,
     ReadDriveService,
+    UpdateDriveService,
 };
 
 use App\Service\Access\AccessControlService;
@@ -128,6 +129,59 @@ final class DriveController extends AbstractController
             return new JsonResponse(
                 ['error' => $e->getMessage()],
                 JsonResponse::HTTP_FORBIDDEN
+            );
+        }
+    }
+
+    #[Route('/{identifier}', name: 'update', requirements: ['identifier' => '.+'], methods: 'PUT')]
+    public function update(
+        string $identifier,
+        Request $request,
+        UpdateDriveService $updateDriveService,
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyUnlessDriver();
+            $this->accessControl->denyIfBanned();
+
+            try {
+                $updateDriveDTO = $this->serializer->deserialize(
+                    data: $request->getContent(),
+                    type: DriveDTO::class,
+                    format: 'json'
+                );
+            } catch (\Exception $e) {
+                throw new BadRequestHttpException("Invalid JSON format");
+            }
+
+            $readDriveDTO = $updateDriveService->update($identifier, $updateDriveDTO);
+
+            $responseData = $this->serializer->serialize(
+                data: $readDriveDTO,
+                format: 'json',
+                context: ['groups' => ['drive:read']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
             );
         }
     }
