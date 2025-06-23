@@ -27,6 +27,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
 
+    App\EventListener\DriveTransitionExceptionListener:
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+
     App\EventListener\DriveReferenceListener:
         tags:
             - { name: doctrine.event_listener, event: prePersist }

@@ -1,0 +1,20 @@
+framework:
+    workflows:
+        drive:
+            type: 'state_machine'
+            marking_store: { property: status }
+            supports: [ App\Entity\Drive ]
+            places: [ open, in_progress, finished, cancelled ]
+            transitions:
+                start: {
+                    from: open,
+                    to: in_progress
+                }
+                finish: {
+                    from: in_progress,
+                    to: finished
+                }
+                cancel: {
+                    from: [open, in_progress],
+                    to: cancelled
+                }

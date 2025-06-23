@@ -99,7 +99,7 @@ class DriveReadDTO
         return new self(
             uuid: $drive->getUuid(),
             reference: $drive->getReference(),
-            status: $drive->getStatus()->value,
+            status: $drive->getStatus(),
             owner: UserReadDTO::fromEntity($drive->getOwner()),
             vehicle: VehicleReadDTO::fromEntity($drive->getVehicle()),
             participantsCount: $drive->getParticipants()->count(),

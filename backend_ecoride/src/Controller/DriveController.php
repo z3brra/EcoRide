@@ -253,30 +253,11 @@ final class DriveController extends AbstractController
                 json: true
             );
 
-        } catch (BadRequestHttpException $e) {
-            return new JsonResponse(
-                data: ['error' => $e->getMessage()],
-                status: JsonResponse::HTTP_BAD_REQUEST
-            );
-        } catch (NotFoundHttpException $e) {
+        }
+        catch (NotFoundHttpException $e) {
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_NOT_FOUND
-            );
-        } catch (ConflictHttpException $e) {
-            return new JsonResponse(
-                data: ['error' => $e->getMessage()],
-                status: JsonResponse::HTTP_CONFLICT
-            );
-        } catch (AccessDeniedHttpException $e) {
-            return new JsonResponse(
-                ['error' => $e->getMessage()],
-                JsonResponse::HTTP_FORBIDDEN
-            );
-        } catch (\Exception $e) {
-            return new JsonResponse(
-                data: ['error' => "An internal server error as occured"],
-                status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
     }

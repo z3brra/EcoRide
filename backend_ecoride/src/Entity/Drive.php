@@ -43,8 +43,9 @@ class Drive
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'joinedDrives')]
     private Collection $participants;
 
-    #[ORM\Column(enumType: DriveStatus::class)]
-    private DriveStatus $status = DriveStatus::OPEN;
+    // #[ORM\Column(enumType: DriveStatus::class)]
+    #[ORM\Column(length: 20)]
+    private string $status = DriveStatus::OPEN->value;
 
     #[ORM\Column]
     private ?int $availableSeats = null;
@@ -156,15 +157,19 @@ class Drive
         return $this;
     }
 
-    public function getStatus(): DriveStatus
+    public function getStatusEnum(): DriveStatus
+    {
+        return DriveStatus::from($this->status);
+    }
+
+    public function getStatus(): string
     {
         return $this->status;
     }
 
-    public function setStatus(DriveStatus $status): static
+    public function setStatus(DriveStatus|string $status): static
     {
-        $this->status = $status;
-
+        $this->status = $status instanceof DriveStatus ? $status->value : $status;
         return $this;
     }
 

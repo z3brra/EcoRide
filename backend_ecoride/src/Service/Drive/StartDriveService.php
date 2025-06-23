@@ -6,17 +6,15 @@ use App\Entity\Drive;
 use App\Repository\DriveRepository;
 use App\DTO\Drive\DriveReadDTO;
 
-use App\Enum\DriveStatus;
-
 use App\Service\Access\AccessControlService;
 use App\Service\StringHelper;
+use App\Service\Workflow\TransitionHelper;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\{
-    BadRequestHttpException,
-    ConflictHttpException,
-    NotFoundHttpException
-};
+use Symfony\Component\Workflow\Registry;
+
+
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class StartDriveService
 {
@@ -25,6 +23,8 @@ class StartDriveService
         private DriveRepository $driveRepository,
         private AccessControlService $accessControl,
         private StringHelper $stringHelper,
+        private Registry $workflowRegistry,
+        private TransitionHelper $transitionHelper,
     ) {}
 
     public function start(string $identifier): DriveReadDTO
@@ -40,15 +40,9 @@ class StartDriveService
 
         $this->accessControl->denyUnlessOwnerByRelation($drive);
 
-        if ($drive->getStatus() !== DriveStatus::OPEN) {
-            throw new ConflictHttpException("Drive already started or closed");
-        }
+        $workflow = $this->workflowRegistry->get($drive, 'drive');
+        $this->transitionHelper->guardAndApply($workflow, $drive, 'start');
 
-        if ($drive->getParticipants()->isEmpty()) {
-            throw new BadRequestHttpException("Cannot start a drive whit no participants");
-        }
-
-        $drive->setStatus(DriveStatus::IN_PROGRESS);
         $this->entityManager->flush();
 
         return DriveReadDTO::fromEntity($drive);
