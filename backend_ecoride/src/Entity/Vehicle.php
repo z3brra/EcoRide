@@ -61,6 +61,14 @@ class Vehicle
         $this->drives = new ArrayCollection();
     }
 
+    #[ORM\PostUpdate]
+    public function propagateSeatChange(): void
+    {
+        foreach ($this->drives as $drive) {
+            $drive->recalculateAvailableSeats();
+        }
+    }
+
     public function anonymize(): void
     {
         $suffix = '-'.Uuid::uuid7()->toString();
@@ -143,9 +151,21 @@ class Vehicle
         return $this->seats;
     }
 
+    /** @throws Exception */
     public function setSeats(int $seats): static
     {
+        if ($seats < 1) {
+            throw new \InvalidArgumentException('A vehicle must have at least one seat');
+        }
+
+        $old = $this->seats;
         $this->seats = $seats;
+
+        if ($old !== null && $seats < $old) {
+            foreach ($this->drives as $drive) {
+                $drive->recalculateAvailableSeats();
+            }
+        }
 
         return $this;
     }
@@ -215,7 +235,4 @@ class Vehicle
 
         return $this;
     }
-
-    
-
 }

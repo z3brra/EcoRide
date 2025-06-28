@@ -6,6 +6,10 @@ framework:
             supports: [ App\Entity\Drive ]
             places: [ open, in_progress, finished, cancelled ]
             transitions:
+                join: {
+                    from: [open, in_progress, finished, cancelled],
+                    to: open
+                }
                 start: {
                     from: open,
                     to: in_progress
@@ -15,6 +19,6 @@ framework:
                     to: finished
                 }
                 cancel: {
-                    from: [open, in_progress],
+                    from: [open],
                     to: cancelled
                 }

@@ -8,9 +8,10 @@ use App\Service\Drive\{
     CreateDriveService,
     ReadDriveService,
     UpdateDriveService,
-    DeleteDriveService,
 
+    JoinDriveService,
     StartDriveService,
+    CancelDriveService,
 };
 
 use App\Service\Access\AccessControlService;
@@ -189,17 +190,17 @@ final class DriveController extends AbstractController
         }
     }
 
-    #[Route('/{identifier}', name: 'delete', requirements: ['identifier' => '.+'], methods: 'DELETE')]
-    public function delete(
+    #[Route('/{identifier}', name: 'cancel', requirements: ['identifier' => '.+'], methods: 'DELETE')]
+    public function cancel(
         string $identifier,
-        DeleteDriveService $deleteDriveService,
+        CancelDriveService $cancelDriveService,
     ): JsonResponse {
         try {
             $this->accessControl->denyUnlessLogged();
             $this->accessControl->denyUnlessDriver();
             $this->accessControl->denyIfBanned();
 
-            $deleteDriveService->delete($identifier);
+            $cancelDriveService->cancel($identifier);
 
             return new JsonResponse(
                 data: ['message' => 'Drive successfully deleted'],
@@ -225,6 +226,37 @@ final class DriveController extends AbstractController
             return new JsonResponse(
                 data: ['error' => "An internal server error as occured"],
                 status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    #[Route('/{identifier}/join', name: 'join', requirements: ['identifier' => '.+'], methods: 'POST')]
+    public function join(
+        string $identifier,
+        JoinDriveService $joinDriveService
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+
+            $readDriveDTO = $joinDriveService->join($identifier);
+
+            $responseData = $this->serializer->serialize(
+                data: $readDriveDTO,
+                format: 'json',
+                context: ['groups' => ['drive:read']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+        }
+        catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
             );
         }
     }

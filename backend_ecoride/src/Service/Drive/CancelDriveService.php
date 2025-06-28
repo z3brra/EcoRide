@@ -3,24 +3,30 @@
 namespace App\Service\Drive;
 
 use App\Entity\Drive;
+use App\DTO\Drive\DriveReadDTO;
 use App\Repository\DriveRepository;
+
 use App\Service\Access\AccessControlService;
 use App\Service\StringHelper;
+use App\Service\Workflow\TransitionHelper;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Workflow\Registry;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\{NotFoundHttpException};
 
-class DeleteDriveService
+class CancelDriveService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
         private DriveRepository $driveRepository,
         private AccessControlService $accessControl,
         private StringHelper $stringHelper,
+        private Registry $workflowRegistry,
+        private TransitionHelper $transitionHelper,
     ) {}
 
-    public function delete(string $identifier): void
+    public function cancel(string $identifier): void
     {
         if ($this->stringHelper->isUuid($identifier)) {
             $drive = $this->driveRepository->findOneByUuid($identifier);
@@ -33,7 +39,10 @@ class DeleteDriveService
 
         $this->accessControl->denyUnlessOwnerByRelation($drive);
 
-        $this->entityManager->remove($drive);
+        $workflow = $this->workflowRegistry->get($drive, 'drive');
+        $this->transitionHelper->guardAndApply($workflow, $drive, 'cancel');
+
+        // $this->entityManager->remove($drive);
         $this->entityManager->flush();
     }
 }

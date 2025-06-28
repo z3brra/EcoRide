@@ -5,7 +5,7 @@ namespace  App\Service\Drive;
 use App\Entity\{Drive, User};
 
 use App\DTO\Drive\{DriveDTO, DriveReadDTO};
-use App\Enum\DriveStatus;
+use App\Enum\DriveStatusEnum;
 
 use App\Repository\VehicleRepository;
 
@@ -61,7 +61,7 @@ class CreateDriveService
               ->setDepartAt($driveCreateDTO->departAt)
               ->setArrived($driveCreateDTO->arrived)
               ->setArrivedAt($driveCreateDTO->arrivedAt)
-              ->setStatus(DriveStatus::OPEN);
+              ->setStatus(DriveStatusEnum::OPEN);
 
         $this->entityManager->persist($drive);
         $this->entityManager->flush();

@@ -20,16 +20,18 @@ class TransitionHelper
             return;
         }
 
+        $priority = ['owner', 'participants', 'capacity', 'duplicate', 'status'];
         $selected = null;
-        foreach ($blockers as $blocker) {
-            $code = $blocker->getCode();
 
-            if (in_array($code, ['owner', 'participants'], true)) {
-                $selected = $blocker;
-                break;
+        foreach ($priority as $wanted) {
+            foreach ($blockers as $blocker) {
+                if ($blocker->getCode() === $wanted) {
+                    $selected = $blocker;
+                    break 2;
+                }
             }
-            $selected ??= $blocker;
         }
+        $selected ??= iterator_to_array($blockers)[0] ?? null;
 
         $code = $selected->getCode();
         $message = $selected->getMessage() ?? $code ?? 'Transition blocked';
@@ -37,6 +39,10 @@ class TransitionHelper
         $status = match ($code) {
             'owner' => 403,
             'participants' => 400,
+            'credits' => 400,
+            'capacity' => 409,
+            'duplicate' => 409,
+            'status' => 409,
             default => 409,
         };
 

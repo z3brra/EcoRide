@@ -81,6 +81,11 @@ class UpdateDriveService
             $drive->setArrivedAt($arrivedAt);
         }
 
+        if ($drive->getDepartAt() && $drive->getArrived() &&
+            $drive->getDepartAt() >= $drive->getArrivedAt()) {
+                throw new BadRequestHttpException("Depart at must be earlier than Arrived at");
+            }
+
         $this->entityManager->flush();
 
         return DriveReadDTO::fromEntity($drive);

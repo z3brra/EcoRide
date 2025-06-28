@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\DriveRepository;
-use App\Enum\DriveStatus;
+use App\Enum\DriveStatusEnum;
 
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -43,9 +43,9 @@ class Drive
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'joinedDrives')]
     private Collection $participants;
 
-    // #[ORM\Column(enumType: DriveStatus::class)]
+    // #[ORM\Column(enumType: DriveStatusEnum::class)]
     #[ORM\Column(length: 20)]
-    private string $status = DriveStatus::OPEN->value;
+    private string $status = DriveStatusEnum::OPEN->value;
 
     #[ORM\Column]
     private ?int $availableSeats = null;
@@ -78,6 +78,25 @@ class Drive
     {
         $this->uuid = Uuid::uuid7()->toString();
         $this->participants = new ArrayCollection();
+    }
+
+    public function recalculateAvailableSeats(): void
+    {
+        if (!$this->vehicle) {
+            return;
+        }
+
+        $total = $this->vehicle->getSeats() ?? 0;
+        $used = $this->participants->count();
+        $this->availableSeats = max(0, $total - $used);
+    }
+
+    #[ORM\PostLoad]
+    #[ORM\PostPersist]
+    #[ORM\PostUpdate]
+    public function syncSeats():void
+    {
+        $this->recalculateAvailableSeats();
     }
 
     public function getId(): ?int
@@ -121,6 +140,8 @@ class Drive
         return $this;
     }
 
+
+
     public function getVehicle(): ?Vehicle
     {
         return $this->vehicle;
@@ -129,6 +150,7 @@ class Drive
     public function setVehicle(?Vehicle $vehicle): static
     {
         $this->vehicle = $vehicle;
+        $this->recalculateAvailableSeats();
 
         return $this;
     }
@@ -145,21 +167,23 @@ class Drive
     {
         if (!$this->participants->contains($participant)) {
             $this->participants->add($participant);
+            $this->recalculateAvailableSeats();
         }
-
         return $this;
     }
 
     public function removeParticipant(User $participant): static
     {
-        $this->participants->removeElement($participant);
-
+        if ($this->participants->removeElement($participant)) {
+            $this->recalculateAvailableSeats();
+        }
+        // $this->participants->removeElement($participant);
         return $this;
     }
 
-    public function getStatusEnum(): DriveStatus
+    public function getStatusEnum(): DriveStatusEnum
     {
-        return DriveStatus::from($this->status);
+        return DriveStatusEnum::from($this->status);
     }
 
     public function getStatus(): string
@@ -167,9 +191,9 @@ class Drive
         return $this->status;
     }
 
-    public function setStatus(DriveStatus|string $status): static
+    public function setStatus(DriveStatusEnum|string $status): static
     {
-        $this->status = $status instanceof DriveStatus ? $status->value : $status;
+        $this->status = $status instanceof DriveStatusEnum ? $status->value : $status;
         return $this;
     }
 

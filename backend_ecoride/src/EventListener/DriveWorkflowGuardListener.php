@@ -3,7 +3,7 @@
 namespace App\EventListener;
 
 use App\Entity\Drive;
-use App\Enum\DriveStatus;
+use App\Enum\DriveStatusEnum;
 use App\Service\Access\AccessControlService;
 
 use Symfony\Component\Workflow\Event\GuardEvent;
@@ -15,6 +15,40 @@ class DriveWorkflowGuardListener
     public function __construct(
         private AccessControlService $accessControl
     ) {}
+
+    #[AsGuardListener(workflow: 'drive', transition: 'join')]
+    public function guardJoin(GuardEvent $event): void
+    {
+        /** @var Drive $drive */
+        $drive = $event->getSubject();
+
+        if ($this->accessControl->isOwnerByEntityRelation($drive)) {
+            $transitionBlocker = new TransitionBlocker('Owner can not join hiw own drive', 'owner');
+            $event->addTransitionBlocker($transitionBlocker);
+        }
+
+        if ($drive->getStatusEnum() !== DriveStatusEnum::OPEN) {
+            $transitionBlocker = new TransitionBlocker('Drive must be open', 'status');
+            $event->addTransitionBlocker($transitionBlocker);
+        }
+
+        $user = $this->accessControl->getUser();
+
+        if ($user->getCredits() < $drive->getPrice()) {
+            $transitionBlocker = new TransitionBlocker('Insuficient credits', 'credits');
+            $event->addTransitionBlocker($transitionBlocker);
+        }
+
+        if ($drive->getParticipants()->contains($user)) {
+            $transitionBlocker = new TransitionBlocker('Already registered', 'duplicate');
+            $event->addTransitionBlocker($transitionBlocker);
+        }
+
+        if ($drive->getAvailableSeats() <= 0) {
+            $transitionBlocker = new TransitionBlocker('No more seats', 'capacity');
+            $event->addTransitionBlocker($transitionBlocker);
+        }
+    }
 
     #[AsGuardListener(workflow: 'drive', transition: 'start')]
     public function guardStart(GuardEvent $event): void
@@ -32,7 +66,7 @@ class DriveWorkflowGuardListener
             $event->addTransitionBlocker($transitionBlocker);
         }
 
-        if ($drive->getStatusEnum() !== DriveStatus::OPEN) {
+        if ($drive->getStatusEnum() !== DriveStatusEnum::OPEN) {
             $transitionBlocker = new TransitionBlocker('Drive must be open', 'status');
             $event->addTransitionBlocker($transitionBlocker);
         }
@@ -45,13 +79,30 @@ class DriveWorkflowGuardListener
         $drive = $event->getSubject();
 
         if (!$this->accessControl->isOwnerByEntityRelation($drive)) {
-            $event->setBlocked(true, "Only the owner can finish the drive", 'owner');
-            return;
+            $transitionBlocker = new TransitionBlocker('Only the owner can finish the drive', 'owner');
+            $event->addTransitionBlocker($transitionBlocker);
         }
 
-        if ($drive->getStatusEnum() !== DriveStatus::IN_PROGRESS) {
-            $event->setBlocked(true, "Drive must be in progess", 'status');
-            return;
+        if ($drive->getStatusEnum() !== DriveStatusEnum::IN_PROGRESS) {
+            $transitionBlocker = new TransitionBlocker('Drive must be in progess', 'status');
+            $event->addTransitionBlocker($transitionBlocker);
+        }
+    }
+
+    #[AsGuardListener(workflow: 'drive', transition: 'cancel')]
+    public function guardCancel(GuardEvent $event): void
+    {
+        /** @var Drive $drive */
+        $drive = $event->getSubject();
+
+        if (!$this->accessControl->isOwnerByEntityRelation($drive)) {
+            $transitionBlocker = new TransitionBlocker('Only the owner can finish the drive', 'owner');
+            $event->addTransitionBlocker($transitionBlocker);
+        }
+
+        if ($drive->getStatusEnum() !== DriveStatusEnum::OPEN) {
+            $transitionBlocker = new TransitionBlocker('Drive must be open', 'status');
+            $event->addTransitionBlocker($transitionBlocker);
         }
     }
 }

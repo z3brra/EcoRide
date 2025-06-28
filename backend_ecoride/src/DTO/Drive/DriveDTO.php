@@ -2,7 +2,7 @@
 
 namespace App\DTO\Drive;
 
-use App\Enum\DriveStatus;
+use App\Enum\DriveStatusEnum;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -53,9 +53,9 @@ class DriveDTO
     public ?DateTimeImmutable $arrivedAt = null;
 
     #[Assert\Choice(
-        callback: [DriveStatus::class, 'cases']
+        callback: [DriveStatusEnum::class, 'cases']
     )]
-    public ?DriveStatus $status = null;
+    public ?DriveStatusEnum $status = null;
 
     public function isEmpty(): bool
     {
