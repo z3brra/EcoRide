@@ -20,7 +20,7 @@ class TransitionHelper
             return;
         }
 
-        $priority = ['owner', 'participants', 'capacity', 'duplicate', 'status'];
+        $priority = ['owner', 'participants', 'not_participant', 'capacity', 'duplicate', 'status'];
         $selected = null;
 
         foreach ($priority as $wanted) {
@@ -39,6 +39,7 @@ class TransitionHelper
         $status = match ($code) {
             'owner' => 403,
             'participants' => 400,
+            'not_participant' => 400,
             'credits' => 400,
             'capacity' => 409,
             'duplicate' => 409,

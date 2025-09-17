@@ -8,8 +8,8 @@ use App\Service\Drive\{
     CreateDriveService,
     ReadDriveService,
     UpdateDriveService,
-
     JoinDriveService,
+    LeaveDriveService,
     StartDriveService,
     CancelDriveService,
 };
@@ -254,6 +254,36 @@ final class DriveController extends AbstractController
             );
         }
         catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
+            );
+        }
+    }
+
+    #[Route('/{identifier}/leave', name: 'leave', requirements: ['identifier' => '.+'], methods: 'POST')]
+    public function leave(
+        string $identifier,
+        LeaveDriveService $leaveDriveService
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+
+            $readDriveDTO = $leaveDriveService->leave($identifier);
+
+            $responseData = $this->serializer->serialize(
+                data: $readDriveDTO,
+                format: 'json',
+                context: ['groups' => ['drive:read']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+        } catch (NotFoundHttpException $e) {
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_NOT_FOUND

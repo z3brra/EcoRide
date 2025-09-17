@@ -50,6 +50,29 @@ class DriveWorkflowGuardListener
         }
     }
 
+    #[AsGuardListener(workflow: 'drive', transition: 'leave')]
+    public function guardLeave(GuardEvent $event): void
+    {
+        /** @var Drive $drive */
+        $drive = $event->getSubject();
+
+        if ($this->accessControl->isOwnerByEntityRelation($drive)) {
+            $transitionBlocker = new TransitionBlocker('Owner can not leave his own drive', 'owner');
+            $event->addTransitionBlocker($transitionBlocker);
+        }
+
+        if ($drive->getStatusEnum() !== DriveStatusEnum::OPEN) {
+            $transitionBlocker = new TransitionBlocker('Drive must be open', 'status');
+            $event->addTransitionBlocker($transitionBlocker);
+        }
+
+        $user = $this->accessControl->getUser();
+        if (!$drive->getParticipants()->contains($user)) {
+            $transitionBlocker = new TransitionBlocker('User is not participant', 'not_participant');
+            $event->addTransitionBlocker($transitionBlocker);
+        }
+    }
+
     #[AsGuardListener(workflow: 'drive', transition: 'start')]
     public function guardStart(GuardEvent $event): void
     {

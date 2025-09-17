@@ -10,6 +10,10 @@ framework:
                     from: [open, in_progress, finished, cancelled],
                     to: open
                 }
+                leave: {
+                    from: open,
+                    to: open
+                }
                 start: {
                     from: open,
                     to: in_progress
