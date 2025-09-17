@@ -7,13 +7,16 @@ use App\DTO\Drive\DriveReadDTO;
 use App\Repository\DriveRepository;
 
 use App\Service\Access\AccessControlService;
+use App\Service\Billing\RefundService;
 use App\Service\StringHelper;
 use App\Service\Workflow\TransitionHelper;
 
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Workflow\Registry;
 
 use Symfony\Component\HttpKernel\Exception\{NotFoundHttpException};
+use Throwable;
 
 class CancelDriveService
 {
@@ -21,6 +24,7 @@ class CancelDriveService
         private EntityManagerInterface $entityManager,
         private DriveRepository $driveRepository,
         private AccessControlService $accessControl,
+        private RefundService $refundService,
         private StringHelper $stringHelper,
         private Registry $workflowRegistry,
         private TransitionHelper $transitionHelper,
@@ -39,11 +43,27 @@ class CancelDriveService
 
         $this->accessControl->denyUnlessOwnerByRelation($drive);
 
-        $workflow = $this->workflowRegistry->get($drive, 'drive');
-        $this->transitionHelper->guardAndApply($workflow, $drive, 'cancel');
+        $this->entityManager->beginTransaction();
+        try {
+            $this->entityManager->lock($drive, LockMode::PESSIMISTIC_WRITE);
 
-        // $this->entityManager->remove($drive);
-        $this->entityManager->flush();
+            $workflow = $this->workflowRegistry->get($drive, 'drive');
+            $this->transitionHelper->guardAndApply($workflow, $drive, 'cancel');
+
+            $price = $drive->getPrice() ?? 0;
+            if ($price > 0) {
+                foreach ($drive->getParticipants() as $participant) {
+                    $this->refundService->refund($participant, $price);
+                }
+            }
+
+            $this->entityManager->flush();
+            $this->entityManager->commit();
+
+        } catch (Throwable $e) {
+            $this->entityManager->rollback();
+            throw $e;
+        }
     }
 }
 

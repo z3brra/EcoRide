@@ -7,6 +7,7 @@ use App\Repository\DriveRepository;
 use App\DTO\Drive\DriveReadDTO;
 
 use App\Service\Access\AccessControlService;
+use App\Service\Billing\CreditService;
 use App\Service\StringHelper;
 use App\Service\Workflow\TransitionHelper;
 
@@ -23,6 +24,7 @@ class JoinDriveService
         private EntityManagerInterface $entityManager,
         private DriveRepository $driveRepository,
         private AccessControlService $accessControl,
+        private CreditService $creditService,
         private StringHelper $stringHelper,
         private Registry $workflowRegistry,
         private TransitionHelper $transitionHelper,
@@ -42,15 +44,20 @@ class JoinDriveService
         $this->entityManager->beginTransaction();
 
         try {
-            $this->entityManager->lock($drive, LockMode::PESSIMISTIC_WRITE);
-
             $this->accessControl->denyUnlessLogged();
             $this->accessControl->denyIfBanned();
+
+            $user = $this->accessControl->getUser();
+            $this->entityManager->lock($user, LockMode::PESSIMISTIC_WRITE);
+
+            $this->entityManager->lock($drive, LockMode::PESSIMISTIC_WRITE);
 
             $workflow = $this->workflowRegistry->get($drive, 'drive');
             $this->transitionHelper->guardAndApply($workflow, $drive, 'join');
 
-            $user = $this->accessControl->getUser();
+            $price = $drive->getPrice();
+            $this->creditService->debit($user, $price);
+
             $drive->addParticipant($user);
 
         // $availableSeats = $drive->getAvailableSeats();
