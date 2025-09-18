@@ -48,8 +48,8 @@ class DriveRepository extends ServiceEntityRepository
         $departNormalized = mb_strtolower(trim($depart));
         $arrivedNormalized = mb_strtolower(trim($arrived));
 
-        $dayStart = $departAt->setTime(0, 0, 0);
-        $dayEnd = $departAt->setTime(23, 59, 59);
+        // $dayStart = $departAt->setTime(0, 0, 0);
+        // $dayEnd = $departAt->setTime(23, 59, 59);
 
         $minDepartAt = $departAt->setTimezone(new DateTimeZone('UTC'));
 

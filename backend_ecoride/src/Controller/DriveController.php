@@ -8,6 +8,7 @@ use App\Service\Drive\{
     CreateDriveService,
     ReadDriveService,
     UpdateDriveService,
+    ListDrivePaginatedService,
     JoinDriveService,
     LeaveDriveService,
     StartDriveService,
@@ -96,6 +97,53 @@ final class DriveController extends AbstractController
                 status: JsonResponse::HTTP_NOT_FOUND
             );
         }
+    }
+
+    #[Route('/own', name: 'list', methods: 'GET')]
+    public function list(
+        Request $request,
+        ListDrivePaginatedService $listDriveService
+    ): JsonResponse {
+        try {
+            $page = max(1, (int) $request->query->get('page', 1));
+            $limit = max(1, (int) $request->query->get('limit', 10));
+
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+            $this->accessControl->denyUnlessDriver();
+
+            $user = $this->getUser();
+
+            $drivePaginated = $listDriveService->listDrivePaginatedByUser($user, $page, $limit);
+
+            $responseData = $this->serializer->serialize(
+                data: $drivePaginated,
+                format: 'json',
+                context: ['groups' => ['drive:read']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (LogicException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+        // catch (\Exception $e) {
+        //     return new JsonResponse(
+        //         data: ['error' => "An internal server error as occured"],
+        //         status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+        //     );
+        // }
     }
 
     #[Route('/{identifier}', name: 'read', requirements: ['identifier' => '.+'], methods: 'GET')]
@@ -373,7 +421,6 @@ final class DriveController extends AbstractController
             );
         }
     }
-
 }
 
 ?>
