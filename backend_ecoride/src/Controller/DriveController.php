@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\DTO\Drive\{DriveDTO};
+use App\DTO\Drive\{DriveDTO, DriveSearchDTO};
 
 use App\Service\Drive\{
     CreateDriveService,
@@ -12,6 +12,8 @@ use App\Service\Drive\{
     LeaveDriveService,
     StartDriveService,
     CancelDriveService,
+
+    SearchDriveService,
 };
 
 use App\Service\Access\AccessControlService;
@@ -21,6 +23,7 @@ use Symfony\Component\HttpFoundation\{Request, JsonResponse};
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
+use LogicException;
 use Symfony\Component\HttpKernel\Exception\{
     NotFoundHttpException,
     AccessDeniedHttpException,
@@ -320,6 +323,53 @@ final class DriveController extends AbstractController
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_NOT_FOUND
+            );
+        }
+    }
+
+    #[Route('/search', name: 'search', methods: 'POST')]
+    public function search(
+        Request $request,
+        SearchDriveService $searchDriveService
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyIfBanned();
+
+            $page = max(1, (int) $request->query->get('page', 1));
+            $limit = max(1, (int) $request->query->get('limit', 10));
+
+            try {
+                $searchDriveDTO = $this->serializer->deserialize(
+                    data: $request->getContent(),
+                    type: DriveSearchDTO::class,
+                    format: 'json'
+                );
+            } catch (\Exception $e) {
+                throw new BadRequestHttpException("Invalid JSON format");
+            }
+
+            $searchDrivePaginated = $searchDriveService->search($searchDriveDTO, $page, $limit);
+
+            $responseData = $this->serializer->serialize(
+                data: $searchDrivePaginated,
+                format: 'json',
+                context: ['groups' => ['drive:read']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (LogicException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
     }

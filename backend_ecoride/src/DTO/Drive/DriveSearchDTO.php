@@ -47,6 +47,13 @@ class DriveSearchDTO
 
     public ?bool $smoke = null;
 
+    /** Sort */
+    #[Assert\Choice(choices: ['price', 'departAt'], message: "sortBy invalid.", groups: ['search'])]
+    public string $sortBy = 'price';
+
+    #[Assert\Choice(choices: ['asc', 'desc'], message: "sortDir invalid.", groups: ['search'])]
+    public string $sortDir = 'asc';
+
     public function isEmpty(): bool
     {
         return $this->depart === null &&
