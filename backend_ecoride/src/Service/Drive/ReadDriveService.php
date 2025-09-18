@@ -32,7 +32,9 @@ class ReadDriveService
             throw new NotFoundHttpException("Drive not found or does not exist");
         }
 
-        $this->accessControl->denyUnlessOwnerByRelation($drive);
+        // $this->accessControl->denyUnlessOwnerByRelation($drive);
+        $this->accessControl->denyIfBanned();
+        // $this->accessControl->denyUnlessLogged()
 
         return DriveReadDTO::fromEntity($drive);
     }

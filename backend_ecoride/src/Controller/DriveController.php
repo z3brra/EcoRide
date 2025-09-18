@@ -101,9 +101,9 @@ final class DriveController extends AbstractController
         ReadDriveService $readDriveService,
     ): JsonResponse {
         try {
-            $this->accessControl->denyUnlessLogged();
+            // $this->accessControl->denyUnlessLogged();
             $this->accessControl->denyIfBanned();
-            $this->accessControl->denyUnlessDriver();
+            // $this->accessControl->denyUnlessDriver();
 
             $readDriveDTO = $readDriveService->getDrive($identifier);
 
