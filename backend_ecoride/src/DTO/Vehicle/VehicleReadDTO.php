@@ -10,7 +10,7 @@ use DateTimeImmutable;
 
 class VehicleReadDTO
 {
-    #[Groups(['vehicle:read', 'vehicle:list'])]
+    #[Groups(['vehicle:read', 'vehicle:list', 'drive:read', 'drive:list'])]
     public string $uuid;
 
     #[Groups(['vehicle:read', 'vehicle:list'])]
@@ -19,13 +19,13 @@ class VehicleReadDTO
     #[Groups(['vehicle:read', 'vehicle:list'])]
     public DateTimeImmutable $firstLicenseDate;
 
-    #[Groups(['vehicle:read', 'vehicle:list'])]
+    #[Groups(['vehicle:read', 'vehicle:list', 'drive:read', 'drive:list'])]
     public bool $isElectric;
 
-    #[Groups(['vehicle:read'])]
+    #[Groups(['vehicle:read', 'drive:read', 'drive:list'])]
     public string $color;
 
-    #[Groups(['vehicle:read', 'vehicle:list'])]
+    #[Groups(['vehicle:read', 'vehicle:list', 'drive:read', 'drive:list'])]
     public int $seats;
 
     #[Groups(['vehicle:read'])]

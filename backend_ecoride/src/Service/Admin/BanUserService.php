@@ -26,7 +26,7 @@ class BanUserService
         }
 
         $user->setIsBanned(true);
-        $user->setUpdatedAt(new DateTimeImmutable());
+        // $user->setUpdatedAt(new DateTimeImmutable());
 
         $this->entityManager->flush();
     }
@@ -38,7 +38,7 @@ class BanUserService
             throw new NotFoundHttpException("User not found or does not exist");
         }
         $user->setIsBanned(false);
-        $user->setUpdatedAt(new DateTimeImmutable());
+        // $user->setUpdatedAt(new DateTimeImmutable());
 
         $this->entityManager->flush();
     }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,15 +12,17 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    // Identity
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 36)]
+    #[ORM\Column(length: 36, unique: true)]
     private ?string $uuid = null;
 
 
@@ -41,20 +44,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+
+
+    /*** Account / Security ***/
     #[ORM\Column(nullable: true)]
     private ?int $credits = null;
 
     #[ORM\Column]
     private ?bool $isBanned = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $apiToken = null;
+
+
+    /*** Date / Time ***/
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $apiToken = null;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $deletedAt = null;
+
+    /*** Relations ***/
 
     /**
      * @var Collection<int, Vehicle>
@@ -71,14 +84,60 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: CustomDriverPreference::class, mappedBy: 'owner', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $customDriverPreferences;
 
+    /**
+     * @var Collection<int, Drive>
+     */
+    #[ORM\OneToMany(targetEntity: Drive::class, mappedBy: 'owner')]
+    private Collection $drives;
+
+    /**
+     * @var Collection<int, Drive>
+     */
+    #[ORM\ManyToMany(targetEntity: Drive::class, mappedBy: 'participants')]
+    private Collection $joinedDrives;
+
+
+
     /** @throws Exception */
     public function __construct()
     {
         $this->uuid = Uuid::uuid7()->toString();
         $this->apiToken = bin2hex(random_bytes(20));
+        $this->createdAt = new DateTimeImmutable();
         $this->vehicles = new ArrayCollection();
         $this->customDriverPreferences = new ArrayCollection();
+        $this->drives = new ArrayCollection();
+        $this->joinedDrives = new ArrayCollection();
     }
+
+    /*** Anonymisation ***/
+    public function anonymize(): void
+    {
+        if ($this->deletedAt !== null) {
+            return;
+        }
+        $suffix = '-'.Uuid::uuid7()->toString();
+        $this->pseudo = 'deleted';
+        $this->email = 'deleted@exemple.local';
+        $this->roles = ['ROLE_DELETED'];
+        $this->deletedAt = new DateTimeImmutable();
+
+        foreach ($this->vehicles as $vehicle) {
+            $vehicle->anonymize();
+        }
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deletedAt !== null;
+    }
+
+    #[ORM\PreUpdate]
+    public function onUpdate(): void
+    {
+        $this->updatedAt = new DateTimeImmutable();
+    }
+
 
     public function getId(): ?int
     {
@@ -309,6 +368,63 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             if ($customDriverPreference->getOwner() === $this) {
                 $customDriverPreference->setOwner(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Drive>
+     */
+    public function getDrives(): Collection
+    {
+        return $this->drives;
+    }
+
+    public function addDrive(Drive $drive): static
+    {
+        if (!$this->drives->contains($drive)) {
+            $this->drives->add($drive);
+            $drive->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDrive(Drive $drive): static
+    {
+        if ($this->drives->removeElement($drive)) {
+            // set the owning side to null (unless already changed)
+            if ($drive->getOwner() === $this) {
+                $drive->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Drive>
+     */
+    public function getJoinedDrives(): Collection
+    {
+        return $this->joinedDrives;
+    }
+
+    public function addJoinedDrive(Drive $joinedDrive): static
+    {
+        if (!$this->joinedDrives->contains($joinedDrive)) {
+            $this->joinedDrives->add($joinedDrive);
+            $joinedDrive->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJoinedDrive(Drive $joinedDrive): static
+    {
+        if ($this->joinedDrives->removeElement($joinedDrive)) {
+            $joinedDrive->removeParticipant($this);
         }
 
         return $this;

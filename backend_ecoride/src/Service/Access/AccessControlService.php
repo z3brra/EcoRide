@@ -8,7 +8,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-
 class AccessControlService
 {
     public function __construct(
@@ -18,9 +17,14 @@ class AccessControlService
 
     public function getUser(): User
     {
-        return $this->getInternUser();
+        $user = $this->getInternUser();
+        if (!$user instanceof User) {
+            throw new AccessDeniedHttpException("User is not authenticated");
+        }
+        return $user;
     }
 
+    /** @internal Don't use outside because of not throwable */
     private function getInternUser(): ?UserInterface
     {
         return $this->tokenStorage->getToken()?->getUser();

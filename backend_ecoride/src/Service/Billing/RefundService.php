@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Service\Billing;
+
+use App\Entity\User;
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\EntityManagerInterface;
+
+class RefundService
+{
+    public function __construct(
+        private EntityManagerInterface $entityManager
+    ) {}
+
+    public function refund(User $user, int $amount): void
+    {
+        if ($amount <= 0) {
+            return;
+        }
+
+        $this->entityManager->lock($user, LockMode::PESSIMISTIC_WRITE);
+
+        $currentCredits = $user->getCredits();
+        $user->setCredits($currentCredits + $amount);
+    }
+}
+
+?>

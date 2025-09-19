@@ -3,11 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\VehicleRepository;
+use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Ramsey\Uuid\Uuid;
 
 #[ORM\Entity(repositoryClass: VehicleRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Vehicle
 {
     #[ORM\Id]
@@ -15,7 +19,7 @@ class Vehicle
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 36)]
+    #[ORM\Column(length: 36, unique: true)]
     private ?string $uuid = null;
 
     #[ORM\Column(length: 20, unique: true)]
@@ -43,10 +47,38 @@ class Vehicle
     #[ORM\JoinColumn(nullable: false)]
     private ?User $owner = null;
 
+    /**
+     * @var Collection<int, Drive>
+     */
+    #[ORM\OneToMany(targetEntity: Drive::class, mappedBy: 'vehicle')]
+    private Collection $drives;
+
 
     public function __construct()
     {
         $this->uuid = Uuid::uuid7()->toString();
+        $this->createdAt = new DateTimeImmutable();
+        $this->drives = new ArrayCollection();
+    }
+
+    #[ORM\PostUpdate]
+    public function propagateSeatChange(): void
+    {
+        foreach ($this->drives as $drive) {
+            $drive->recalculateAvailableSeats();
+        }
+    }
+
+    public function anonymize(): void
+    {
+        $suffix = '-'.Uuid::uuid7()->toString();
+        $this->licensePlate = 'deleted';
+    }
+
+    #[ORM\PreUpdate]
+    public function onUpdate(): void
+    {
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -119,9 +151,21 @@ class Vehicle
         return $this->seats;
     }
 
+    /** @throws Exception */
     public function setSeats(int $seats): static
     {
+        if ($seats < 1) {
+            throw new \InvalidArgumentException('A vehicle must have at least one seat');
+        }
+
+        $old = $this->seats;
         $this->seats = $seats;
+
+        if ($old !== null && $seats < $old) {
+            foreach ($this->drives as $drive) {
+                $drive->recalculateAvailableSeats();
+            }
+        }
 
         return $this;
     }
@@ -162,6 +206,33 @@ class Vehicle
         return $this;
     }
 
-    
+    /**
+     * @return Collection<int, Drive>
+     */
+    public function getDrives(): Collection
+    {
+        return $this->drives;
+    }
 
+    public function addDrive(Drive $drive): static
+    {
+        if (!$this->drives->contains($drive)) {
+            $this->drives->add($drive);
+            $drive->setVehicle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDrive(Drive $drive): static
+    {
+        if ($this->drives->removeElement($drive)) {
+            // set the owning side to null (unless already changed)
+            if ($drive->getVehicle() === $this) {
+                $drive->setVehicle(null);
+            }
+        }
+
+        return $this;
+    }
 }
