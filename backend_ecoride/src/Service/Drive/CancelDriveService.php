@@ -7,7 +7,7 @@ use App\DTO\Drive\DriveReadDTO;
 use App\Repository\DriveRepository;
 
 use App\Service\Access\AccessControlService;
-use App\Service\Billing\RefundService;
+use App\Service\Billing\CreditService;
 use App\Service\StringHelper;
 use App\Service\Workflow\TransitionHelper;
 
@@ -24,7 +24,7 @@ class CancelDriveService
         private EntityManagerInterface $entityManager,
         private DriveRepository $driveRepository,
         private AccessControlService $accessControl,
-        private RefundService $refundService,
+        private CreditService $creditService,
         private StringHelper $stringHelper,
         private Registry $workflowRegistry,
         private TransitionHelper $transitionHelper,
@@ -53,7 +53,7 @@ class CancelDriveService
             $price = $drive->getPrice() ?? 0;
             if ($price > 0) {
                 foreach ($drive->getParticipants() as $participant) {
-                    $this->refundService->refund($participant, $price);
+                    $this->creditService->credit($participant, $price);
                 }
             }
 

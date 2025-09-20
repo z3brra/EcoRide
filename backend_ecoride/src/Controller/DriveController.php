@@ -14,8 +14,9 @@ use App\Service\Drive\{
     StartDriveService,
     FinishDriveService,
     CancelDriveService,
-
     SearchDriveService,
+
+    ConfirmParticipationService,
 };
 
 use App\Service\Access\AccessControlService;
@@ -461,6 +462,40 @@ final class DriveController extends AbstractController
             return new JsonResponse(
                 ['error' => $e->getMessage()],
                 JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    #[Route('/{identifier}/confirm', name: 'confirm_participation', requirements: ['identifier' => '.+'], methods: 'POST')]
+    public function confirmParticipation(
+        string $identifier,
+        ConfirmParticipationService $confirmService,
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+
+            $confirmService->confirm($identifier);
+
+            return new JsonResponse(
+                data: ['message' => 'Participation confirmed'],
+                status: JsonResponse::HTTP_OK
+            );
+
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
             );
         }
     }

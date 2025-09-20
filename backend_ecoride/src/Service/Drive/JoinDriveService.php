@@ -7,7 +7,7 @@ use App\Repository\DriveRepository;
 use App\DTO\Drive\DriveReadDTO;
 
 use App\Service\Access\AccessControlService;
-use App\Service\Billing\CreditService;
+use App\Service\Billing\DebitService;
 use App\Service\StringHelper;
 use App\Service\Workflow\TransitionHelper;
 
@@ -24,7 +24,7 @@ class JoinDriveService
         private EntityManagerInterface $entityManager,
         private DriveRepository $driveRepository,
         private AccessControlService $accessControl,
-        private CreditService $creditService,
+        private DebitService $debitService,
         private StringHelper $stringHelper,
         private Registry $workflowRegistry,
         private TransitionHelper $transitionHelper,
@@ -56,7 +56,7 @@ class JoinDriveService
             $this->transitionHelper->guardAndApply($workflow, $drive, 'join');
 
             $price = $drive->getPrice();
-            $this->creditService->debit($user, $price);
+            $this->debitService->debit($user, $price);
 
             $drive->addParticipant($user);
 
