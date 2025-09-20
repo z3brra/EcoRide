@@ -67,13 +67,16 @@ class ConfirmParticipationService
             return;
         }
 
-        $netAmount = max(0, (int) $drive->getPrice() - self::PLATFORM_FEE);
+        $price = max(0, (int) $drive->getPrice());
+        $fee = min(self::PLATFORM_FEE, $price);
+        $netAmount = $price - $fee;
+
         $credit = new Credit();
         $credit->setDriveUuid($drive->getUuid())
                ->setOwnerUuid($driver->getUuid())
                ->setParticipantUuid($user->getUuid())
                ->setAmount($netAmount)
-               ->setFee(self::PLATFORM_FEE)
+               ->setFee($fee)
                ->setOccurredAt(new DateTimeImmutable())
                ->setStatus(CreditStatusEnum::CONFIRMED);
 
