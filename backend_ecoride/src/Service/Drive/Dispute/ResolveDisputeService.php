@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Drive;
+namespace App\Service\Drive\Dispute;
 
 use App\Document\Credit;
 use App\Entity\{Drive, User};

@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Service\Drive;
-
-use App\Entity\User;
+namespace App\Service\Drive\Manage;
 
 use App\Entity\Drive;
 use App\DTO\Drive\{DriveDTO, DriveReadDTO};
@@ -85,6 +83,8 @@ class UpdateDriveService
             $drive->getDepartAt() >= $drive->getArrivedAt()) {
                 throw new BadRequestHttpException("Depart at must be earlier than Arrived at");
             }
+
+            $drive->setUpdatedAt(new DateTimeImmutable());
 
         $this->entityManager->flush();
 

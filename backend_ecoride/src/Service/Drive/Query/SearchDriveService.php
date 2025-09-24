@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Drive;
+namespace App\Service\Drive\Query;
 
 use App\DTO\Drive\DriveReadDTO;
 use App\DTO\Drive\DriveSearchDTO;

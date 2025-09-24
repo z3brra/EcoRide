@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Drive;
+namespace App\Service\Drive\Participation;
 
 use App\Document\Credit;
 use App\Enum\CreditStatusEnum;

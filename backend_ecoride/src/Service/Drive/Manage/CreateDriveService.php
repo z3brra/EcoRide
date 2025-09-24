@@ -1,6 +1,6 @@
 <?php
 
-namespace  App\Service\Drive;
+namespace  App\Service\Drive\Manage;
 
 use App\Entity\{Drive, User};
 
@@ -13,8 +13,10 @@ use App\Service\ValidationService;
 use App\Service\Access\AccessControlService;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\{
+    BadRequestHttpException,
+    NotFoundHttpException
+};
 
 class CreateDriveService
 {

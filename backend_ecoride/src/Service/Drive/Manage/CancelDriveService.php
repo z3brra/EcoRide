@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Service\Drive;
+namespace App\Service\Drive\Manage;
 
 use App\Entity\Drive;
-use App\DTO\Drive\DriveReadDTO;
 use App\Repository\DriveRepository;
 
 use App\Service\Access\AccessControlService;
