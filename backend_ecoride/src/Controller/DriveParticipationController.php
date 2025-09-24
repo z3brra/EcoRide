@@ -19,6 +19,8 @@ use Symfony\Component\HttpKernel\Exception\{
     BadRequestHttpException,
 };
 
+use App\Security\Attribute\BypassSettlementLock;
+
 #[Route('/api/drives', name: 'app_api_drives_participation')]
 final class DriveParticipationController extends AbstractController
 {
@@ -26,6 +28,7 @@ final class DriveParticipationController extends AbstractController
         private AccessControlService $accessControl,
     ) {}
 
+    #[BypassSettlementLock]
     #[Route('/{identifier}/confirm', name: 'confirm', requirements: ['identifier' => '.+'], methods: 'POST')]
     public function confirm(
         string $identifier,
@@ -65,6 +68,7 @@ final class DriveParticipationController extends AbstractController
         }
     }
 
+    #[BypassSettlementLock]
     #[Route('/{identifier}/dispute', name: 'dispute', requirements: ['identifier' => '.+'], methods: 'POST')]
     public function dispute(
         string $identifier,

@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Drive;
+use App\Entity\{Drive, User};
 use App\Enum\DriveStatusEnum;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -142,6 +142,19 @@ class DriveRepository extends ServiceEntityRepository
             'currentPage' => $page,
             'perPage' => $limit
         ];
+    }
+
+    public function findFinishedWithParticipant(User $user): array
+    {
+        $query = $this->createQueryBuilder('drive')
+            ->innerJoin('drive.participants', 'participant')
+            ->andWhere('participant = :user')
+            ->andWhere('drive.status = :status')
+            ->setParameter('user', $user)
+            ->setParameter('status', DriveStatusEnum::FINISHED->value)
+            ->getQuery()
+            ->getResult();
+        return $query;
     }
 
     //    /**

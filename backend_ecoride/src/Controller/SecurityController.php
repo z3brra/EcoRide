@@ -25,8 +25,7 @@ use Symfony\Component\HttpKernel\Exception\{
     ConflictHttpException
 };
 
-use DateTimeImmutable;
-
+use App\Security\Attribute\BypassSettlementLock;
 
 #[Route('/api/auth', name: 'app_api_auth_')]
 final class SecurityController extends AbstractController
@@ -37,6 +36,7 @@ final class SecurityController extends AbstractController
         private AccessControlService $accessControl,
     ) {}
 
+    #[BypassSettlementLock]
     #[Route('/login', name: 'login', methods: 'POST')]
     public function login(
         Request $request,
@@ -163,6 +163,7 @@ final class SecurityController extends AbstractController
         }
     }
 
+    #[BypassSettlementLock]
     #[Route('/logout', name: 'logout', methods: 'POST')]
     public function logout(): JsonResponse
     {
