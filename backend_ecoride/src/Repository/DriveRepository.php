@@ -105,7 +105,6 @@ class DriveRepository extends ServiceEntityRepository
                               ->setMaxResults($limit)
                               ->getQuery();
 
-        // $paginator = new Paginator($query, fetchJoinCollection: true);
         $paginator = new Paginator($query);
         $total = count($paginator);
         $totalPages = (int) ceil($total / $limit);

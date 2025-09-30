@@ -74,10 +74,17 @@ class Drive
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $updatedAt = null;
 
+    /**
+     * @var Collection<int, DriverReview>
+     */
+    #[ORM\OneToMany(targetEntity: DriverReview::class, mappedBy: 'drive', orphanRemoval: true)]
+    private Collection $driverReviews;
+
     public function __construct()
     {
         $this->uuid = Uuid::uuid7()->toString();
         $this->participants = new ArrayCollection();
+        $this->driverReviews = new ArrayCollection();
     }
 
     public function recalculateAvailableSeats(): void
@@ -315,5 +322,35 @@ class Drive
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new DateTimeImmutable();
+    }
+
+    /**
+     * @return Collection<int, DriverReview>
+     */
+    public function getDriverReviews(): Collection
+    {
+        return $this->driverReviews;
+    }
+
+    public function addDriverReview(DriverReview $driverReview): static
+    {
+        if (!$this->driverReviews->contains($driverReview)) {
+            $this->driverReviews->add($driverReview);
+            $driverReview->setDrive($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDriverReview(DriverReview $driverReview): static
+    {
+        if ($this->driverReviews->removeElement($driverReview)) {
+            // set the owning side to null (unless already changed)
+            if ($driverReview->getDrive() === $this) {
+                $driverReview->setDrive(null);
+            }
+        }
+
+        return $this;
     }
 }

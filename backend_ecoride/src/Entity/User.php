@@ -96,6 +96,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Drive::class, mappedBy: 'participants')]
     private Collection $joinedDrives;
 
+    /**
+     * @var Collection<int, DriverReview>
+     */
+    #[ORM\OneToMany(targetEntity: DriverReview::class, mappedBy: 'driver', orphanRemoval: true)]
+    private Collection $driverReviews;
+
+    /**
+     * @var Collection<int, DriverReview>
+     */
+    #[ORM\OneToMany(targetEntity: DriverReview::class, mappedBy: 'author', orphanRemoval: true)]
+    private Collection $authorReviews;
+
 
 
     /** @throws Exception */
@@ -108,6 +120,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->customDriverPreferences = new ArrayCollection();
         $this->drives = new ArrayCollection();
         $this->joinedDrives = new ArrayCollection();
+        $this->driverReviews = new ArrayCollection();
+        $this->authorReviews = new ArrayCollection();
     }
 
     /*** Anonymisation ***/
@@ -425,6 +439,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->joinedDrives->removeElement($joinedDrive)) {
             $joinedDrive->removeParticipant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DriverReview>
+     */
+    public function getDriverReviews(): Collection
+    {
+        return $this->driverReviews;
+    }
+
+    public function addDriverReview(DriverReview $driverReview): static
+    {
+        if (!$this->driverReviews->contains($driverReview)) {
+            $this->driverReviews->add($driverReview);
+            $driverReview->setDriver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDriverReview(DriverReview $driverReview): static
+    {
+        if ($this->driverReviews->removeElement($driverReview)) {
+            // set the owning side to null (unless already changed)
+            if ($driverReview->getDriver() === $this) {
+                $driverReview->setDriver(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DriverReview>
+     */
+    public function getAuthorReviews(): Collection
+    {
+        return $this->authorReviews;
+    }
+
+    public function addAuthorReview(DriverReview $authorReview): static
+    {
+        if (!$this->authorReviews->contains($authorReview)) {
+            $this->authorReviews->add($authorReview);
+            $authorReview->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAuthorReview(DriverReview $authorReview): static
+    {
+        if ($this->authorReviews->removeElement($authorReview)) {
+            // set the owning side to null (unless already changed)
+            if ($authorReview->getAuthor() === $this) {
+                $authorReview->setAuthor(null);
+            }
         }
 
         return $this;
