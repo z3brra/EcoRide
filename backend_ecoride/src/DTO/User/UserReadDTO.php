@@ -9,13 +9,32 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 class UserReadDTO
 {
-    #[Groups(['user:read', 'user:login', 'user:list', 'drive:read', 'drive:list'])]
+    #[Groups([
+        'user:read',
+        'user:login',
+        'user:list',
+        'drive:read',
+        'drive:list',
+        'review:public',
+        'review:author',
+        'review:driver',
+        'review:employee',
+    ])]
     public string $uuid;
 
-    #[Groups(['user:read', 'user:list', 'drive:read', 'drive:list'])]
+    #[Groups([
+        'user:read',
+        'user:list',
+        'drive:read',
+        'drive:list',
+        'review:public',
+        'review:author',
+        'review:driver',
+        'review:employee',
+    ])]
     public string $pseudo;
 
-    #[Groups(['user:read', 'user:login', 'user:list'])]
+    #[Groups(['user:read', 'user:login', 'user:list', 'review:employee'])]
     public string $email;
 
     #[Groups(['user:read', 'user:login', 'user:list'])]

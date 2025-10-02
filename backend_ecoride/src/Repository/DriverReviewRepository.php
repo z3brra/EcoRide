@@ -2,7 +2,12 @@
 
 namespace App\Repository;
 
-use App\Entity\DriverReview;
+use App\Entity\{
+    DriverReview,
+    Drive,
+    User
+};
+
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,6 +20,26 @@ class DriverReviewRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, DriverReview::class);
     }
+
+    public function findOneByDriveAndAuthor(Drive $drive, User $author): ?DriverReview
+    {
+        $query = $this->createQueryBuilder('review')
+            ->andWhere('review.drive = :drive')
+            ->andWhere('review.author = :author')
+            ->setParameter('drive', $drive)
+            ->setParameter('author', $author)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $query;
+    }
+
+    public function existsForDriveAndAuthor(Drive $drive, User $author): bool
+    {
+        return null !== $this->findOneByDriveAndAuthor($drive, $author);
+    }
+
 
     //    /**
     //     * @return DriverReview[] Returns an array of DriverReview objects

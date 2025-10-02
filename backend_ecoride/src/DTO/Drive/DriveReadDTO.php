@@ -14,10 +14,10 @@ use DateTimeImmutable;
 class DriveReadDTO
 {
 
-    #[Groups(['drive:read', 'drive:list'])]
+    #[Groups(['drive:read', 'drive:list', 'review:author', 'review:employee'])]
     public string $uuid;
 
-    #[Groups(['drive:read', 'drive:list'])]
+    #[Groups(['drive:read', 'drive:list', 'review:author', 'review:employee'])]
     public string $reference;
 
     #[Groups(['drive:read', 'drive:list'])]
@@ -41,13 +41,13 @@ class DriveReadDTO
     #[Groups(['drive:read'])]
     public float $distance;
 
-    #[Groups(['drive:read', 'drive:list'])]
+    #[Groups(['drive:read', 'drive:list', 'review:author'])]
     public string $depart;
 
-    #[Groups(['drive:read', 'drive:list'])]
+    #[Groups(['drive:read', 'drive:list', 'review:author'])]
     public DateTimeImmutable $departAt;
 
-    #[Groups(['drive:read', 'drive:list'])]
+    #[Groups(['drive:read', 'drive:list', 'review:author'])]
     public string $arrived;
 
     #[Groups(['drive:read', 'drive:list'])]

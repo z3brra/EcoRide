@@ -22,7 +22,7 @@ class SearchDriveService
             throw new BadRequestHttpException("No data to search");
         }
 
-        $this->validationService->validate($driveSearchDTO, ['search']);
+        $this->validationService->validate($driveSearchDTO, ['drive:search']);
 
         $result = $this->driveRepository->findPaginated(
             depart: $driveSearchDTO->depart,

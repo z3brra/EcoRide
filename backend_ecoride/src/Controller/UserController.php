@@ -23,6 +23,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpKernel\Exception\{AccessDeniedHttpException, BadRequestHttpException};
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
+use App\Security\Attribute\BypassSettlementLock;
+
 #[Route('/api/user', name: 'app_api_user_')]
 final class UserController extends AbstractController
 {
@@ -32,6 +34,7 @@ final class UserController extends AbstractController
         private AccessControlService $accessControl,
     ) {}
 
+    #[BypassSettlementLock]
     #[Route('', name: 'me', methods: 'GET')]
     public function me(
         ReadUserProfileService $readUserService
