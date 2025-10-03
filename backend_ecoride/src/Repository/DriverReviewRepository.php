@@ -21,6 +21,13 @@ class DriverReviewRepository extends ServiceEntityRepository
         parent::__construct($registry, DriverReview::class);
     }
 
+    public function findOneByUuid(string $uuid): ?DriverReview
+    {
+        return $this->findOneBy([
+            'uuid' => $uuid
+        ]);
+    }
+
     public function findOneByDriveAndAuthor(Drive $drive, User $author): ?DriverReview
     {
         $query = $this->createQueryBuilder('review')

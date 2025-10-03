@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\DriverReview;
+namespace App\Service\DriverReview\Manage;
 
 use App\Entity\{DriverReview};
 
