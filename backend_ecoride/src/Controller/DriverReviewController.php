@@ -5,7 +5,8 @@ namespace App\Controller;
 use App\DTO\DriverReview\{DriverReviewDTO, DriverReviewReadDTO};
 
 use App\Service\DriverReview\Manage\{
-    CreateDriverReviewService
+    CreateDriverReviewService,
+    ListDriverReviewService
 };
 
 use App\Service\Access\AccessControlService;
@@ -54,6 +55,76 @@ final class DriverReviewController extends AbstractController
                 data: $readReviewDTO,
                 format: 'json',
                 context: ['groups' => ['review:author']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
+            );
+        }
+    }
+
+    #[Route('/{driverUuid}', name: 'list_validated', methods: 'GET')]
+    public function listValidatedForPublic(
+        string $driverUuid,
+        Request $request,
+        ListDriverReviewService $listReviewService
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+
+            $page = max(1, (int) $request->get('page', 1));
+            $limit = max(1, (int) $request->get('limit', 10));
+
+            $raw = $request->getContent();
+            if ($raw === null || $raw === '') {
+                $payload = [];
+            } else {
+                $payload = json_decode($raw, true);
+                if ($payload === null && json_last_error() !== JSON_ERROR_NONE) {
+                    throw new BadRequestHttpException("Invalid JSON format");
+                }
+                if (!is_array($payload)) {
+                    throw new BadRequestHttpException("Invalid JSON format");
+                }
+            }
+
+            if (array_key_exists('sortDir', $payload)) {
+                if (!is_string($payload['sortDir'])) {
+                    throw new BadRequestHttpException("Field 'sortDir' must be string");
+                }
+                $sortDir = trim($payload['sortDir']);
+                if ($sortDir === '') {
+                    $sortDir = 'ASC';
+                }
+            } else {
+                $sortDir = 'ASC';
+            }
+
+            $reviewPaginated = $listReviewService->listForPublic($driverUuid, $sortDir, $page, $limit);
+
+            $responseData = $this->serializer->serialize(
+                data: $reviewPaginated,
+                format: 'json',
+                context: ['groups' => ['review:public']]
             );
 
             return new JsonResponse(

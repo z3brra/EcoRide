@@ -7,9 +7,13 @@ use App\Entity\{
     Drive,
     User
 };
-
+use App\Enum\DriverReviewEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+use function Symfony\Component\DependencyInjection\Loader\Configurator\iterator;
 
 /**
  * @extends ServiceEntityRepository<DriverReview>
@@ -42,10 +46,124 @@ class DriverReviewRepository extends ServiceEntityRepository
         return $query;
     }
 
+    public function findValidatedForPublicPaginated(User $driver, string $sortDir, int $page = 1, int $limit = 10): array
+    {
+        $sortDir = strtolower($sortDir) === 'desc' ? 'DESC' : 'ASC';
+
+        $query = $this->createQueryBuilder('review')
+            ->andWhere('review.driver = :driver')
+            ->andWhere('review.status = :validated')
+            ->setParameter('driver', $driver)
+            ->setParameter('validated', DriverReviewEnum::VALIDATED)
+            ->orderBy('review.createdAt', $sortDir)
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery();
+
+        $paginator = new Paginator($query);
+        $total = count($paginator);
+        $totalPages = (int) ceil($total / $limit);
+
+        return [
+            'data' => iterator_to_array($paginator->getIterator()),
+            'total' => $total,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
+            'perPage' => $limit,
+        ];
+    }
+
+    public function findForUserPaginated(User $user, string $role, ?string $status, string $sortDir, int $page, int $limit): array
+    {
+        $sortDir = strtolower($sortDir) === 'desc' ? 'DESC' : 'ASC';
+
+        $queryBuilder = $this->createQueryBuilder('review');
+
+        switch ($role) {
+            case 'author':
+                $queryBuilder->andWhere('review.author = :user')
+                    ->setParameter('user', $user);
+                break;
+            case 'driver':
+                $queryBuilder->andWhere('review.driver = :user')
+                    ->setParameter('user', $user);
+                break;
+            default:
+                throw new BadRequestHttpException("Role is incorrect");
+                break;
+        }
+
+        if ($status !== null) {
+            $queryBuilder->andWhere('review.status = :status')
+                ->setParameter('status', $status);
+        }
+
+        $query = $queryBuilder->addOrderBy('review.createdAt', $sortDir)
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery();
+
+        $paginator = new Paginator($query);
+        $total = count($paginator);
+        $totalPages = (int) ceil($total / $limit);
+
+        return [
+            'data' => iterator_to_array($paginator->getIterator()),
+            'total' => $total,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
+            'perPage' => $limit,
+        ];
+    }
+
+    public function findForEmployeePaginated(string $sortDir, int $page, int $limit): array
+    {
+        $sortDir = strtolower($sortDir) === 'desc' ? 'DESC' : 'ASC';
+
+        $query = $this->createQueryBuilder('review')
+            ->andWhere('review.status = :pending')
+            ->setParameter('pending', DriverReviewEnum::PENDING)
+            ->orderBy('review.createdAt', $sortDir)
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery();
+
+        $paginator = new Paginator($query);
+        $total = count($paginator);
+        $totalPages = (int) ceil($total / $limit);
+
+        return [
+            'data' => iterator_to_array($paginator->getIterator()),
+            'total' => $total,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
+            'perPage' => $limit
+        ];
+    }
+
+    public function getValidatedStatsForDriver(User $driver): array
+    {
+        $query = $this->createQueryBuilder('review')
+            ->select('AVG(review.rate) as averageRate, COUNT(review.id) as reviewCount')
+            ->andWhere('review.driver = :driver')
+            ->andWhere('review.status = :validated')
+            ->setParameter('driver', $driver)
+            ->setParameter('validated', DriverReviewEnum::VALIDATED);
+
+        $result = $query->getQuery()->getSingleResult();
+
+        return [
+            'average' => $result['averageRate'] !== null ? (float) $result['averageRate'] : null,
+            'count' => (int) $result['reviewCount'],
+        ];
+    }
+
     public function existsForDriveAndAuthor(Drive $drive, User $author): bool
     {
         return null !== $this->findOneByDriveAndAuthor($drive, $author);
     }
+
+
 
 
     //    /**
