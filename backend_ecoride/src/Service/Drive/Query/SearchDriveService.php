@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Drive;
+namespace App\Service\Drive\Query;
 
 use App\DTO\Drive\DriveReadDTO;
 use App\DTO\Drive\DriveSearchDTO;
@@ -22,7 +22,7 @@ class SearchDriveService
             throw new BadRequestHttpException("No data to search");
         }
 
-        $this->validationService->validate($driveSearchDTO, ['search']);
+        $this->validationService->validate($driveSearchDTO, ['drive:search']);
 
         $result = $this->driveRepository->findPaginated(
             depart: $driveSearchDTO->depart,

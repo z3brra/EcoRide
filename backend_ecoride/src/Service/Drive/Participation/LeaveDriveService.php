@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Drive;
+namespace App\Service\Drive\Participation;
 
 use App\Entity\Drive;
 use App\Repository\DriveRepository;
@@ -13,12 +13,12 @@ use App\Service\Workflow\TransitionHelper;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\LockMode;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException ;
 use Symfony\Component\Workflow\Registry;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
-class JoinDriveService
+class LeaveDriveService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -27,10 +27,10 @@ class JoinDriveService
         private CreditService $creditService,
         private StringHelper $stringHelper,
         private Registry $workflowRegistry,
-        private TransitionHelper $transitionHelper,
+        private TransitionHelper $transitionHelper
     ) {}
 
-    public function join(string $identifier): DriveReadDTO
+    public function leave(string $identifier): DriveReadDTO
     {
         if ($this->stringHelper->isUuid($identifier)) {
             $drive = $this->driveRepository->findOneByUuid($identifier);
@@ -53,16 +53,14 @@ class JoinDriveService
             $this->entityManager->lock($drive, LockMode::PESSIMISTIC_WRITE);
 
             $workflow = $this->workflowRegistry->get($drive, 'drive');
-            $this->transitionHelper->guardAndApply($workflow, $drive, 'join');
+            $this->transitionHelper->guardAndApply($workflow, $drive, 'leave');
 
-            $price = $drive->getPrice();
-            $this->creditService->debit($user, $price);
+            $price = $drive->getPrice() ?? 0;
+            if ($price > 0) {
+                $this->creditService->credit($user, $price);
+            }
 
-            $drive->addParticipant($user);
-
-        // $availableSeats = $drive->getAvailableSeats();
-        // $participantCount = $drive->getParticipants()->count();
-        // $drive->setAvailableSeats($availableSeats - $participantCount);
+            $drive->removeParticipant($user);
 
             $this->entityManager->flush();
             $this->entityManager->commit();

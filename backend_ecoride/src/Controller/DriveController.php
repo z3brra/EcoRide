@@ -4,17 +4,24 @@ namespace App\Controller;
 
 use App\DTO\Drive\{DriveDTO, DriveSearchDTO};
 
-use App\Service\Drive\{
+use App\Service\Drive\Manage\{
     CreateDriveService,
-    ReadDriveService,
     UpdateDriveService,
     ListDrivePaginatedService,
+
+    StartDriveService,
+    FinishDriveService,
+    CancelDriveService,
+};
+
+use App\Service\Drive\Query\{
+    ReadDriveService,
+    SearchDriveService,
+};
+
+use App\Service\Drive\Participation\{
     JoinDriveService,
     LeaveDriveService,
-    StartDriveService,
-    CancelDriveService,
-
-    SearchDriveService,
 };
 
 use App\Service\Access\AccessControlService;
@@ -241,6 +248,47 @@ final class DriveController extends AbstractController
         }
     }
 
+    #[Route('/{identifier}/finish', name: 'finish', requirements: ['identifier' => '.+'], methods: 'POST')]
+    public function finish(
+        string $identifier,
+        FinishDriveService $finishDriveService
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyUnlessDriver();
+            $this->accessControl->denyIfBanned();
+
+            $finishDriveService->finish($identifier);
+
+            return new JsonResponse(
+                data: ['message' => 'Drive successfully finished'],
+                status: JsonResponse::HTTP_OK,
+            );
+
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                data: ['error' => "An internal server error as occured"],
+                status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+
     #[Route('/{identifier}', name: 'cancel', requirements: ['identifier' => '.+'], methods: 'DELETE')]
     public function cancel(
         string $identifier,
@@ -273,12 +321,13 @@ final class DriveController extends AbstractController
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_NOT_FOUND
             );
-        } catch (\Exception $e) {
-            return new JsonResponse(
-                data: ['error' => "An internal server error as occured"],
-                status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
-        }
+        } 
+        // catch (\Exception $e) {
+        //     return new JsonResponse(
+        //         data: ['error' => "An internal server error as occured"],
+        //         status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+        //     );
+        // }
     }
 
     #[Route('/{identifier}/join', name: 'join', requirements: ['identifier' => '.+'], methods: 'POST')]

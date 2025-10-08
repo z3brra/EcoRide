@@ -1,37 +1,36 @@
 <?php
 
-namespace App\Service\Drive;
+namespace App\Service\Drive\Participation;
 
 use App\Entity\Drive;
 use App\Repository\DriveRepository;
 use App\DTO\Drive\DriveReadDTO;
 
 use App\Service\Access\AccessControlService;
-use App\Service\Billing\RefundService;
+use App\Service\Billing\DebitService;
 use App\Service\StringHelper;
 use App\Service\Workflow\TransitionHelper;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\LockMode;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as ExceptionNotFoundHttpException;
 use Symfony\Component\Workflow\Registry;
 
-use Symfony\Component\HttpKernel\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
-class LeaveDriveService
+class JoinDriveService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
         private DriveRepository $driveRepository,
         private AccessControlService $accessControl,
-        private RefundService $refundService,
+        private DebitService $debitService,
         private StringHelper $stringHelper,
         private Registry $workflowRegistry,
-        private TransitionHelper $transitionHelper
+        private TransitionHelper $transitionHelper,
     ) {}
 
-    public function leave(string $identifier): DriveReadDTO
+    public function join(string $identifier): DriveReadDTO
     {
         if ($this->stringHelper->isUuid($identifier)) {
             $drive = $this->driveRepository->findOneByUuid($identifier);
@@ -39,7 +38,7 @@ class LeaveDriveService
             $drive = $this->driveRepository->findOneByReference($identifier);
         }
         if (!$drive instanceof Drive) {
-            throw new ExceptionNotFoundHttpException("Drive not found or does not exist");
+            throw new NotFoundHttpException("Drive not found or does not exist");
         }
 
         $this->entityManager->beginTransaction();
@@ -54,14 +53,16 @@ class LeaveDriveService
             $this->entityManager->lock($drive, LockMode::PESSIMISTIC_WRITE);
 
             $workflow = $this->workflowRegistry->get($drive, 'drive');
-            $this->transitionHelper->guardAndApply($workflow, $drive, 'leave');
+            $this->transitionHelper->guardAndApply($workflow, $drive, 'join');
 
-            $price = $drive->getPrice() ?? 0;
-            if ($price > 0) {
-                $this->refundService->refund($user, $price);
-            }
+            $price = $drive->getPrice();
+            $this->debitService->debit($user, $price);
 
-            $drive->removeParticipant($user);
+            $drive->addParticipant($user);
+
+        // $availableSeats = $drive->getAvailableSeats();
+        // $participantCount = $drive->getParticipants()->count();
+        // $drive->setAvailableSeats($availableSeats - $participantCount);
 
             $this->entityManager->flush();
             $this->entityManager->commit();

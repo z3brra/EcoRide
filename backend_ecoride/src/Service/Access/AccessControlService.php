@@ -45,6 +45,11 @@ class AccessControlService
         return $this->authChecker->isGranted('ROLE_DRIVER');
     }
 
+    public function isEmployee(): bool
+    {
+        return $this->authChecker->isGranted('ROLE_EMPLOYEE');
+    }
+
     public function isBanned(): bool
     {
         $user = $this->getInternUser();
@@ -88,6 +93,13 @@ class AccessControlService
     {
         if (!$this->isDriver()) {
             throw new AccessDeniedHttpException("Driver users reserved access");
+        }
+    }
+
+    public function denyUnlessEmployee(): void
+    {
+        if (!$this->isEmployee() && !$this->isAdmin()) {
+            throw new AccessDeniedHttpException("Employee users reserved access");
         }
     }
 

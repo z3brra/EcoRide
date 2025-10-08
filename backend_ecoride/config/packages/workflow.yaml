@@ -23,6 +23,6 @@ framework:
                     to: finished
                 }
                 cancel: {
-                    from: [open],
+                    from: open,
                     to: cancelled
                 }

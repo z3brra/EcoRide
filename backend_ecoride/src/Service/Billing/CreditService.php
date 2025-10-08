@@ -12,7 +12,7 @@ class CreditService
         private EntityManagerInterface $entityManager
     ) {}
 
-    public function debit(User $user, int $amount): void
+    public function credit(User $user, int $amount): void
     {
         if ($amount <= 0) {
             return;
@@ -21,7 +21,7 @@ class CreditService
         $this->entityManager->lock($user, LockMode::PESSIMISTIC_WRITE);
 
         $currentCredits = $user->getCredits();
-        $user->setCredits($currentCredits - $amount);
+        $user->setCredits($currentCredits + $amount);
     }
 }
 
