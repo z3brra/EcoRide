@@ -156,6 +156,68 @@ class DriveRepository extends ServiceEntityRepository
         return $query;
     }
 
+    public function findOwnedPaginated(
+        User $owner,
+        ?string $status = null,
+        ?string $depart = null,
+        ?string $arrived = null,
+        ?bool $includeCancelled = null,
+        int $page = 1,
+        int $limit = 10,
+        string $sortDir = 'asc'
+    ): array {
+
+        $queryBuilder = $this->createQueryBuilder('drive')
+            ->andWhere('drive.owner = :owner')
+            ->setParameter('owner', $owner);
+
+        // var_dump($status);
+        if ($status !== null) {
+            
+            $queryBuilder->andWhere('drive.status = :status')
+                ->setParameter('status', $status);
+        } else {
+            // var_dump('toto');
+            if ($includeCancelled === null || $includeCancelled === false) {
+                $queryBuilder->andWhere('drive.status != :cancelled')
+                    ->setParameter('cancelled', DriveStatusEnum::CANCELLED->value);
+            }
+        }
+
+        if ($depart !== null) {
+            $departNormalized = mb_strtolower(trim($depart));
+            $queryBuilder->andWhere('LOWER(drive.depart) = :depart')
+                ->setParameter('depart', $departNormalized);
+        }
+
+        if ($arrived !== null) {
+            $arrivedNormalized = mb_strtolower(trim($arrived));
+            $queryBuilder->andWhere('LOWER(drive.arrived) = :arrived')
+                ->setParameter('arrived', $arrivedNormalized);
+        }
+
+        $sortDir = strtolower($sortDir) === 'desc' ? 'DESC' : 'ASC';
+
+        $queryBuilder->addOrderBy('drive.createdAt', $sortDir);
+
+        $query = $queryBuilder->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery();
+
+        $paginator = new Paginator($query);
+        $total = count($paginator);
+        $totalPages = (int) ceil($total / $limit);
+
+        return [
+            'data' => iterator_to_array($paginator->getIterator()),
+            'total' => $total,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
+            'perPage' => $limit,
+            'sortDir' => $sortDir
+        ];
+    }
+
     //    /**
     //     * @return Drive[] Returns an array of Drive objects
     //     */
