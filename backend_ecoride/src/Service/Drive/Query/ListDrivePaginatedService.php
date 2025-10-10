@@ -2,6 +2,7 @@
 
 namespace App\Service\Drive\Query;
 
+use App\DTO\Drive\DriveJoinedHistoryDTO;
 use App\DTO\Drive\DriveOwnedHistoryDTO;
 
 use App\Repository\DriveRepository;
@@ -24,7 +25,7 @@ class ListDrivePaginatedService
 
     public function listOwned(DriveOwnedHistoryDTO $driveOwnedDTO, int $page, int $limit): array
     {
-        $this->validationService->validate($driveOwnedDTO, ['drive:history']);
+        $this->validationService->validate($driveOwnedDTO, ['history']);
         $owner = $this->accessControl->getUser();
 
         $result = $this->driveRepository->findOwnedPaginated(
@@ -53,10 +54,38 @@ class ListDrivePaginatedService
         ];
     }
 
-    // public function listJoined(): array
-    // {
+    public function listJoined(DriveJoinedHistoryDTO $driveJoinedDTO, int $page, int $limit): array
+    {
+        $this->validationService->validate($driveJoinedDTO, ['history']);
+        $participant = $this->accessControl->getUser();
 
-    // }
+        $result = $this->driveRepository->findJoinedPaginated(
+            participant: $participant,
+            status: $driveJoinedDTO->status,
+            when: $driveJoinedDTO->when === null ? 'all' : $driveJoinedDTO->when,
+            depart: $driveJoinedDTO->depart,
+            arrived: $driveJoinedDTO->arrived,
+            includeCancelled: $driveJoinedDTO->includeCancelled,
+            page: $page,
+            limit: $limit,
+            sortDir: $driveJoinedDTO->sortDir
+        );
+
+        $driveDTOs = [];
+        foreach ($result['data'] as $drive) {
+            $driveDTOs[] = DriveReadDTO::fromEntity($drive);
+        }
+
+        return [
+            'data' => $driveDTOs,
+            'total' => $result['total'],
+            'totalPages' => $result['totalPages'],
+            'currentPage' => $result['currentPage'],
+            'perPage' => $result['perPage'],
+            'when' => $result['when'],
+            'sortDir' => $result['sortDir'],
+        ];
+    }
 
     // public function listDrivePaginatedByUser(UserInterface $user, int $page, int $limit): array
     // {
