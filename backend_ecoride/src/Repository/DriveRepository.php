@@ -4,10 +4,12 @@ namespace App\Repository;
 
 use App\Entity\{Drive, User};
 use App\Enum\DriveStatusEnum;
+use App\Enum\DriveWhenChoices;
 use DateTimeImmutable;
 use DateTimeZone;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -154,6 +156,144 @@ class DriveRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
         return $query;
+    }
+
+    public function findOwnedPaginated(
+        User $owner,
+        ?string $status = null,
+        ?string $depart = null,
+        ?string $arrived = null,
+        ?bool $includeCancelled = null,
+        int $page = 1,
+        int $limit = 10,
+        string $sortDir = 'asc'
+    ): array {
+
+        $queryBuilder = $this->createQueryBuilder('drive')
+            ->andWhere('drive.owner = :owner')
+            ->setParameter('owner', $owner);
+
+        // var_dump($status);
+        if ($status !== null) {
+            
+            $queryBuilder->andWhere('drive.status = :status')
+                ->setParameter('status', $status);
+        } else {
+            // var_dump('toto');
+            if ($includeCancelled === null || $includeCancelled === false) {
+                $queryBuilder->andWhere('drive.status != :cancelled')
+                    ->setParameter('cancelled', DriveStatusEnum::CANCELLED->value);
+            }
+        }
+
+        if ($depart !== null) {
+            $departNormalized = mb_strtolower(trim($depart));
+            $queryBuilder->andWhere('LOWER(drive.depart) = :depart')
+                ->setParameter('depart', $departNormalized);
+        }
+
+        if ($arrived !== null) {
+            $arrivedNormalized = mb_strtolower(trim($arrived));
+            $queryBuilder->andWhere('LOWER(drive.arrived) = :arrived')
+                ->setParameter('arrived', $arrivedNormalized);
+        }
+
+        $sortDir = strtolower($sortDir) === 'desc' ? 'DESC' : 'ASC';
+
+        $queryBuilder->addOrderBy('drive.createdAt', $sortDir);
+
+        $query = $queryBuilder->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery();
+
+        $paginator = new Paginator($query);
+        $total = count($paginator);
+        $totalPages = (int) ceil($total / $limit);
+
+        return [
+            'data' => iterator_to_array($paginator->getIterator()),
+            'total' => $total,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
+            'perPage' => $limit,
+            'sortDir' => $sortDir
+        ];
+    }
+
+    public function findJoinedPaginated(
+        User $participant,
+        ?string $status = null,
+        string $when = 'all',
+        ?string $depart = null,
+        ?string $arrived = null,
+        ?bool $includeCancelled = null,
+        int $page = 1,
+        int $limit = 10,
+        string $sortDir = 'asc'
+    ): array {
+
+        $queryBuilder = $this->createQueryBuilder('drive')
+            ->innerJoin('drive.participants', 'participant')
+            ->andWhere('participant = :user')
+            ->setParameter('user', $participant);
+
+        if ($status !== null) {
+            
+            $queryBuilder->andWhere('drive.status = :status')
+                ->setParameter('status', $status);
+        } else {
+            if ($includeCancelled === null || $includeCancelled === false) {
+                $queryBuilder->andWhere('drive.status != :cancelled')
+                    ->setParameter('cancelled', DriveStatusEnum::CANCELLED->value);
+            }
+        }
+
+        if ($depart !== null) {
+            $departNormalized = mb_strtolower(trim($depart));
+            $queryBuilder->andWhere('LOWER(drive.depart) = :depart')
+                ->setParameter('depart', $departNormalized);
+        }
+
+        if ($arrived !== null) {
+            $arrivedNormalized = mb_strtolower(trim($arrived));
+            $queryBuilder->andWhere('LOWER(drive.arrived) = :arrived')
+                ->setParameter('arrived', $arrivedNormalized);
+        }
+
+        $when = strtolower($when ?: DriveWhenChoices::ALL->value);
+        if ($when === DriveWhenChoices::UPCOMING->value || $when === DriveWhenChoices::PAST->value) {
+            $now = new DateTimeImmutable();
+            $queryBuilder->setParameter('now', $now, Types::DATETIME_IMMUTABLE);
+
+            if ($when === DriveWhenChoices::UPCOMING->value) {
+                $queryBuilder->andWhere('drive.departAt > :now');
+                $queryBuilder->addOrderBy('drive.departAt', 'ASC');
+            } else {
+                $queryBuilder->andWhere('drive.departAt < :now');
+                $queryBuilder->addOrderBy('drive.departAt', 'DESC');
+            }
+        }
+
+        $sortDir = strtolower($sortDir) === 'desc' ? 'DESC' : 'ASC';
+        $queryBuilder->addOrderBy('drive.createdAt', $sortDir);
+
+        $query = $queryBuilder->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery();
+
+        $paginator = new Paginator($query);
+        $total = count($paginator);
+        $totalPages = (int) ceil($total / $limit);
+
+        return [
+            'data' => iterator_to_array($paginator->getIterator()),
+            'total' => $total,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
+            'perPage' => $limit,
+            'when' => $when,
+            'sortDir' => $sortDir
+        ];
     }
 
     //    /**

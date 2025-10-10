@@ -15,7 +15,7 @@ class DriveSearchDTO
         minMessage: "Depart must have at least 2 chars.",
         max: 255,
         maxMessage: "Depart may not exceed 255 characters.",
-        groups: ['search']
+        groups: ['drive:search']
     )]
     public ?string $depart = null;
 
@@ -25,7 +25,7 @@ class DriveSearchDTO
         minMessage: "Arrived must have at least 2 chars.",
         max: 255,
         maxMessage: "Arrived may not exceed 255 characters.",
-        groups: ['search']
+        groups: ['drive:search']
     )]
     public ?string $arrived = null;
 

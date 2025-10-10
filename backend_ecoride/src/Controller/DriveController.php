@@ -7,7 +7,6 @@ use App\DTO\Drive\{DriveDTO, DriveSearchDTO};
 use App\Service\Drive\Manage\{
     CreateDriveService,
     UpdateDriveService,
-    ListDrivePaginatedService,
 
     StartDriveService,
     FinishDriveService,
@@ -17,6 +16,7 @@ use App\Service\Drive\Manage\{
 use App\Service\Drive\Query\{
     ReadDriveService,
     SearchDriveService,
+    ListDrivePaginatedService
 };
 
 use App\Service\Drive\Participation\{
@@ -25,7 +25,7 @@ use App\Service\Drive\Participation\{
 };
 
 use App\Service\Access\AccessControlService;
-
+use Deprecated;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{Request, JsonResponse};
 use Symfony\Component\Routing\Attribute\Route;
@@ -106,52 +106,53 @@ final class DriveController extends AbstractController
         }
     }
 
-    #[Route('/own', name: 'list', methods: 'GET')]
-    public function list(
-        Request $request,
-        ListDrivePaginatedService $listDriveService
-    ): JsonResponse {
-        try {
-            $page = max(1, (int) $request->query->get('page', 1));
-            $limit = max(1, (int) $request->query->get('limit', 10));
+    // #[Deprecated(message: 'use /api/user/drives/owned')]
+    // #[Route('/own', name: 'list', methods: 'GET')]
+    // public function list(
+    //     Request $request,
+    //     ListDrivePaginatedService $listDriveService
+    // ): JsonResponse {
+    //     try {
+    //         $page = max(1, (int) $request->query->get('page', 1));
+    //         $limit = max(1, (int) $request->query->get('limit', 10));
 
-            $this->accessControl->denyUnlessLogged();
-            $this->accessControl->denyIfBanned();
-            $this->accessControl->denyUnlessDriver();
+    //         $this->accessControl->denyUnlessLogged();
+    //         $this->accessControl->denyIfBanned();
+    //         $this->accessControl->denyUnlessDriver();
 
-            $user = $this->getUser();
+    //         $user = $this->getUser();
 
-            $drivePaginated = $listDriveService->listDrivePaginatedByUser($user, $page, $limit);
+    //         $drivePaginated = $listDriveService->listDrivePaginatedByUser($user, $page, $limit);
 
-            $responseData = $this->serializer->serialize(
-                data: $drivePaginated,
-                format: 'json',
-                context: ['groups' => ['drive:read']]
-            );
+    //         $responseData = $this->serializer->serialize(
+    //             data: $drivePaginated,
+    //             format: 'json',
+    //             context: ['groups' => ['drive:read']]
+    //         );
 
-            return new JsonResponse(
-                data: $responseData,
-                status: JsonResponse::HTTP_OK,
-                json: true
-            );
-        } catch (AccessDeniedHttpException $e) {
-            return new JsonResponse(
-                ['error' => $e->getMessage()],
-                JsonResponse::HTTP_FORBIDDEN
-            );
-        } catch (LogicException $e) {
-            return new JsonResponse(
-                ['error' => $e->getMessage()],
-                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
-        }
-        // catch (\Exception $e) {
-        //     return new JsonResponse(
-        //         data: ['error' => "An internal server error as occured"],
-        //         status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
-        //     );
-        // }
-    }
+    //         return new JsonResponse(
+    //             data: $responseData,
+    //             status: JsonResponse::HTTP_OK,
+    //             json: true
+    //         );
+    //     } catch (AccessDeniedHttpException $e) {
+    //         return new JsonResponse(
+    //             ['error' => $e->getMessage()],
+    //             JsonResponse::HTTP_FORBIDDEN
+    //         );
+    //     } catch (LogicException $e) {
+    //         return new JsonResponse(
+    //             ['error' => $e->getMessage()],
+    //             JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+    //         );
+    //     }
+    //     // catch (\Exception $e) {
+    //     //     return new JsonResponse(
+    //     //         data: ['error' => "An internal server error as occured"],
+    //     //         status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+    //     //     );
+    //     // }
+    // }
 
     #[Route('/{identifier}', name: 'read', requirements: ['identifier' => '.+'], methods: 'GET')]
     public function read(
