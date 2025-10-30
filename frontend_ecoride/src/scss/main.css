@@ -123,6 +123,130 @@
   }
 }
 
+.navbar {
+  width: 100%;
+  background-color: #EDE8D5;
+  padding: 1rem 2rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.navbar__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+.navbar__icon {
+  color: #5A7C17;
+  width: 24px;
+  height: 24px;
+}
+.navbar__title {
+  color: #5A7C17;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+.navbar__links {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+.navbar__burger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+}
+.navbar__burger:hover, .navbar__burger:focus-visible {
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+@media (min-width: 668px) and (max-width: 1024px) {
+  .navbar__burger {
+    display: inline-flex;
+  }
+}
+@media (max-width: 667px) {
+  .navbar__burger {
+    display: inline-flex;
+  }
+}
+.navbar__burger-icon {
+  width: 28px;
+  height: 28px;
+  color: #333333;
+  transition: transform 0.2s ease;
+}
+.open .navbar__burger-icon {
+  transform: rotate(90deg);
+}
+
+.navlinks {
+  display: flex;
+  gap: 2rem;
+  transition: all 0.3s ease-in-out;
+  margin: 0;
+}
+@media (min-width: 668px) and (max-width: 1024px) {
+  .navlinks {
+    display: none;
+  }
+  .navlinks.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: #EDE8D5;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2509803922);
+    padding: 1.5rem;
+    gap: 1.5rem;
+    z-index: 20;
+  }
+}
+@media (max-width: 667px) {
+  .navlinks {
+    display: none;
+  }
+  .navlinks.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: #EDE8D5;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2509803922);
+    padding: 1.5rem;
+    gap: 1.5rem;
+    z-index: 20;
+  }
+}
+
+.navlink {
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+  color: #767675;
+}
+.navlink.active {
+  color: #5A7C17;
+}
+.navlink:hover {
+  color: #D97734;
+}
+
 .header {
   margin: 2rem 0;
 }

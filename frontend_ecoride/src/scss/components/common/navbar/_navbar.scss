@@ -1,0 +1,138 @@
+.navbar {
+    width: 100%;
+    background-color: $menu-background;
+    padding: 1rem 2rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    &__container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__brand {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    &__icon {
+        color: $primary;
+        width: 24px;
+        height: 24px;
+    }
+
+    &__title {
+        color: $primary;
+        font-size: 1.3rem;
+        font-weight: 600;
+    }
+
+    &__links {
+        display: flex;
+        align-items: center;
+        margin: 0;
+    }
+
+    &__burger {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: .25rem;
+        border-radius: .5rem;
+
+        &:hover,
+        &:focus-visible {
+            outline: none;
+            background-color: rgba(0,0,0,0.04);
+        }
+
+        @include tablet {
+            display: inline-flex;
+        }
+        
+        @include mobile {
+            display: inline-flex;
+        }
+    }
+
+    &__burger-icon {
+        width: 28px;
+        height: 28px;
+        color: $primary-text-fg;
+        transition: transform .2s ease;
+
+        .open & { transform: rotate(90deg); }
+    }
+}
+
+.navlinks {
+    display: flex;
+    gap: 2rem;
+    transition: all 0.3s ease-in-out;
+    margin: 0;
+
+    @include tablet {
+        display: none;
+        &.open {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background-color: $menu-background;
+            box-shadow: 0 4px 4px $box-shadow;
+            padding: 1.5rem;
+            gap: 1.5rem;
+            z-index: 20;
+        }
+    }
+
+    @include mobile {
+        display: none;
+        &.open {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background-color: $menu-background;
+            box-shadow: 0 4px 4px $box-shadow;
+            padding: 1.5rem;
+            gap: 1.5rem;
+            z-index: 20;
+        }
+    }
+}
+
+.navlink {
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+    color: $silent-text-fg;
+
+    &.active {
+        color: $primary;
+    }
+
+    &:hover {
+        color: $secondary;
+    }
+
+}
+
+// /* Respect des préférences d’accessibilité */
+// @media (prefers-reduced-motion: reduce) {
+//     .navbar__links,
+//     .navbar__burger-icon {
+//         transition: none !important;
+//     }
+// }
