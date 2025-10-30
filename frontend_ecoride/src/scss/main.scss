@@ -10,7 +10,14 @@
 
 
 @import 'components/common/navbar/navbar';
-@import 'components/common/header';
+
+@import 'components/common/section';
+@import 'components/common/section-header';
+@import 'components/common/section-media';
+
+@import 'components/common/footer/footer';
+
+@import 'components/common/card/card';
 
 * {
     margin: 0;

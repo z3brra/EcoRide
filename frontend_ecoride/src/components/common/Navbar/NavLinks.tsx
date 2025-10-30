@@ -14,7 +14,7 @@ export function NavLinks({
     className = ""
 }: NavLinksProps): JSX.Element {
     const links = [
-        { to: PUBLIC_ROUTES.HOME, label: "Acceuil" },
+        { to: PUBLIC_ROUTES.HOME, label: "Accueil" },
         { to: PUBLIC_ROUTES.DRIVES, label: "Trajets" },
         { to: PUBLIC_ROUTES.CONTACT, label: "Contact" },
         isAuthenticated

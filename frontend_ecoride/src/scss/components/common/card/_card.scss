@@ -1,0 +1,65 @@
+.card {
+    background-color: $background;
+    border-radius: 1rem;
+    box-shadow: 0 4px 8px $box-shadow;
+    padding: 2rem;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 14px $box-shadow;
+    }
+
+    .card__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 1rem auto;
+        border-radius: 50%;
+        background-color: rgba($primary, 0.1);
+        color: $primary;
+    }
+
+    .card__title {
+        @extend .text-bigcontent;
+        @extend .text-primary;
+        margin-bottom: 0.5rem;
+    }
+
+    .card__description {
+        @extend .text-small;
+        @extend .text-silent;
+    }
+
+    .card__content {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+
+
+    > .card {
+        flex: 1 1 calc(25% - 2rem);
+    }
+
+    @include tablet {
+        > .card {
+            flex: 1 1 calc(50% - 2rem);
+        }
+    }
+
+    @include mobile {
+        > .card {
+            flex: 1 1 100%;
+        }
+    }
+}

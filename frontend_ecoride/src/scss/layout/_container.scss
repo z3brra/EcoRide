@@ -4,7 +4,7 @@
     // margin-left: dashboard-side-menu-width(default);
     padding: 2rem 10rem 2rem 10rem;
     min-height: 100vh;
-    background-color: $background;
+    background: linear-gradient(0deg, $background 0%, $test-gradient 100%);
 
     @include tablet {
         // min-height: calc(100vh - mobile-header-menu-height(tablet));

@@ -49,7 +49,7 @@ export function NavBar() {
             <div className="navbar__container" ref={menuRef}>
                 <Link to="/" className="navbar__brand" onClick={closeMenu}>
                     <Leaf className="navbar__icon" />
-                    <span className="navbar__title text-content">EcoRide</span>
+                    <span className="navbar__title text-content">Ecoride</span>
                 </Link>
 
 

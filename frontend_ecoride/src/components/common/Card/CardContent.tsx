@@ -1,16 +1,16 @@
 import type { JSX } from "react"
 
-export type SectionProps = {
+export type CardContentProps = {
     children: React.ReactNode
     className?: string
 }
 
-export function Section({
+export function CardContent({
     children,
     className = ""
-}: SectionProps): JSX.Element {
+}: CardContentProps): JSX.Element {
     return (
-        <div className={`section ${className}`}>
+        <div className={`card__content ${className}`}>
             {children}
         </div>
     )
