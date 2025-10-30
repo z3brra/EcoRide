@@ -1,0 +1,27 @@
+@function header-height($breakpoint) {
+    @if $breakpoint == mobile {
+        @return 52px;
+    } @else if $breakpoint == tablet {
+        @return 74px;
+    } @else {
+        @return 100px;
+    }
+}
+
+@function side-menu-width($breakpoint) {
+    @if $breakpoint == mobile {
+        @return 240px;
+    } @else if $breakpoint == tablet {
+        @return 280px;
+    } @else {
+        @return 300px;
+    }
+}
+
+@function mobile-header-menu-height($breakpoint) {
+    @if $breakpoint == mobile {
+        @return 52px;
+    } @else {
+        @return 74px;
+    }
+}
