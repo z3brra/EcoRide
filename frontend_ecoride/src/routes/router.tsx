@@ -1,16 +1,18 @@
 import { createBrowserRouter, Outlet } from 'react-router-dom'
 
-import { PUBLIC_ROUTES } from "@routes/paths"
+import { PUBLIC_ROUTES, USER_ROUTES } from "@routes/paths"
 
 import { RootLayout } from '@layout/RootLayout'
 
 import { AuthProvider } from '@provider/AuthContext'
+import { RequireAuth } from "@components/auth/RequireAuth"
 
 import { Home } from '@pages/Home'
 import { Drives } from '@pages/Drives/Drives'
 import { Contact } from '@pages/Contact'
 import { Login } from '@pages/auth/Login'
 import { Register } from '@pages/auth/Register'
+import { User } from '@pages/User/User'
 
 export const router = createBrowserRouter([
     {
@@ -29,6 +31,17 @@ export const router = createBrowserRouter([
                     { path: PUBLIC_ROUTES.CONTACT, element: <Contact /> },
                     { path: PUBLIC_ROUTES.LOGIN, element: <Login /> },
                     { path: PUBLIC_ROUTES.REGISTER, element: <Register /> },
+                ]
+            },
+            {
+                path: USER_ROUTES.USER,
+                element: (
+                    <RequireAuth>
+                        <RootLayout />
+                    </RequireAuth>
+                ),
+                children: [
+                    { index: true, element: <User /> },
                 ]
             }
         ]

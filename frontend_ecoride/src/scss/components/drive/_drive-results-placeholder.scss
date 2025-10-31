@@ -1,0 +1,42 @@
+.drive-results-placeholder {
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    background-color: $background;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    padding: 4rem 2rem;
+    // width: 70%;
+    max-width: 80%;
+    min-width: 60%;
+    min-height: 300px;
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    &__title {
+        margin-bottom: 0.5rem;
+    }
+
+    &__description {
+        max-width: 50ch;
+    }
+
+    @include tablet {
+        padding: 3rem 1.5rem;
+        width: 100%;
+    }
+
+    @include mobile {
+        padding: 2rem 1rem;
+        width: 100%;
+    }
+}

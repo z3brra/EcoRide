@@ -7,8 +7,7 @@ export type InputProps = {
     label?: string
     labelIcon?: JSX.Element
     required?: boolean
-    helperText?: string
-    error?: boolean
+    errorText?: string
 }& (
     | React.InputHTMLAttributes<HTMLInputElement>
     | React.TextareaHTMLAttributes<HTMLTextAreaElement>
@@ -20,8 +19,7 @@ export function Input({
     label,
     labelIcon,
     required,
-    helperText,
-    error = false,
+    errorText,
     ...props
 }: InputProps): JSX.Element {
     const id = useId()
@@ -29,7 +27,6 @@ export function Input({
     const fieldClass = [
         "text-input-field",
         textSize ? textSize : "text-small",
-        error ? "has-error": "",
     ].filter(Boolean).join(" ")
 
     return (
@@ -65,8 +62,10 @@ export function Input({
                 />
             )}
 
-            { helperText && (
-                <p className={`text-input-helper ${error ? "error" : ""}`}>{helperText}</p>
+            { errorText && (
+                <div className="text-input__error text-small">
+                    {errorText}
+                </div>
             )}
         </div>
     )

@@ -1,6 +1,7 @@
 import type { JSX } from "react"
 import { NavLinkItem } from "@components/common/Navbar/NavLinkItem"
-import { PUBLIC_ROUTES } from "@routes/paths"
+import { PUBLIC_ROUTES, USER_ROUTES } from "@routes/paths"
+import { useAuth } from "@provider/AuthContext"
 
 export type NavLinksProps = {
     isAuthenticated?: boolean
@@ -13,23 +14,25 @@ export function NavLinks({
     onItemClick,
     className = ""
 }: NavLinksProps): JSX.Element {
+    const { logout } = useAuth()
+
     const links = [
-        { to: PUBLIC_ROUTES.HOME, label: "Accueil" },
-        { to: PUBLIC_ROUTES.DRIVES, label: "Trajets" },
-        { to: PUBLIC_ROUTES.CONTACT, label: "Contact" },
+        { to: PUBLIC_ROUTES.HOME, label: "Accueil", onClick: onItemClick },
+        { to: PUBLIC_ROUTES.DRIVES, label: "Trajets", onClick: onItemClick },
+        { to: PUBLIC_ROUTES.CONTACT, label: "Contact", onClick: onItemClick },
         isAuthenticated
-            ? { to: "#", label: "Profil" }
-            : { to: PUBLIC_ROUTES.LOGIN, label: "Connexion" }
+            ? { to: USER_ROUTES.USER, label: "Profil", onClick: onItemClick}
+            : { to: PUBLIC_ROUTES.LOGIN, label: "Connexion", onClick: onItemClick }
     ]
 
     if (isAuthenticated) {
-        links.push({ to: PUBLIC_ROUTES.HOME, label: "Déconnexion" })
+        links.push({ to: PUBLIC_ROUTES.HOME, label: "Déconnexion", onClick: logout})
     }
 
     return (
         <nav className={`navlinks ${className}`.trim()}>
-            { links.map(({ to, label }) => (
-                <NavLinkItem key={to} to={to} label={label} onClick={onItemClick} />
+            { links.map(({ to, label, onClick }) => (
+                <NavLinkItem key={to} to={to} label={label} onClick={onClick} />
             ))}
         </nav>
     )

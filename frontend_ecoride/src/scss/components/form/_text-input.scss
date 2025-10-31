@@ -113,15 +113,12 @@
         }
     }
 
-    &-helper {
-        color: $silent-text-fg;
-
-        &.error {
-            color: $error;
-        }
-
-        &.success {
-            color: $success
-        }
+    &__error {
+        color: $red-label-fg;
+        background-color: $red-label-bg;
+        padding: 0.5rem 1rem;
+        border-radius: $border-radius;
+        margin-bottom: 1rem;
+        width: auto;
     }
 }

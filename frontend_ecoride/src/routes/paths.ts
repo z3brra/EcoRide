@@ -7,5 +7,8 @@ export const PUBLIC_ROUTES = {
 
     LOGIN: "/login" as const,
     REGISTER: "/register" as const,
+}
 
+export const USER_ROUTES = {
+    USER: "/user" as const
 }

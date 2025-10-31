@@ -59,6 +59,7 @@ export function DriveSearchCard({
                 />
 
                 <Button
+                    type="submit"
                     variant="primary"
                     icon={<Search />}
                     disabled={isLoading}
