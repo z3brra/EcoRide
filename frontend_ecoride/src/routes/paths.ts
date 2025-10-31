@@ -6,6 +6,6 @@ export const PUBLIC_ROUTES = {
     CONTACT: "/contact" as const,
 
     LOGIN: "/login" as const,
-
+    REGISTER: "/register" as const,
 
 }

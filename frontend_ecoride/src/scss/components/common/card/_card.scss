@@ -4,11 +4,14 @@
     box-shadow: 0 4px 8px $box-shadow;
     padding: 2rem;
     text-align: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-    &:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 6px 14px $box-shadow;
+    &--animated {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 14px $box-shadow;
+        }
     }
 
     .card__icon {

@@ -1,0 +1,49 @@
+.drive-search {
+    width: 100%;
+    max-width: 100%;
+    padding: 2rem;
+    background-color: $background;
+    border-radius: $border-radius;
+    box-shadow: 0 4px 10px $box-shadow;
+
+    &__form {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 1.5rem;
+        width: 100%;
+        flex-wrap: wrap;
+
+        > .text-input {
+            flex: 1 1 calc(25% - 1rem);
+        }
+
+        > .button {
+            flex: 0 0 auto;
+            min-width: 160px;
+            align-self: flex-end;
+        }
+
+        @include tablet {
+            flex-direction: column;
+            align-items: stretch;
+
+            > .text-input,
+            > .button {
+                flex: 1 1 100%;
+                width: 100%;
+            }
+        }
+
+        @include mobile {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+
+            > .text-input,
+            > .button {
+                width: 100%;
+            }
+        }
+    }
+}

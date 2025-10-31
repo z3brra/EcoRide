@@ -8,6 +8,8 @@ import { SectionHeader } from "@components/common/Section/SectionHeader"
 import { SectionMedia } from "@components/common/Section/SectionMedia"
 import { SectionMediaGrid } from "@components/common/Section/SectionMediaGrid"
 
+import { DriveSearchCard } from "@components/drive/DriveSearchCard"
+
 
 import { Leaf, TrendingDown, Users, Car } from "lucide-react"
 
@@ -16,6 +18,14 @@ import incar from "@assets/incar_trees.jpg"
 import tesla from "@assets/tesla_in_forest.jpg"
 
 export function Home () {
+    const handleSearch = (data: {
+        from: string;
+        to: string;
+        date: string
+    }) => {
+        console.log("Search drives : ", data)
+    }
+
     return (
         <>
             <Section id="header">
@@ -28,6 +38,8 @@ export function Home () {
                     animate
                     align="center"
                 />
+
+                <DriveSearchCard onSearch={handleSearch} />
             </Section>
 
             <Section id="about">
@@ -53,54 +65,53 @@ export function Home () {
                     align="center"
                 />
                 <CardGrid>
-                <Card>
-                    <CardIcon icon={<Leaf size={30}/>} />
-                    <CardContent>
-                        <h3 className="card__title">
-                            Eco-Friendly
-                        </h3>
-                        <p className="card__description">
-                            Réduisez votre empreinte carbone avec le covoiturage et contribuez pour un environnement sain
-                        </p>
-                    </CardContent>
+                    <Card animate>
+                        <CardIcon icon={<Leaf size={30}/>} />
+                        <CardContent>
+                            <h3 className="card__title">
+                                Eco-Friendly
+                            </h3>
+                            <p className="card__description">
+                                Réduisez votre empreinte carbone avec le covoiturage et contribuez pour un environnement sain
+                            </p>
+                        </CardContent>
+                    </Card>
 
-                </Card>
-                <Card>
-                    <CardIcon icon={<TrendingDown size={30}/>} />
-                    <CardContent>
-                        <h3 className="card__title">
-                            Faites des économies
-                        </h3>
-                        <p className="card__description">
-                            Répartissez les coûts de carburant et réduisez considérablement vos frais de transport.
-                        </p>
-                    </CardContent>
-                    
-                </Card>
-                <Card>
-                    <CardIcon icon={<Users size={30}/>} />
-                    <CardContent>
-                        <h3 className="card__title">
-                            Faites des rencontres
-                        </h3>
-                        <p className="card__description">
-                            Entrez en contact avec des voyageurs qui partagent vos centres d'intérêt et rendez vos trajets quotidiens plus agréables.
-                        </p>
-                    </CardContent>
-                    
-                </Card>
-                <Card>
-                    <CardIcon icon={<Car size={30}/>} />
-                    <CardContent>
-                        <h3 className="card__title">
-                            Facile à utiliser
-                        </h3>
-                        <p className="card__description">
-                            Processus de recherche et de réservation simple pour trouver des trajets qui correspondent à votre emploi du temps.
-                        </p>
-                    </CardContent>
-                    
-                </Card>
+                    <Card animate>
+                        <CardIcon icon={<TrendingDown size={30}/>} />
+                        <CardContent>
+                            <h3 className="card__title">
+                                Faites des économies
+                            </h3>
+                            <p className="card__description">
+                                Répartissez les coûts de carburant et réduisez considérablement vos frais de transport.
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    <Card animate>
+                        <CardIcon icon={<Users size={30}/>} />
+                        <CardContent>
+                            <h3 className="card__title">
+                                Faites des rencontres
+                            </h3>
+                            <p className="card__description">
+                                Entrez en contact avec des voyageurs qui partagent vos centres d'intérêt et rendez vos trajets quotidiens plus agréables.
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    <Card animate>
+                        <CardIcon icon={<Car size={30}/>} />
+                        <CardContent>
+                            <h3 className="card__title">
+                                Facile à utiliser
+                            </h3>
+                            <p className="card__description">
+                                Processus de recherche et de réservation simple pour trouver des trajets qui correspondent à votre emploi du temps.
+                            </p>
+                        </CardContent>
+                    </Card>
                 </CardGrid>
             </Section>
 
