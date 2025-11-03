@@ -103,6 +103,14 @@
   font-weight: 700 !important;
 }
 
+.icon-primary {
+  color: #5A7C17;
+}
+
+.text-left {
+  text-align: left;
+}
+
 .main-content {
   display: flex;
   flex-direction: column;
@@ -388,6 +396,10 @@
   transform: translateY(-4px);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2509803922);
 }
+.card .card__link {
+  text-decoration: none;
+  width: 100%;
+}
 .card .card__icon {
   display: flex;
   align-items: center;
@@ -405,6 +417,42 @@
 .card .card__content {
   display: flex;
   flex-direction: column;
+}
+.card .card__content--row {
+  flex-direction: row;
+}
+.card .card__content--column {
+  flex-direction: column;
+}
+.card .card__content--justify-start {
+  justify-content: flex-start;
+}
+.card .card__content--justify-center {
+  justify-content: center;
+}
+.card .card__content--justify-end {
+  justify-content: flex-end;
+}
+.card .card__content--justify-between {
+  justify-content: space-between;
+}
+.card .card__content--justify-around {
+  justify-content: space-around;
+}
+.card .card__content--justify-evenly {
+  justify-content: space-evenly;
+}
+.card .card__content--align-start {
+  align-items: flex-start;
+}
+.card .card__content--align-center {
+  align-items: center;
+}
+.card .card__content--align-end {
+  align-items: flex-end;
+}
+.card .card__content--align-stretch {
+  align-items: stretch;
 }
 
 .card-grid {
@@ -470,6 +518,27 @@
 .message-box__warning {
   background-color: #FEF9C3;
   color: #854D0E;
+}
+
+.return-link {
+  text-decoration: none;
+}
+.return-link:hover {
+  color: #333333;
+}
+.return-link__item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .button {
@@ -720,6 +789,9 @@
   justify-content: center;
   margin-bottom: 1.5rem;
 }
+.drive-results-placeholder__icon.is-loading {
+  animation: drp-spin 2s linear infinite;
+}
 .drive-results-placeholder__title {
   margin-bottom: 0.5rem;
 }
@@ -737,6 +809,113 @@
     padding: 2rem 1rem;
     width: 100%;
   }
+}
+
+@keyframes drp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.drive-item {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.drive-item:hover .drive-item__card {
+  background-color: #E5DED8;
+}
+
+.drive-item__card {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 2rem;
+  padding: 1.5rem 2rem;
+  background-color: #F9F9F2;
+  transition: background-color 0.2s ease;
+}
+@media (min-width: 668px) and (max-width: 1024px) {
+  .drive-item__card {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+@media (max-width: 667px) {
+  .drive-item__card {
+    flex-direction: column;
+  }
+}
+
+.drive-item__left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 2;
+}
+
+.drive-item__right {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2rem;
+  flex: 1;
+}
+@media (min-width: 668px) and (max-width: 1024px) {
+  .drive-item__right {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+@media (max-width: 667px) {
+  .drive-item__right {
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+  .drive-item__right .button {
+    width: 100%;
+  }
+}
+
+.drive-item__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.drive-item__icon {
+  color: #5A7C17;
+  flex-shrink: 0;
+}
+
+.drive-item__tag {
+  background-color: rgba(217, 119, 52, 0.2);
+  color: #D97734;
+  font-size: 0.85rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.drive-item__info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.drive-item__info-top {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.drive-item__info-bottom {
+  margin-top: 0.25rem;
+}
+
+.drive-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .contact-infos {
@@ -859,6 +1038,113 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
+}
+
+.drive-detail__title {
+  margin-bottom: 1rem;
+}
+.drive-detail__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background-color: #E5DED8;
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+}
+.drive-detail__summary-icon {
+  color: #5A7C17;
+}
+.drive-detail__infos {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+@media (min-width: 668px) and (max-width: 1024px) {
+  .drive-detail__infos {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+.drive-detail__infos-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+.drive-detail__info-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.drive-detail__info-text {
+  text-align: left;
+}
+.drive-detail__button {
+  width: 100%;
+}
+
+.driver-detail__card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.drive-detail__user {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.driver-detail__rating {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.driver-detail__rating .text-yellow {
+  color: #FACC15;
+}
+
+.driver-detail__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(90, 124, 23, 0.1);
+  color: #5A7C17;
+}
+
+.driver-reviews__list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.driver-reviews__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem 0;
+  border-bottom: 1px solid #BCB8B8;
+}
+.driver-reviews__item:last-child {
+  border-bottom: none;
+}
+.driver-reviews__item .driver-reviews__user {
+  max-width: 70%;
+}
+.driver-reviews__item .driver-reviews__rating {
+  display: flex;
+  gap: 0.25rem;
+}
+.driver-reviews__item .driver-reviews__rating .star--filled {
+  color: #FACC15;
+}
+.driver-reviews__item .driver-reviews__rating .star--empty {
+  color: #767675;
 }
 
 * {

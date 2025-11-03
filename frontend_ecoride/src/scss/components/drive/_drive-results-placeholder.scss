@@ -20,6 +20,10 @@
         align-items: center;
         justify-content: center;
         margin-bottom: 1.5rem;
+
+        &.is-loading {
+            animation: drp-spin 2s linear infinite;
+        }
     }
 
     &__title {
@@ -38,5 +42,11 @@
     @include mobile {
         padding: 2rem 1rem;
         width: 100%;
+    }
+}
+
+@keyframes drp-spin {
+    to {
+        transform: rotate(360deg);
     }
 }

@@ -18,7 +18,7 @@ export function NavLinks({
 
     const links = [
         { to: PUBLIC_ROUTES.HOME, label: "Accueil", onClick: onItemClick },
-        { to: PUBLIC_ROUTES.DRIVES, label: "Trajets", onClick: onItemClick },
+        { to: PUBLIC_ROUTES.DRIVES.REL, label: "Trajets", onClick: onItemClick },
         { to: PUBLIC_ROUTES.CONTACT, label: "Contact", onClick: onItemClick },
         isAuthenticated
             ? { to: USER_ROUTES.USER, label: "Profil", onClick: onItemClick}

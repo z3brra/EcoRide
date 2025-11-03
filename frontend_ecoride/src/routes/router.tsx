@@ -8,10 +8,16 @@ import { AuthProvider } from '@provider/AuthContext'
 import { RequireAuth } from "@components/auth/RequireAuth"
 
 import { Home } from '@pages/Home'
+
 import { Drives } from '@pages/Drives/Drives'
+import { DriveDetail } from '@pages/Drives/DriveDetail'
+
 import { Contact } from '@pages/Contact'
+
 import { Login } from '@pages/auth/Login'
+
 import { Register } from '@pages/auth/Register'
+
 import { User } from '@pages/User/User'
 
 export const router = createBrowserRouter([
@@ -27,7 +33,14 @@ export const router = createBrowserRouter([
                 element: <RootLayout />,
                 children: [
                     { index: true, element: <Home /> },
-                    { path: PUBLIC_ROUTES.DRIVES, element: <Drives />},
+                    { 
+                        path: PUBLIC_ROUTES.DRIVES.REL,
+                        children: [
+                            { index: true, element: <Drives /> },
+                            { path: PUBLIC_ROUTES.DRIVES.DETAIL_PATTERN, element: <DriveDetail />}
+                        ]
+                    },
+
                     { path: PUBLIC_ROUTES.CONTACT, element: <Contact /> },
                     { path: PUBLIC_ROUTES.LOGIN, element: <Login /> },
                     { path: PUBLIC_ROUTES.REGISTER, element: <Register /> },

@@ -1,27 +1,38 @@
+import { useDriveSearch } from "@hook/drive/useDriveSearch"
+
 import { Section } from "@components/common/Section/Section"
 import { SectionHeader } from "@components/common/Section/SectionHeader"
 
-// import { Card } from "@components/common/Card/Card"
-// import { CardContent } from "@components/common/Card/CardContent"
-// import { CardIcon } from "@components/common/Card/CardIcon"
-
 import { DriveSearchCard } from "@components/drive/DriveSearchCard"
-import { useState } from "react"
 import { DriveResultsPlaceholder } from "@components/drive/DriveResultsPlaceholder"
+import { DriveItemList } from "@components/drive/DriveItemList"
+
+import { Pagination } from "@components/common/Pagination/Pagination"
+
+import { MessageBox } from "@components/common/MessageBox/MessageBox"
 
 export function Drives () {
-    const [hasSearched, setHasSearched] = useState<boolean>(false)
-    const [results, setResults] = useState<any[]>([])
+    const {
+        data,
+        hasSearched,
+        page,
+        totalPages,
+        search,
+        changePage,
 
-    const handleSearch = (data: {
-        from: string;
-        to: string;
-        date: string
-    }) => {
-        // console.log("Search drives : ", data)
-        setHasSearched(true)
-        setResults([])
+        loading,
+        error,
+        setError,
+    } = useDriveSearch()
+
+    const handleSearch = (criteria: { from: string; to: string; date: string }) => {
+        search({
+            depart: criteria.from,
+            arrived: criteria.to,
+            departAt: criteria.date,
+        })
     }
+
     return (
         <>
             <Section id="drive-header">
@@ -35,16 +46,29 @@ export function Drives () {
             </Section>
 
             <Section id="drive-results">
-                { !hasSearched && (
+                { !hasSearched && !loading && (
                     <DriveResultsPlaceholder />
                 )}
 
-                { hasSearched && results.length === 0 && (
+                { hasSearched && !loading && data.length === 0 && (
                     <DriveResultsPlaceholder noResults />
                 )}
 
+                { hasSearched && loading && (
+                    <DriveResultsPlaceholder isLoading />
+                )}
 
+                {hasSearched && !loading && data.length > 0 && (
+                    <DriveItemList items={data}/>
+                )}
             </Section>
+            { hasSearched && totalPages > 1 && (
+                <Pagination
+                    currentPage={page}
+                    totalPages={totalPages}
+                    onPageChange={changePage}
+                />
+            )}
         </>
     )
 }

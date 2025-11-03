@@ -1,0 +1,122 @@
+.drive-detail {
+    &__title {
+        margin-bottom: 1rem;
+    }
+
+    &__summary {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        background-color: $background-darker;
+        border-radius: $border-radius;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+
+        &-icon {
+            color: $primary;
+        }
+    }
+
+    &__infos {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+        margin-bottom: 2rem;
+
+        @include tablet {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+    }
+
+    &__infos-col {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        flex: 1;
+    }
+
+    &__info-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    &__info-text {
+        text-align: left;
+
+    }
+
+    &__button {
+        width: 100%;
+    }
+}
+
+
+.driver-detail__card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.drive-detail__user {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.driver-detail__rating {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    .text-yellow {
+        color: $yellow-star;
+    }
+}
+
+.driver-detail__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba($primary, 0.1);
+    color: $primary;
+}
+
+.driver-reviews__list {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.driver-reviews__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem 0;
+    border-bottom: 1px solid $border-color;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    .driver-reviews__user {
+        max-width: 70%;
+    }
+
+    .driver-reviews__rating {
+        display: flex;
+        gap: 0.25rem;
+
+        .star--filled {
+            color: $yellow-star;
+        }
+
+        .star--empty {
+            color: $silent-text-fg;
+        }
+    }
+}
