@@ -21,7 +21,7 @@ export function Footer(): JSX.Element {
 
                 <div className="footer__container-down">
                     <div className="footer-mention">
-                        <p className="text-small text-silent">© 2025 Ecoride. Tous droits résevés.</p>
+                        <p className="text-small text-silent">© 2025 Ecoride. Tous droits réservés.</p>
                     </div>
                 </div>
             </div>

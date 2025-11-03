@@ -114,9 +114,12 @@
 .main-content {
   display: flex;
   flex-direction: column;
-  padding: 2rem 10rem 2rem 10rem;
+  padding: 2rem 10rem;
   min-height: 100vh;
   background: linear-gradient(0deg, #F9F9F2 0%, #cbf8b7 100%);
+}
+.main-content > #footer {
+  margin-top: auto;
 }
 @media (min-width: 668px) and (max-width: 1024px) {
   .main-content {
