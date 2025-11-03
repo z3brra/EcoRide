@@ -15,6 +15,7 @@ export function NavLinkItem({
     return (
         <NavLink
             to={to}
+            end={false}
             onClick={onClick}
             className={({ isActive }) => 
                 `navlink ${isActive ? "active" : ""} text-content`

@@ -21,3 +21,12 @@ export async function fetchOneDrive(
         `${Endpoints.DRIVES}/${uuid}`
     )
 }
+
+export async function joinDrive(
+    uuid: string
+): Promise<{ message: string }> {
+    return postRequest<null, { message: string }>(
+        `${Endpoints.DRIVES}/${uuid}/join`,
+        null
+    )
+}

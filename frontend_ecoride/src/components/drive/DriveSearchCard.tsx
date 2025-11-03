@@ -1,5 +1,5 @@
 import type { JSX } from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { MapPin, Calendar, Search } from "lucide-react"
 import { Card } from "@components/common/Card/Card"
 import { Input } from "@components/form/Input"
@@ -13,16 +13,29 @@ export type DriveSearchCardProps = {
     }) => void
     isLoading?: boolean
     className?: string
+
+    defaultFrom?: string
+    defaultTo?: string
+    defaultDate?: string
 }
 
 export function DriveSearchCard({
     onSearch,
     isLoading,
-    className = ""
+    className = "",
+    defaultFrom = "",
+    defaultTo = "",
+    defaultDate = ""
 }: DriveSearchCardProps): JSX.Element {
     const [from, setFrom] = useState<string>("")
     const [to, setTo] = useState<string>("")
     const [date, setDate] = useState<string>("")
+
+    useEffect(() => {
+        setFrom(defaultFrom)
+        setTo(defaultTo)
+        setDate(defaultDate)
+    }, [defaultFrom, defaultTo, defaultDate])
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault()
@@ -63,7 +76,7 @@ export function DriveSearchCard({
                     variant="primary"
                     icon={<Search />}
                     disabled={isLoading}
-                    onClick={() => console.log("search")}
+                    onClick={() => {}}
                     className="text-content"
                 >
                     { isLoading ? "Recherche..." : "Chercher"}

@@ -6,6 +6,8 @@ import { CardContent } from "@components/common/Card/CardContent"
 
 import { Button } from "@components/form/Button"
 
+import { MessageBox } from "@components/common/MessageBox/MessageBox"
+
 import { 
     MapPin,
     Calendar,
@@ -18,6 +20,7 @@ import {
 } from "lucide-react"
 
 import { useDriveDetail } from "@hook/drive/useDriveDetail"
+import { useJoinDrive } from "@hook/drive/useJoinDrive"
 
 import { formatDate, formatTime } from "@utils/formatters"
 
@@ -26,8 +29,16 @@ export function DriveDetail() {
         drive,
         loading,
         error,
-        // setError
     } = useDriveDetail()
+
+    const {
+        join,
+        loading: joinLoading,
+        error: joinError,
+        setError: setJoinError,
+        success: joinSuccess,
+        setSuccess: setJoinSucces,
+    } = useJoinDrive()
 
     const reviews = [
         {
@@ -71,6 +82,22 @@ export function DriveDetail() {
 
             <Section id="drive-detail" className="drive-detail">
                 <Card className="drive-detail__card">
+
+                    { joinError && (
+                        <MessageBox
+                            variant="error"
+                            message={joinError}
+                            onClose={() => setJoinError(null)}
+                        />
+                    )}
+                    { joinSuccess && (
+                        <MessageBox
+                            variant="success"
+                            message={joinSuccess}
+                            onClose={() => setJoinSucces(null)}
+                        />
+                    )}
+
                     <CardContent>
                         <h3 className="drive-detail__title text-subtitle text-primary text-left">Détail du trajet</h3>
 
@@ -87,7 +114,7 @@ export function DriveDetail() {
                                     <Calendar size={20} className="icon-primary"/>
                                     <div className="drive-detail__info-text">
                                         <p className="text-small text-silent">Date</p>
-                                        <p className="text-content text-primary">{formatDate(drive.departAt)} à {formatTime(drive.departAt)}</p>
+                                        <p className="text-content text-bold text-primary">{formatDate(drive.departAt)} à {formatTime(drive.departAt)}</p>
                                     </div>
                                 </div>
 
@@ -103,7 +130,7 @@ export function DriveDetail() {
                                     <Car size={20} className="icon-primary"/>
                                     <div className="drive-detail__info-text">
                                         <p className="text-small text-silent">Couleur</p>
-                                        <p className="text-content text-primary">{drive.vehicle.color}</p>
+                                        <p className="text-content text-bold text-primary">{drive.vehicle.color}</p>
                                     </div>
                                 </div>
                             </div>
@@ -113,7 +140,7 @@ export function DriveDetail() {
                                     <Hash size={20} className="icon-primary"/>
                                     <div className="drive-detail__info-text">
                                         <p className="text-small text-silent">Référence</p>
-                                        <p className="text-content text-primary">{drive.reference}</p>
+                                        <p className="text-content text-bold text-primary">{drive.reference}</p>
                                     </div>
                                 </div>
 
@@ -129,7 +156,7 @@ export function DriveDetail() {
                                     <Users size={20} className="icon-primary"/>
                                     <div className="drive-detail__info-text">
                                         <p className="text-small text-silent">Participants</p>
-                                        <p className="texrt-content text-primary">{drive.participantsCount}</p>
+                                        <p className="text-content text-bold text-primary">{drive.participantsCount}</p>
                                     </div>
                                 </div>
                             </div>
@@ -138,9 +165,10 @@ export function DriveDetail() {
                         <Button
                             variant="primary"
                             className="drive-detail__button"
-                            onClick={() => {}}
+                            disabled={joinLoading}
+                            onClick={() => join(drive.uuid, drive.owner.uuid)}
                         >
-                            Réserver
+                            { joinLoading ? "Réservation..." : "Réserver" }
                         </Button>
                     </CardContent>
                 </Card>

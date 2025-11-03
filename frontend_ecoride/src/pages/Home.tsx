@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom"
+
 import { Card } from "@components/common/Card/Card"
 import { CardGrid } from "@components/common/Card/CardGrid"
 import { CardIcon } from "@components/common/Card/CardIcon"
@@ -10,20 +12,29 @@ import { SectionMediaGrid } from "@components/common/Section/SectionMediaGrid"
 
 import { DriveSearchCard } from "@components/drive/DriveSearchCard"
 
-
 import { Leaf, TrendingDown, Users, Car } from "lucide-react"
 
 import carpool from "@assets/carpool.jpg"
 import incar from "@assets/incar_trees.jpg"
 import tesla from "@assets/tesla_in_forest.jpg"
+import { PUBLIC_ROUTES } from "@routes/paths"
 
 export function Home () {
+    const navigate = useNavigate()
+
     const handleSearch = (data: {
         from: string;
         to: string;
         date: string
     }) => {
-        console.log("Search drives : ", data)
+        const params = new URLSearchParams({
+            from: data.from,
+            to: data.to,
+            date: data.date,
+            page: "1"
+        })
+
+        navigate(`${PUBLIC_ROUTES.DRIVES.TO}?${params.toString()}`)
     }
 
     return (
