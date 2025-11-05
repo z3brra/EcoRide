@@ -27,7 +27,7 @@ interface LogoutResponse {
     message: string
 }
 
-interface CurrentUserResponse {
+export interface CurrentUserResponse {
     uuid: string
     pseudo: string
     email: string

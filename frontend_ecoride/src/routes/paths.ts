@@ -16,6 +16,6 @@ export const PUBLIC_ROUTES = {
     }
 }
 
-export const USER_ROUTES = {
-    USER: "/user" as const
+export const PROFILE_ROUTES = {
+    PROFILE: "/profile" as const
 }

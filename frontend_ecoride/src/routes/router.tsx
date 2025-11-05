@@ -1,6 +1,6 @@
 import { createBrowserRouter, Outlet } from 'react-router-dom'
 
-import { PUBLIC_ROUTES, USER_ROUTES } from "@routes/paths"
+import { PUBLIC_ROUTES, PROFILE_ROUTES } from "@routes/paths"
 
 import { RootLayout } from '@layout/RootLayout'
 
@@ -18,7 +18,7 @@ import { Login } from '@pages/auth/Login'
 
 import { Register } from '@pages/auth/Register'
 
-import { User } from '@pages/User/User'
+import { Profile } from '@pages/Profile/Profile'
 
 export const router = createBrowserRouter([
     {
@@ -47,14 +47,14 @@ export const router = createBrowserRouter([
                 ]
             },
             {
-                path: USER_ROUTES.USER,
+                path: PROFILE_ROUTES.PROFILE,
                 element: (
                     <RequireAuth>
                         <RootLayout />
                     </RequireAuth>
                 ),
                 children: [
-                    { index: true, element: <User /> },
+                    { index: true, element: <Profile /> },
                 ]
             }
         ]

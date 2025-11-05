@@ -1,6 +1,6 @@
 import type { JSX } from "react"
 import { NavLinkItem } from "@components/common/Navbar/NavLinkItem"
-import { PUBLIC_ROUTES, USER_ROUTES } from "@routes/paths"
+import { PROFILE_ROUTES, PUBLIC_ROUTES, } from "@routes/paths"
 import { useAuth } from "@provider/AuthContext"
 
 export type NavLinksProps = {
@@ -21,7 +21,7 @@ export function NavLinks({
         { to: PUBLIC_ROUTES.DRIVES.TO, label: "Trajets", onClick: onItemClick },
         { to: PUBLIC_ROUTES.CONTACT, label: "Contact", onClick: onItemClick },
         isAuthenticated
-            ? { to: USER_ROUTES.USER, label: "Profil", onClick: onItemClick}
+            ? { to: PROFILE_ROUTES.PROFILE, label: "Profil", onClick: onItemClick}
             : { to: PUBLIC_ROUTES.LOGIN, label: "Connexion", onClick: onItemClick }
     ]
 
