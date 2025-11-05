@@ -5,7 +5,8 @@ import { CardContent } from "@components/common/Card/CardContent"
 import { User, Car, Wallet, Coins } from "lucide-react"
 
 import type { ProfileTab } from "@pages/Profile/Profile"
-import type { CurrentUserResponse } from "@provider/AuthContext"
+
+import type { CurrentUserResponse } from "@models/user"
 
 export type ProfileSidebarProps = {
     user: CurrentUserResponse

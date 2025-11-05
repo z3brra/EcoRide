@@ -10,6 +10,12 @@ import { useNavigate } from "react-router-dom"
 import { postRequest, getRequest } from "@api/request"
 import { Endpoints } from "@api/endpoints"
 
+import type {
+    LoginResponse,
+    LogoutResponse,
+    CurrentUserResponse,
+} from "@models/user"
+
 import {
     clearAttempts,
     isLocked,
@@ -17,30 +23,9 @@ import {
     getRetryInMinutes,
 } from '@utils/loginLock'
 
-interface LoginResponse {
-    uuid: string
-    email: string
-    roles: string[]
-}
-
-interface LogoutResponse {
-    message: string
-}
-
-export interface CurrentUserResponse {
-    uuid: string
-    pseudo: string
-    email: string
-    roles: string[]
-    credits: number
-    isBanned: boolean
-    createdAt: Date
-    updatedAt: Date | null
-    apiToken: string
-}
-
 interface AuthContextType {
     user: CurrentUserResponse | null
+    setUser: React.Dispatch<React.SetStateAction<CurrentUserResponse | null>>
     isAuthenticated: boolean
     loading: boolean
     hasRole: (role: string) => boolean
@@ -63,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode}) {
     const hasAnyRole = (...checks: string[]) => Boolean(user && checks.some(role => user.roles.includes(role)))
 
     useEffect(() => {
-        getRequest<CurrentUserResponse>(Endpoints.ME)
+        getRequest<CurrentUserResponse>(Endpoints.USER)
             .then(setUser)
             .catch(() => setUser(null))
             .finally(() => setLoading(false))
@@ -85,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode}) {
 
             clearAttempts()
 
-            const currentUser = await getRequest<CurrentUserResponse>(Endpoints.ME)
+            const currentUser = await getRequest<CurrentUserResponse>(Endpoints.USER)
             setUser(currentUser)
             navigate('/')
         } catch (error: any) {
@@ -110,6 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode}) {
         <AuthContext.Provider
             value={{
                 user,
+                setUser,
                 isAuthenticated,
                 loading,
                 hasRole,

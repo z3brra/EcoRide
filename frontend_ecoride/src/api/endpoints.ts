@@ -1,7 +1,7 @@
 export const Endpoints = {
     LOGIN: "/auth/login",
     LOGOUT: "/auth/logout",
-    ME: "/user",
+    USER: "/user",
 
     DRIVES: "/drives",
     SEARCH_DRIVE: "/drives/search",

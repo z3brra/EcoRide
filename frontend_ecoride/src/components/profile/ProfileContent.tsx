@@ -1,4 +1,5 @@
 import type { JSX } from "react"
+import { useState } from "react"
 
 import { Card } from "@components/common/Card/Card"
 import { CardContent } from "@components/common/Card/CardContent"
@@ -6,10 +7,16 @@ import { CardContent } from "@components/common/Card/CardContent"
 import { Input } from "@components/form/Input"
 import { Button } from "@components/form/Button"
 
+import { MessageBox } from "@components/common/MessageBox/MessageBox"
+
 import { Star } from "lucide-react"
 
-import type { CurrentUserResponse } from "@provider/AuthContext"
 import type { ProfileTab } from "@pages/Profile/Profile"
+
+import { useUpdateProfile } from "@hook/user/useUpdateProfile"
+import { useBecomeDriver } from "@hook/user/useBecomeDriver"
+
+import type { CurrentUserResponse } from "@models/user"
 
 export type ProfileContentProps = {
     user: CurrentUserResponse
@@ -22,8 +29,72 @@ export function ProfileContent({
     activeTab,
     isDriver
 }: ProfileContentProps): JSX.Element {
+    const [pseudo, setPseudo] = useState<string>(user.pseudo)
+    const [oldPassword, setOldPassword] = useState<string>("")
+    const [newPassword, setNewPassword] = useState<string>("")
+    const [confirmPassword, setConfirmPassword] = useState<string>("")
+
+    const {
+        updateProfile,
+        loading,
+        error,
+        success,
+        setError,
+        setSuccess
+    } = useUpdateProfile()
+
+    const {
+        activateDriver,
+        loading: driverLoading,
+        error: driverError,
+        success: driverSuccess,
+        setError: setDriverError,
+        setSuccess: setDriverSuccess,
+    } = useBecomeDriver()
+
+    const handleSavePseudo = async () => {
+        if (pseudo.trim() === "") {
+            return setError("Le pseudo ne peut pas être vide.")
+        }
+        await updateProfile({ pseudo })
+    }
+
+    const handleBecomeDriver = async () => {
+        await activateDriver()
+    }
+
+    const handleSavePassword = async () => {
+        if (!oldPassword || !newPassword || !confirmPassword) {
+            return setError("Tous les champs sont requis.")
+        }
+        if (newPassword !== confirmPassword) {
+            return setError("Les mots de passe ne correspondent pas.")
+        }
+        await updateProfile({ oldPassword, newPassword })
+        setOldPassword("")
+        setNewPassword("")
+        setConfirmPassword("")
+    }
+
+
     return (
         <div className="profile__content">
+            { error && (
+                <MessageBox variant="error" message={error} onClose={() => setError(null)} />
+            )}
+
+            { success && (
+                <MessageBox variant="success" message={success} onClose={() => setSuccess(null)} />
+            )}
+
+            { driverError && (
+                <MessageBox variant="error" message={driverError} onClose={() => setDriverError(null)} />
+            )}
+
+            { driverSuccess && (
+                <MessageBox variant="success" message={driverSuccess} onClose={() => setDriverSuccess(null)} />
+            )}
+
             { activeTab === "infos" && (
                 <Card className="profile__section">
                     <CardContent gap={1}>
@@ -34,19 +105,25 @@ export function ProfileContent({
                             Mettez à jour les informations relatives à votre compte.
                         </p>
 
-                        <Input label="Pseudo" defaultValue={user.pseudo} />
+                        <Input
+                            label="Pseudo"
+                            value={pseudo}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPseudo(event.currentTarget.value)}
+                        />
                         <div className="profile__actions">
                             { !isDriver && (
                                 <Button
                                     variant="secondary"
-                                    onClick={() => {}}
+                                    disabled={driverLoading}
+                                    onClick={handleBecomeDriver}
                                 >
-                                    Devenir chauffeur
+                                    {driverLoading ? "Activation..." : "Devenir chauffeur"}
                                 </Button>
                             )}
                             <Button
                                 variant="primary"
-                                onClick={() => {}}
+                                disabled={loading}
+                                onClick={handleSavePseudo}
                             >
                                 Sauvegarder
                             </Button>
@@ -65,13 +142,29 @@ export function ProfileContent({
                             Mettez à jour votre mot de passe pour sécuriser votre compte
                         </p>
 
-                        <Input type="password" label="Mot de passe actuel" />
-                        <Input type="password" label="Nouveau mot de passe" />
-                        <Input type="password" label="Confirmer le mot de passe" />
+                        <Input
+                            type="password"
+                            label="Mot de passe actuel"
+                            value={oldPassword}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setOldPassword(event.currentTarget.value)}
+                        />
+                        <Input
+                            type="password"
+                            label="Nouveau mot de passe"
+                            value={newPassword}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setNewPassword(event.currentTarget.value)}
+                        />
+                        <Input
+                            type="password"
+                            label="Confirmer le mot de passe"
+                            value={confirmPassword}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(event.currentTarget.value)}
+                        />
                         <div className="profile__actions">
                             <Button
                                 variant="primary"
-                                onClick={() => {}}
+                                disabled={loading}
+                                onClick={handleSavePassword}
                             >
                                 Sauvegarder
                             </Button>
