@@ -20,9 +20,11 @@ import { usePassengerDrives } from "@hook/user/usePassengerDrives"
 import { useLeaveDrive } from "@hook/drive/useLeaveDrive"
 
 import type { CurrentUserResponse } from "@models/user"
-import { PassengerBookingList } from "./bookings/PassengerBookingList"
 
+import { PassengerBookingList } from "./bookings/PassengerBookingList"
 import { PassengerBookingFilter } from "./bookings/PassengerBookingFilter"
+
+import { VehicleList } from "./vehicles/VehicleList"
 
 export type ProfileContentProps = {
     user: CurrentUserResponse
@@ -248,21 +250,45 @@ export function ProfileContent({
 
             { isDriver && activeTab === "vehicles" && (
                 <Card className="profile__section">
-                    <CardContent direction="row" justify="between" align="center" gap={1}>
-                        <div>
-                            <h3 className="text-subtitle text-primary text-left">
-                                Mes véhicules
-                            </h3>
-                            <p className="text-small text-silent text-left">
-                                Gérez vos véhicules enregistrés.
-                            </p>
+                    {/* <CardContent direction="row" justify="between" align="center" gap={1}> */}
+                    <CardContent gap={1}>
+                        <div className="profile__section-header">
+                            <div>
+                                <h3 className="text-subtitle text-primary text-left">
+                                    Mes véhicules
+                                </h3>
+                                <p className="text-small text-silent text-left">
+                                    Gérez vos véhicules enregistrés.
+                                </p>
+                            </div>
+                            <Button
+                                variant="primary"
+                                onClick={() => {}}
+                            >
+                                Ajouter un véhicule
+                            </Button>
                         </div>
-                        <Button
-                            variant="primary"
-                            onClick={() => {}}
-                        >
-                            Ajouter un véhicule
-                        </Button>
+
+                        <VehicleList
+                            items={[
+                            {
+                                uuid: "v1",
+                                licensePlate: "AB-123-CD",
+                                color: "Bleu",
+                                seats: 4,
+                                isElectric: true,
+                            },
+                            {
+                                uuid: "v2",
+                                licensePlate: "EF-456-GH",
+                                color: "Rouge",
+                                seats: 5,
+                                isElectric: false,
+                            },
+                            ]}
+                            onEdit={(uuid) => console.log("Modifier véhicule :", uuid)}
+                            onDelete={(uuid) => console.log("Supprimer véhicule :", uuid)}
+                        />
                     </CardContent>
                 </Card>
             )}
