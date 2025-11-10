@@ -30,6 +30,24 @@ export interface DriveSeach {
     departAt: string
 }
 
+export interface DriveJoinedFilters {
+    status?: "all" | "open" | "in_progress" | "finished" | "cancelled"
+    when?: "all" | "upcoming" | "past"
+    includeCancelled?: boolean
+    sortDir?: "asc" | "desc"
+    page?: number
+}
+
+export interface DriveJoinedPayload {
+    status?: "open" | "in_progress" | "finished" | "cancelled"
+    when?: "upcoming" | "past"
+    includeCancelled?: boolean
+    sortDir?: "asc" | "desc"
+    page?: number
+}
+
+
+
 // export interface DriveSearchResponse<T> {
 //     data: T[]
 //     total: number

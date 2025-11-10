@@ -27,10 +27,14 @@
 
 @import 'components/form/button';
 @import 'components/form/text-input';
+@import 'components/form/select';
 
 @import 'components/drive/drive-search-card';
 @import 'components/drive/drive-results-placeholder';
 @import 'components/drive/drive-item';
+
+@import 'components/profile/booking';
+@import 'components/profile/booking-filters';
 
 @import 'pages/contact';
 @import 'pages/auth/login';

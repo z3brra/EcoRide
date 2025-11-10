@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react"
 
 import type { Drive, DriveSeach } from "@models/drive"
-import type { PaginatedResponse } from "@components/common/Pagination/Pagination"
+import type { PaginatedResponse } from "@models/pagination"
 
 import { searchDrives } from "@services/driveService"
 

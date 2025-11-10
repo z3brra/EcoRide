@@ -1,5 +1,12 @@
-import type  { PaginatedResponse } from "@components/common/Pagination/Pagination"
-import type { Drive, DriveSeach } from "@models/drive"
+// import type  { PaginatedResponse } from "@components/common/Pagination/Pagination"
+import type { 
+    Drive,
+    DriveSeach,
+    DriveJoinedFilters,
+    DriveJoinedPayload,
+} from "@models/drive"
+
+import type { PaginatedResponse } from "@models/pagination"
 
 import { getRequest, postRequest } from "@api/request"
 import { Endpoints } from "@api/endpoints"
@@ -28,5 +35,49 @@ export async function joinDrive(
     return postRequest<null, { message: string }>(
         `${Endpoints.DRIVES}/${uuid}/join`,
         null
+    )
+}
+
+export async function leaveDrive(
+    uuid: string
+): Promise<{ message: string }> {
+    return postRequest<null, { message: string }>(
+        `${Endpoints.DRIVES}/${uuid}/leave`,
+        null
+    )
+}
+
+
+function buildJoinedPayload(filters: DriveJoinedFilters): DriveJoinedPayload {
+    const payload: DriveJoinedPayload = {}
+
+    if (filters.status && filters.status !== "all") {
+        payload.status = filters.status
+    }
+
+    if (filters.when && filters.when !== "all") {
+        payload.when = filters.when
+    }
+
+    if (filters.includeCancelled) {
+        payload.includeCancelled = true
+    }
+
+    if (filters.sortDir && filters.sortDir !== "asc") {
+        payload.sortDir = filters.sortDir
+    }
+
+    return payload
+}
+
+export async function getJoinedDrives(
+    filters: DriveJoinedFilters = {}
+): Promise<PaginatedResponse<Drive>> {
+    const payload = buildJoinedPayload(filters)
+    const page = filters.page ?? 1
+
+    return postRequest<DriveJoinedPayload, PaginatedResponse<Drive>>(
+        `${Endpoints.USER}/drives/joined?page=${page}`,
+        payload
     )
 }

@@ -15,8 +15,14 @@ import type { ProfileTab } from "@pages/Profile/Profile"
 
 import { useUpdateProfile } from "@hook/user/useUpdateProfile"
 import { useBecomeDriver } from "@hook/user/useBecomeDriver"
+import { usePassengerDrives } from "@hook/user/usePassengerDrives"
+
+import { useLeaveDrive } from "@hook/drive/useLeaveDrive"
 
 import type { CurrentUserResponse } from "@models/user"
+import { PassengerBookingList } from "./bookings/PassengerBookingList"
+
+import { PassengerBookingFilter } from "./bookings/PassengerBookingFilter"
 
 export type ProfileContentProps = {
     user: CurrentUserResponse
@@ -29,6 +35,7 @@ export function ProfileContent({
     activeTab,
     isDriver
 }: ProfileContentProps): JSX.Element {
+
     const [pseudo, setPseudo] = useState<string>(user.pseudo)
     const [oldPassword, setOldPassword] = useState<string>("")
     const [newPassword, setNewPassword] = useState<string>("")
@@ -51,6 +58,26 @@ export function ProfileContent({
         setError: setDriverError,
         setSuccess: setDriverSuccess,
     } = useBecomeDriver()
+
+    const {
+        cancelBooking,
+        loading: leaveLoading,
+        error: leaveError,
+        success: leaveSuccess,
+        setError: setLeaveError,
+        setSuccess: setLeaveSuccess,
+    } = useLeaveDrive()
+
+
+    const {
+        data: bookings,
+        filters,
+        loading: bookingsLoading,
+        error: bookingsError,
+        setError: setBookingsError,
+        changePage,
+        updateFilters,
+    } = usePassengerDrives()
 
     const handleSavePseudo = async () => {
         if (pseudo.trim() === "") {
@@ -76,6 +103,15 @@ export function ProfileContent({
         setConfirmPassword("")
     }
 
+    const handleCancelBooking = async (uuid: string) => {
+        await cancelBooking(uuid)
+        if (!leaveError) {
+            setTimeout(() => {
+                changePage(filters.page ?? 1)
+            }, 500)
+        }
+    }
+
 
     return (
         <div className="profile__content">
@@ -93,6 +129,18 @@ export function ProfileContent({
 
             { driverSuccess && (
                 <MessageBox variant="success" message={driverSuccess} onClose={() => setDriverSuccess(null)} />
+            )}
+
+            { bookingsError && (
+                <MessageBox variant="error" message={bookingsError} onClose={() => setBookingsError(null)} />
+            )}
+
+            { leaveError && (
+                <MessageBox variant="error" message={leaveError} onClose={() => setLeaveError(null)} />
+            )}
+
+            { leaveSuccess && (
+                <MessageBox variant="success" message={leaveSuccess} onClose={() => setLeaveSuccess(null)} />
             )}
 
             { activeTab === "infos" && (
@@ -182,6 +230,18 @@ export function ProfileContent({
                         <p className="text-small text-silent text-left">
                             Voyages auxquels vous avez participé en tant que passager.
                         </p>
+
+                        <PassengerBookingFilter
+                            filters={filters}
+                            onChange={updateFilters}
+                        />
+
+                        <PassengerBookingList
+                            data={bookings}
+                            loading={bookingsLoading || leaveLoading}
+                            onCancel={handleCancelBooking}
+                        />
+
                     </CardContent>
                 </Card>
             )}

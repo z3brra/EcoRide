@@ -36,3 +36,57 @@ export function formatTime(dateString: string | Date): string {
 
     return `${hours}h${minutes}`
 }
+
+export function getStatusLabel(status: string) {
+    switch (status) {
+        case "open":
+            return { text: "En attente", className: "status--open"}
+        case "in_progress":
+            return { text: "En cours", className: "status--in-progress"}
+        case "finished":
+            return { text: "Terminé", className: "status--finished"}
+        case "cancelled": 
+            return { text: "Annulé", className: "status--cancelled"}
+        default:
+            return { text: "Inconnu", className: ""}
+    }
+}
+
+export function formatColor(color: string) {
+    switch (color) {
+        case "BLACK":
+            return { color: "Noir"}
+
+        case "GREY":
+            return { color: "Gris"}
+
+        case "WHITE":
+            return { color: "Blanc"}
+
+        case "BROWN":
+            return { color: "Marron"}
+
+        case "RED":
+            return { color: "Rouge"}
+
+        case "ORANGE":
+            return { color: "Orange"}
+
+        case "YELLOW":
+            return { color: "Jaune"}
+
+        case "GREEN":
+            return { color: "Vert"}
+
+        case "BLUE":
+            return { color: "Bleu"}
+
+        case "PURPLE":
+            return { color: "Violet"}
+
+        case "PINK":
+            return { color: "Rose"}
+        default:
+            return { color: "Inconnue"}
+    }
+}
