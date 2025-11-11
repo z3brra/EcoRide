@@ -1196,11 +1196,14 @@
 .vehicle-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
-.vehicle-list__empty {
-  padding: 1.5rem;
+.vehicle-list__empty, .vehicle-list__loading {
   text-align: center;
+  padding: 2rem;
+  border: 1px solid #BCB8B8;
+  border-radius: 10px;
+  background-color: #F9F9F2;
 }
 
 .vehicle-item {

@@ -19,12 +19,15 @@ import { usePassengerDrives } from "@hook/user/usePassengerDrives"
 
 import { useLeaveDrive } from "@hook/drive/useLeaveDrive"
 
+import { useVehicles } from "@hook/vehicle/useVehicles"
+
 import type { CurrentUserResponse } from "@models/user"
 
 import { PassengerBookingList } from "./bookings/PassengerBookingList"
 import { PassengerBookingFilter } from "./bookings/PassengerBookingFilter"
 
 import { VehicleList } from "./vehicles/VehicleList"
+import { Pagination } from "@components/common/Pagination/Pagination"
 
 export type ProfileContentProps = {
     user: CurrentUserResponse
@@ -74,12 +77,23 @@ export function ProfileContent({
     const {
         data: bookings,
         filters,
+        totalPages: bookingsTotalPages,
         loading: bookingsLoading,
         error: bookingsError,
         setError: setBookingsError,
-        changePage,
+        changePage: changeBookingPage,
         updateFilters,
     } = usePassengerDrives()
+
+    const {
+        data: vehicle,
+        page: vehiclePage,
+        totalPages: vehicleTotalPages,
+        loading: vehicleLoading,
+        error: vehicleError,
+        setError: setVehicleError,
+        changePage: changeVehiclePage,
+    } = useVehicles({ enabled: isDriver })
 
     const handleSavePseudo = async () => {
         if (pseudo.trim() === "") {
@@ -109,7 +123,7 @@ export function ProfileContent({
         await cancelBooking(uuid)
         if (!leaveError) {
             setTimeout(() => {
-                changePage(filters.page ?? 1)
+                changeBookingPage(filters.page ?? 1)
             }, 500)
         }
     }
@@ -143,6 +157,10 @@ export function ProfileContent({
 
             { leaveSuccess && (
                 <MessageBox variant="success" message={leaveSuccess} onClose={() => setLeaveSuccess(null)} />
+            )}
+
+            { isDriver && vehicleError && (
+                <MessageBox variant="error" message={vehicleError} onClose={() => setVehicleError(null)} />
             )}
 
             { activeTab === "infos" && (
@@ -244,6 +262,14 @@ export function ProfileContent({
                             onCancel={handleCancelBooking}
                         />
 
+                        {!bookingsLoading && bookingsTotalPages > 1 && (
+                            <Pagination
+                                currentPage={filters.page!}
+                                totalPages={bookingsTotalPages}
+                                onPageChange={changeBookingPage}
+                            />
+                        )}
+
                     </CardContent>
                 </Card>
             )}
@@ -270,25 +296,19 @@ export function ProfileContent({
                         </div>
 
                         <VehicleList
-                            items={[
-                            {
-                                uuid: "v1",
-                                licensePlate: "AB-123-CD",
-                                color: "Bleu",
-                                seats: 4,
-                                isElectric: true,
-                            },
-                            {
-                                uuid: "v2",
-                                licensePlate: "EF-456-GH",
-                                color: "Rouge",
-                                seats: 5,
-                                isElectric: false,
-                            },
-                            ]}
+                            data={vehicle}
+                            loading={vehicleLoading}
                             onEdit={(uuid) => console.log("Modifier véhicule :", uuid)}
                             onDelete={(uuid) => console.log("Supprimer véhicule :", uuid)}
                         />
+
+                        {!vehicleLoading && vehicleTotalPages > 1 && (
+                            <Pagination
+                                currentPage={vehiclePage}
+                                totalPages={vehicleTotalPages}
+                                onPageChange={changeVehiclePage}
+                            />
+                        )}
                     </CardContent>
                 </Card>
             )}

@@ -17,7 +17,7 @@ export function useDriveSearch() {
     const [hasSearched, setHasSearched] = useState<boolean>(false)
 
     const [criteria, setCriteria] = useState<DriveSeach | null>(null)
-    
+
     const search = useCallback(
         async (payload: DriveSeach, newPage = 1) => {
             setLoading(true)

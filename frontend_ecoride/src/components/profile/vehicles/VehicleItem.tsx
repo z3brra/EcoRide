@@ -2,6 +2,8 @@ import type { JSX } from "react"
 import { Car, SquarePen, Trash2 } from "lucide-react"
 import { Button } from "@components/form/Button"
 
+import { formatColor } from "@utils/formatters"
+
 export type VehicleItemProps = {
     uuid: string
     licensePlate: string
@@ -21,6 +23,8 @@ export function VehicleItem({
     onEdit,
     onDelete
 }: VehicleItemProps): JSX.Element {
+    const vehicleColor = formatColor(color)
+
     return (
         <div className="vehicle-item">
             <div className="vehicle-item__left">
@@ -38,7 +42,7 @@ export function VehicleItem({
                         {licensePlate}
                     </span>
                     <span className="vehicle-item__color text-small text-silent">
-                        Couleur : {color}
+                        {`Couler : ${vehicleColor.color}`}
                     </span>
                     <span className="vehicle-item__seats text-small text-silent">
                         {seats} place{seats > 1 ? "s" : ""}

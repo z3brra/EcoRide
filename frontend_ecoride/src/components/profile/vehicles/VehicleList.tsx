@@ -1,19 +1,33 @@
 import type { JSX } from "react"
 import { VehicleItem } from "./VehicleItem"
-import type { VehicleItemProps } from "./VehicleItem"
+
+import type { Vehicle } from "@models/vehicle"
 
 export type VehicleListProps = {
-    items: VehicleItemProps[]
+    data: Vehicle[]
+    loading: boolean
     onEdit?: (uuid: string) => void
     onDelete?: (uuid: string) => void
 }
 
 export function VehicleList({
-    items,
+    data,
+    loading,
     onEdit,
     onDelete
 }: VehicleListProps): JSX.Element {
-    if (!items || items.length === 0) {
+    if (loading) {
+        return (
+            <div className="vehicle-list__loading">
+                <p className="text-content text-silent">
+                    Chargement des véhicules...
+                </p>
+            </div>
+        )
+    }
+
+
+    if (!data || data.length === 0) {
         return (
             <div className="vehicle-list__empty">
                 <p className="text-content text-silent">
@@ -25,10 +39,14 @@ export function VehicleList({
 
     return (
         <div className="vehicle-list">
-            { items.map((vehicle) => (
+            { data.map((vehicle) => (
                 <VehicleItem
                     key={vehicle.uuid}
-                    {...vehicle}
+                    uuid={vehicle.uuid}
+                    licensePlate={vehicle.licensePlate}
+                    color={vehicle.color}
+                    seats={vehicle.seats}
+                    isElectric={vehicle.isElectric}
                     onEdit={onEdit}
                     onDelete={onDelete}
                 />

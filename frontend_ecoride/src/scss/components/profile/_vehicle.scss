@@ -1,11 +1,14 @@
 .vehicle-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
 
-    &__empty {
-        padding: 1.5rem;
+    &__empty, &__loading {
         text-align: center;
+        padding: 2rem;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        background-color: $background;
     }
 }
 
