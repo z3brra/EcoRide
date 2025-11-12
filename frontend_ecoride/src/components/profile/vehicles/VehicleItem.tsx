@@ -42,7 +42,7 @@ export function VehicleItem({
                         {licensePlate}
                     </span>
                     <span className="vehicle-item__color text-small text-silent">
-                        {`Couler : ${vehicleColor.color}`}
+                        {`Couleur : ${vehicleColor.color}`}
                     </span>
                     <span className="vehicle-item__seats text-small text-silent">
                         {seats} place{seats > 1 ? "s" : ""}

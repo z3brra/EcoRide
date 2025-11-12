@@ -51,5 +51,6 @@ export function useVehicles(options: { enabled?: boolean} = {}) {
         error,
         setError,
         changePage,
+        refresh: fetchVehicles
     }
 }

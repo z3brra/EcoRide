@@ -10,3 +10,17 @@ export interface Vehicle {
     ownerPseudo: string
 }
 
+export interface CreateVehicle {
+    licensePlate: string
+    firstLicenseDate: string
+    isElectric: boolean
+    color: string
+    seats: number
+}
+
+export interface UpdateVehicle {
+    firstLicenseDate: string
+    isElectric: boolean
+    color: string
+    seats: number
+}
