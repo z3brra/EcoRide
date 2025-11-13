@@ -64,6 +64,20 @@
     margin-top: 1.5rem;
 }
 
+.text-error {
+    color: $delete;
+}
+
+.text-success {
+    color: $primary;
+}
+
+.form__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 @keyframes modal-fade-in {
     from {
         opacity: 0;

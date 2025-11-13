@@ -611,6 +611,20 @@
   margin-top: 1.5rem;
 }
 
+.text-error {
+  color: #E84E48;
+}
+
+.text-success {
+  color: #5A7C17;
+}
+
+.form__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 @keyframes modal-fade-in {
   from {
     opacity: 0;
