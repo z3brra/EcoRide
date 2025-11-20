@@ -11,7 +11,7 @@ services:
         expose:
             - "9002"
         ports:
-            - "9002:9002"
+            - "9002:9000"
         volumes:
             - ../backend_ecoride/public/images:/var/www/api/public/images
 
