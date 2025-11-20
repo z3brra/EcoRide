@@ -1,0 +1,136 @@
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    &__empty, &__loading {
+        text-align: center;
+        padding: 2rem;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        background-color: $background;
+    }
+}
+
+.booking-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    background-color: $background;
+    padding: 1.5rem;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: $background-darker;
+    }
+
+    &__top {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+
+        @include tablet {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    &__left {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    &__route {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    &__details {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+
+        @include mobile {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.4rem;
+        }
+    }
+
+    &__detail {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+
+        @include mobile {
+            // flex-direction: column;
+            align-items: flex-start;
+            gap: 0.2rem;
+        }
+    }
+
+    &__driver {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+
+        @include mobile {
+            // flex-direction: column;
+            align-items: flex-start;
+            gap: 0.2rem;
+        }
+    }
+
+    &__color {
+        font-style: italic;
+    }
+
+    &__right {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    &__status {
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: capitalize;
+
+        &.status--open {
+            background-color: $blue-label-bg;
+            color: $blue-label-fg;
+        }
+
+        &.status--in-progress {
+            background-color: $yellow-label-bg;
+            color: $yellow-label-fg;
+        }
+
+        &.status--finished {
+            background-color: $green-label-bg;
+            color: $green-label-fg;
+        }
+
+        &.status--cancelled {
+            background-color: $red-label-bg;
+            color: $red-label-fg;
+        }
+    }
+
+    &__bottom {
+        display: flex;
+        justify-content: center;
+        border-top: 1px solid $border-color;
+        padding-top: 1rem;
+    }
+
+    &__cancel {
+        font-size: 0.9rem;
+    }
+}

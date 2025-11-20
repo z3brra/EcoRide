@@ -1,0 +1,27 @@
+.main-content {
+    display: flex;
+    flex-direction: column;
+    // margin-left: dashboard-side-menu-width(default);
+    padding: 2rem 10rem;
+    min-height: 100vh;
+    background: linear-gradient(0deg, $background 0%, $test-gradient 100%);
+
+    > #footer {
+        margin-top: auto;
+    }
+
+    @include tablet {
+        // min-height: calc(100vh - mobile-header-menu-height(tablet));
+        // height: calc(100vh - mobile-header-menu-height(tablet));
+        // margin-top: mobile-header-menu-height(tablet);
+        margin-left: 0;
+        padding: 2rem;
+    }
+
+    @include mobile {
+        // min-height: calc(100vh - mobile-header-menu-height(tablet));
+        margin-left: 0;
+        padding: 2rem;
+        // padding: calc(mobile-header-menu-height(mobile) + 2rem) 2rem 2rem 2rem;
+    }
+}

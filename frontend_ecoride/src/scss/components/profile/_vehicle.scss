@@ -1,0 +1,78 @@
+.vehicle-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    &__empty, &__loading {
+        text-align: center;
+        padding: 2rem;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        background-color: $background;
+    }
+}
+
+.vehicle-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    background-color: $background;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: $background-darker;
+    }
+
+    &__left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: rgba($primary, 0.2);
+        color: $primary;
+    }
+
+    &__infos {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    &__label {
+        background-color: rgba($secondary, 0.2);
+        color: $secondary;
+        font-size: 0.85rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 0.5rem;
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    @include tablet {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    @include mobile {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+}

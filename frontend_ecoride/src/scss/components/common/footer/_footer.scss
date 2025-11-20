@@ -1,0 +1,48 @@
+.footer {
+    width: 100%;
+    // background-color: $background;
+    // padding: 1rem 2rem;
+    // box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    // position: sticky;
+    // top: 0;
+    // z-index: 10;
+    &__container-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid $border-color;
+        padding: 2rem;
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+
+            &__icon {
+                color: $primary;
+            }
+
+            &__title {
+                color: $primary;
+            }
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: row;
+            gap: 1.5rem;
+        }
+
+    }
+
+    &__container-down {
+        display: flex;
+        justify-content: center;
+        // .mention {
+
+        // }
+    }
+
+
+}

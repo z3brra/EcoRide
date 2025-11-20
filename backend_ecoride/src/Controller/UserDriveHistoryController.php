@@ -27,7 +27,7 @@ final class UserDriveHistoryController extends AbstractController
         private AccessControlService $accessControl,
     ) {}
 
-    #[Route('/owned', name: 'owned', methods: 'GET')]
+    #[Route('/owned', name: 'owned', methods: 'POST')]
     public function owned(
         Request $request,
         ListDrivePaginatedService $listDriveService,
@@ -80,7 +80,7 @@ final class UserDriveHistoryController extends AbstractController
         }
     }
 
-    #[Route('/joined', name: 'joined', methods: 'GET')]
+    #[Route('/joined', name: 'joined', methods: 'POST')]
     public function joined(
         Request $request,
         ListDrivePaginatedService $listDriveService

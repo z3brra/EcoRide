@@ -1,0 +1,14 @@
+.return-link {
+    text-decoration: none;
+
+    &:hover {
+        color: $primary-text-fg;
+    }
+
+    &__item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+    }
+}

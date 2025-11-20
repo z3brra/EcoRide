@@ -1,0 +1,71 @@
+@import 'mixins/mixins';
+
+@import 'settings/variables';
+@import 'settings/typography';
+@import 'settings/fonts';
+
+@import 'functions/sizeFunctions';
+
+@import 'layout/container';
+
+
+@import 'components/common/navbar/navbar';
+
+@import 'components/common/section';
+@import 'components/common/section-header';
+@import 'components/common/section-media';
+
+@import 'components/common/footer/footer';
+
+@import 'components/common/card/card';
+
+@import 'components/common/messagebox/message-box';
+
+@import 'components/common/return-link';
+
+@import 'components/common/modal/modal';
+
+@import 'components/pagination/pagination';
+
+@import 'components/form/button';
+@import 'components/form/text-input';
+@import 'components/form/select';
+
+@import 'components/drive/drive-search-card';
+@import 'components/drive/drive-results-placeholder';
+@import 'components/drive/drive-item';
+
+@import 'components/profile/booking';
+@import 'components/profile/booking-filters';
+@import 'components/profile/vehicle';
+
+@import 'pages/contact';
+@import 'pages/auth/login';
+
+// @import 'pages/drive/drive-detail';
+@import 'pages/drive/drive-detail';
+
+@import 'pages/profile/profile';
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    &::-webkit-scrollbar {
+        width: 4px;
+        background-color: $menu-background;
+    }
+    &::-webkit-scrollbar-button {
+        display: none;
+        height: 0;
+        width: 0;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: $menu-background;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: $border-color;
+        border-radius: 4px;
+    }
+}
