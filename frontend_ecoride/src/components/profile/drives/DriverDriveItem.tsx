@@ -7,7 +7,7 @@ import { formatDate, formatTime, getStatusLabel } from "@utils/formatters"
 import type { ReservationStatus } from "@models/status"
 
 export type DriverDriveItemProps = {
-    uuid: string
+    // uuid: string
     depart: string
     arrived: string
     departAt: string
@@ -17,7 +17,7 @@ export type DriverDriveItemProps = {
 }
 
 export function DriverDriveItem({
-    uuid,
+    // uuid,
     depart,
     arrived,
     departAt,
