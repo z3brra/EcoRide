@@ -5,7 +5,12 @@ RUN apt-get update && apt-get install -y \
     git \
     unzip \
     libzip-dev \
+    pkg-config \
+    libssl-dev \
     && docker-php-ext-install pdo_mysql zip
+
+RUN pecl install mongodb \
+    && docker-php-ext-enable mongodb
 
 RUN sed -i 's|listen = 127.0.0.1:9000|listen = 0.0.0.0:9000|' /usr/local/etc/php-fpm.d/www.conf
 
