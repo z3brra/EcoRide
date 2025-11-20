@@ -120,11 +120,15 @@
     color: $silent-text-fg;
 
     &.active {
-        color: $primary;
+        color: $secondary;
+        border-bottom: 2px solid $secondary;
+        padding-bottom: 0.2rem;
     }
 
     &:hover {
-        color: $secondary;
+        color: $primary;
+        border-bottom: 2px solid $primary;
+        padding-bottom: 0.2rem;
     }
 
 }

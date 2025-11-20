@@ -3,8 +3,6 @@ import type { JSX } from "react"
 import { Card } from "@components/common/Card/Card"
 import { CardContent } from "@components/common/Card/CardContent"
 
-import { Button } from "@components/form/Button"
-
 import { Star } from "lucide-react"
 
 import type { ProfileTab } from "@pages/Profile/Profile"
@@ -15,6 +13,7 @@ import { ProfilInfosSection } from "./sections/ProfileInfosSection"
 import { ProfileSecuritySection } from "./sections/ProfileSecuritySection"
 import { ProfileBookingSection } from "./sections/ProfileBookingsSection"
 import { ProfileVehiclesSection } from "./sections/ProfileVehiclesSection"
+import { ProfileDrivesSection } from "./sections/ProfileDrivesSection"
 
 export type ProfileContentProps = {
     user: CurrentUserResponse
@@ -34,27 +33,7 @@ export function ProfileContent({
             { activeTab === "security" && <ProfileSecuritySection /> }
             { activeTab === "bookings" && <ProfileBookingSection /> }
             { isDriver && activeTab === "vehicles" && <ProfileVehiclesSection isDriver={isDriver} /> }
-
-            { isDriver && activeTab === "drives" && (
-                <Card className="profile__section">
-                    <CardContent direction="row" justify="between" align="center" gap={1}>
-                        <div>
-                            <h3 className="text-subtitle text-primary text-left">
-                                Mes trajets
-                            </h3>
-                            <p className="text-small text-silent text-left">
-                                Gérez vos trajets en covoiturage.
-                            </p>
-                        </div>
-                        <Button
-                            variant="primary"
-                            onClick={() => {}}
-                        >
-                            Créer un trajet
-                        </Button>
-                    </CardContent>
-                </Card>
-            )}
+            { isDriver && activeTab === "drives" && <ProfileDrivesSection /> }
 
             { isDriver && activeTab === "reviews" && (
                 <Card className="profile__section">

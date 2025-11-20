@@ -260,10 +260,14 @@
   color: #767675;
 }
 .navlink.active {
-  color: #5A7C17;
+  color: #D97734;
+  border-bottom: 2px solid #D97734;
+  padding-bottom: 0.2rem;
 }
 .navlink:hover {
-  color: #D97734;
+  color: #5A7C17;
+  border-bottom: 2px solid #5A7C17;
+  padding-bottom: 0.2rem;
 }
 
 .section {

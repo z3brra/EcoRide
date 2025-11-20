@@ -46,7 +46,23 @@ export interface DriveJoinedPayload {
     page?: number
 }
 
+export interface DriverOwnedFilters {
+    status?: "all" | "open" | "in_progress" | "finished" | "cancelled"
+    depart?: string
+    arrived?: string
+    includeCancelled?: boolean
+    sortDir?: "asc" | "desc"
+    page?: number
+}
 
+export interface DriverOwnedPayload {
+    status?: "open" | "in_progress" | "finished" | "cancelled"
+    depart?: string
+    arrived?: string
+    includeCancelled?: boolean
+    sortDir?: "asc" | "desc"
+    page?: number
+}
 
 // export interface DriveSearchResponse<T> {
 //     data: T[]

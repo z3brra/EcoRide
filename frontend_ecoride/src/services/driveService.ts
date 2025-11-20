@@ -4,6 +4,8 @@ import type {
     DriveSeach,
     DriveJoinedFilters,
     DriveJoinedPayload,
+    DriverOwnedFilters,
+    DriverOwnedPayload
 } from "@models/drive"
 
 import type { PaginatedResponse } from "@models/pagination"
@@ -70,6 +72,7 @@ function buildJoinedPayload(filters: DriveJoinedFilters): DriveJoinedPayload {
     return payload
 }
 
+
 export async function getJoinedDrives(
     filters: DriveJoinedFilters = {}
 ): Promise<PaginatedResponse<Drive>> {
@@ -78,6 +81,43 @@ export async function getJoinedDrives(
 
     return postRequest<DriveJoinedPayload, PaginatedResponse<Drive>>(
         `${Endpoints.USER}/drives/joined?page=${page}`,
+        payload
+    )
+}
+
+function buildOwnedPayload(filters: DriverOwnedFilters): DriverOwnedPayload {
+    const payload: DriverOwnedPayload = {}
+
+    if (filters.status && filters.status !== "all") {
+        payload.status = filters.status
+    }
+
+    if (filters.depart) {
+        payload.depart = filters.depart
+    }
+
+    if (filters.arrived) {
+        payload.arrived = filters.arrived
+    }
+
+    if (filters.includeCancelled) {
+        payload.includeCancelled = true
+    }
+
+    if (filters.sortDir && filters.sortDir !== "asc") {
+        payload.sortDir = filters.sortDir
+    }
+
+    return payload
+}
+
+export async function getOwnedDrives(
+    filters: DriverOwnedFilters = {}
+): Promise<PaginatedResponse<Drive>> {
+    const payload = buildOwnedPayload(filters)
+    const page = filters.page ?? 1
+    return postRequest<DriverOwnedPayload, PaginatedResponse<Drive>>(
+        `${Endpoints.USER}/drives/owned?page=${page}`,
         payload
     )
 }

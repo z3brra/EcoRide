@@ -1,3 +1,5 @@
+import type { ReservationStatus } from "@models/status"
+
 export function formatDate(dateString: string | Date): string {
     const newDate = new Date(dateString)
     if (isNaN(newDate.getTime())) {
@@ -37,7 +39,7 @@ export function formatTime(dateString: string | Date): string {
     return `${hours}h${minutes}`
 }
 
-export function getStatusLabel(status: string) {
+export function getStatusLabel(status: ReservationStatus) {
     switch (status) {
         case "open":
             return { text: "En attente", className: "status--open"}
