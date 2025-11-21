@@ -71,6 +71,7 @@ export function DriverDrivesFilter({
 
             <button
                 className="booking-filters__sort"
+                onClick={() => handleChange("sortDir", filters.sortDir === "asc" ? "desc" : "asc")}
             >
                 <ArrowUpDown size={16} />
                 <span className="text-small">

@@ -1,6 +1,6 @@
 import { deleteRequest, getRequest, postRequest, putRequest } from "@api/request"
 import { Endpoints } from "@api/endpoints"
-import type { CreateVehicle, UpdateVehicle, Vehicle } from "@models/vehicle"
+import type { CreateVehicle, UpdateVehicle, Vehicle, AllVehiculeResponse} from "@models/vehicle"
 import type { PaginatedResponse } from "@models/pagination"
 
 export async function getVehicles(
@@ -35,5 +35,11 @@ export async function deleteVehicle(
 ): Promise<void> {
     return deleteRequest<void>(
         `${Endpoints.VEHICLE}/${uuid}`
+    )
+}
+
+export async function fetchAllVehicles(): Promise<AllVehiculeResponse> {
+    return getRequest<AllVehiculeResponse>(
+        `${Endpoints.VEHICLE}/all`
     )
 }

@@ -51,6 +51,16 @@ class VehicleRepository extends ServiceEntityRepository
         ];
     }
 
+    public function findAllCurrentUser(UserInterface $owner): array
+    {
+        return $this->createQueryBuilder('vehicle')
+            ->where('vehicle.owner = :owner')
+            ->setParameter('owner', $owner)
+            ->orderBy('vehicle.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Vehicle[] Returns an array of Vehicle objects
     //     */

@@ -5,7 +5,8 @@ import type {
     DriveJoinedFilters,
     DriveJoinedPayload,
     DriverOwnedFilters,
-    DriverOwnedPayload
+    DriverOwnedPayload,
+    CreateDrivePayload
 } from "@models/drive"
 
 import type { PaginatedResponse } from "@models/pagination"
@@ -118,6 +119,15 @@ export async function getOwnedDrives(
     const page = filters.page ?? 1
     return postRequest<DriverOwnedPayload, PaginatedResponse<Drive>>(
         `${Endpoints.USER}/drives/owned?page=${page}`,
+        payload
+    )
+}
+
+export async function createDrive(
+    payload: CreateDrivePayload
+): Promise<Drive> {
+    return postRequest<CreateDrivePayload, Drive>(
+        `${Endpoints.DRIVES}`,
         payload
     )
 }

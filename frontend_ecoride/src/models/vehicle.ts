@@ -24,3 +24,8 @@ export interface UpdateVehicle {
     color: string
     seats: number
 }
+
+export interface AllVehiculeResponse {
+    data: Vehicle[]
+    total: number
+}
