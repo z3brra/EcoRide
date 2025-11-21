@@ -42,21 +42,21 @@ export function DriverDriveItem({
 
                     <div className="booking-item__details">
                         <div className="booking-item__detail">
-                            <Calendar className="icon-secondary" size={16} />
+                            <Calendar className="icon-primary" size={16} />
                             <span className="text-content text-silent">
                                 {formattedDate}
                             </span>
                         </div>
 
                         <div className="booking-item__detail">
-                            <Clock className="icon-secondary" size={16} />
+                            <Clock className="icon-primary" size={16} />
                             <span className="text-content text-silent">
                                 {formattedTime}
                             </span>
                         </div>
 
                         <div className="booking-item__detail">
-                            <Coins className="icon-secondary" size={16} />
+                            <Coins className="icon-primary" size={16} />
                             <span className="text-content text-silent">
                                 {price}
                             </span>
