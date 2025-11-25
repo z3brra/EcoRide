@@ -12,7 +12,7 @@ import type {
 
 import type { PaginatedResponse } from "@models/pagination"
 
-import { getRequest, postRequest, putRequest } from "@api/request"
+import { deleteRequest, getRequest, postRequest, putRequest } from "@api/request"
 import { Endpoints } from "@api/endpoints"
 
 export async function searchDrives(
@@ -149,5 +149,13 @@ export async function startDrive(
     return postRequest<null, void>(
         `${Endpoints.DRIVES}/${uuid}/start`,
         null
+    )
+}
+
+export async function cancelOwnedDrive(
+    uuid: string
+): Promise<void> {
+    return deleteRequest<void>(
+        `${Endpoints.DRIVES}/${uuid}`
     )
 }

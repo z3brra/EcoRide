@@ -13,6 +13,7 @@ import { MessageBox } from "@components/common/MessageBox/MessageBox"
 
 import { EditDriveModal } from "@components/profile/drives/EditDriveModal"
 import { StartDriveModal } from "@components/profile/drives/StartDriveModal"
+import { CancelDriveModal } from "@components/profile/drives/CancelDriveModal"
 
 import {
     MapPin,
@@ -33,6 +34,7 @@ import { PROFILE_ROUTES } from "@routes/paths"
 import { useDriveDetail } from "@hook/drive/useDriveDetail"
 import { useUpdateDrive } from "@hook/drive/useUpdateDrive"
 import { useStartDrive } from "@hook/drive/useStartDrive"
+import { useCancelDrive } from "@hook/drive/useCancelDrive"
 
 
 export function ProfileDriveDetail(): JSX.Element {
@@ -40,6 +42,7 @@ export function ProfileDriveDetail(): JSX.Element {
 
     const [updateOpen, setUpdateOpen] = useState<boolean>(false)
     const [startOpen, setStartOpen] = useState<boolean>(false)
+    const [cancelOpen, setCancelOpen] = useState<boolean>(false)
 
     const {
         submit: updateDrive,
@@ -58,6 +61,15 @@ export function ProfileDriveDetail(): JSX.Element {
         setError: setStartError,
         setSuccess: setStartSuccess
     } = useStartDrive()
+
+    const {
+        submit: cancelDrive,
+        loading: cancelLoading,
+        error: cancelError,
+        success: cancelSuccess,
+        setError: setCancelError,
+        setSuccess: setCancelSuccess
+    } = useCancelDrive()
 
     const handleUpdateDrive = async (payload: { departAt: string; arrivedAt: string }) => {
         if (!drive) {
@@ -81,6 +93,19 @@ export function ProfileDriveDetail(): JSX.Element {
 
         if (!startError) {
             setStartOpen(false)
+            refresh()
+        }
+    }
+
+    const handleCancel = async () => {
+        if (!drive) {
+            return
+        }
+
+        await cancelDrive(drive.uuid)
+
+        if (!cancelError) {
+            setCancelOpen(false)
             refresh()
         }
     }
@@ -128,6 +153,15 @@ export function ProfileDriveDetail(): JSX.Element {
             { startSuccess && (
                 <MessageBox variant="success" message={startSuccess} onClose={() => setStartSuccess(null)} />
             )}
+
+            { cancelError && (
+                <MessageBox variant="error" message={cancelError} onClose={() => setCancelError(null)} />
+            )}
+
+            { cancelSuccess && (
+                <MessageBox variant="success" message={cancelSuccess} onClose={() => setCancelSuccess(null)} />
+            )}
+
 
             <Section id="return">
                 <ReturnLink to={PROFILE_ROUTES.PROFILE} />
@@ -246,7 +280,7 @@ export function ProfileDriveDetail(): JSX.Element {
                                 <Button
                                     variant="delete"
                                     icon={<Ban size={18}/>}
-                                    onClick={() => {}}
+                                    onClick={() => setCancelOpen(true)}
                                 >
                                     Annuler le trajet
                                 </Button>
@@ -294,6 +328,13 @@ export function ProfileDriveDetail(): JSX.Element {
                 onClose={() => setStartOpen(false)}
                 onConfirm={handleStart}
                 loading={startLoading}
+            />
+
+            <CancelDriveModal
+                isOpen={cancelOpen}
+                onClose={() => setCancelOpen(false)}
+                onConfirm={handleCancel}
+                loading={cancelLoading}
             />
         </>
     )
