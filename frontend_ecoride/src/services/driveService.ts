@@ -142,3 +142,12 @@ export async function updateDrive(
         payload
     )
 }
+
+export async function startDrive(
+    uuid: string
+): Promise<void> {
+    return postRequest<null, void>(
+        `${Endpoints.DRIVES}/${uuid}/start`,
+        null
+    )
+}

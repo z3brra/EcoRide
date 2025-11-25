@@ -9,7 +9,10 @@ import { Card } from "@components/common/Card/Card"
 import { CardContent } from "@components/common/Card/CardContent"
 import { Button } from "@components/form/Button"
 
+import { MessageBox } from "@components/common/MessageBox/MessageBox"
+
 import { EditDriveModal } from "@components/profile/drives/EditDriveModal"
+import { StartDriveModal } from "@components/profile/drives/StartDriveModal"
 
 import {
     MapPin,
@@ -20,7 +23,8 @@ import {
     Users,
     PlayCircle,
     Ban,
-    PenSquare
+    PenSquare,
+    BookmarkCheck
 } from "lucide-react"
 
 import { formatDate, formatTime, formatColor, getStatusLabel } from "@utils/formatters"
@@ -28,12 +32,14 @@ import { PROFILE_ROUTES } from "@routes/paths"
 
 import { useDriveDetail } from "@hook/drive/useDriveDetail"
 import { useUpdateDrive } from "@hook/drive/useUpdateDrive"
-import { MessageBox } from "@components/common/MessageBox/MessageBox"
+import { useStartDrive } from "@hook/drive/useStartDrive"
+
 
 export function ProfileDriveDetail(): JSX.Element {
     const { drive, loading, error, refresh } = useDriveDetail()
 
     const [updateOpen, setUpdateOpen] = useState<boolean>(false)
+    const [startOpen, setStartOpen] = useState<boolean>(false)
 
     const {
         submit: updateDrive,
@@ -44,6 +50,15 @@ export function ProfileDriveDetail(): JSX.Element {
         setSuccess: setUpdateSuccess
     } = useUpdateDrive()
 
+    const {
+        submit: startDrive,
+        loading: startLoading,
+        error: startError,
+        success: startSuccess,
+        setError: setStartError,
+        setSuccess: setStartSuccess
+    } = useStartDrive()
+
     const handleUpdateDrive = async (payload: { departAt: string; arrivedAt: string }) => {
         if (!drive) {
             return
@@ -53,6 +68,19 @@ export function ProfileDriveDetail(): JSX.Element {
 
         if (!updateError) {
             setUpdateOpen(false)
+            refresh()
+        }
+    }
+
+    const handleStart = async () => {
+        if (!drive) {
+            return
+        }
+
+        await startDrive(drive.uuid)
+
+        if (!startError) {
+            setStartOpen(false)
             refresh()
         }
     }
@@ -81,6 +109,7 @@ export function ProfileDriveDetail(): JSX.Element {
     const canStart = drive.status === "open"
     const canEdit = drive.status === "open"
     const canCancel = drive.status === "open"
+    const canFinish = drive.status === "in_progress"
 
     return (
         <>
@@ -90,6 +119,14 @@ export function ProfileDriveDetail(): JSX.Element {
 
             { updateSuccess && (
                 <MessageBox variant="success" message={updateSuccess} onClose={()  => setUpdateSuccess(null)} />
+            )}
+
+            { startError && (
+                <MessageBox variant="error" message={startError} onClose={() => setStartError(null)} />
+            )}
+
+            { startSuccess && (
+                <MessageBox variant="success" message={startSuccess} onClose={() => setStartSuccess(null)} />
             )}
 
             <Section id="return">
@@ -199,7 +236,7 @@ export function ProfileDriveDetail(): JSX.Element {
                                 <Button
                                     variant="primary"
                                     icon={<PlayCircle size={18}/>}
-                                    onClick={() => {}}
+                                    onClick={() => setStartOpen(true)}
                                 >
                                     Démarrer le trajet
                                 </Button>
@@ -214,6 +251,17 @@ export function ProfileDriveDetail(): JSX.Element {
                                     Annuler le trajet
                                 </Button>
                             )}
+
+                            { canFinish && (
+                                <Button
+                                    variant="secondary"
+                                    icon={<BookmarkCheck size={18}/>}
+                                    onClick={() => {}}
+                                >
+                                    Terminer le trajet
+                                </Button>
+                            )}
+
                         </div>
                     </CardContent>
                 </Card>
@@ -239,6 +287,13 @@ export function ProfileDriveDetail(): JSX.Element {
                 onClose={() => setUpdateOpen(false)}
                 onSubmit={handleUpdateDrive}
                 loading={updateLoading}
+            />
+
+            <StartDriveModal
+                isOpen={startOpen}
+                onClose={() => setStartOpen(false)}
+                onConfirm={handleStart}
+                loading={startLoading}
             />
         </>
     )
