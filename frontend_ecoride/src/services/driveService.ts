@@ -1,4 +1,3 @@
-// import type  { PaginatedResponse } from "@components/common/Pagination/Pagination"
 import type { 
     Drive,
     DriveSeach,
@@ -157,5 +156,14 @@ export async function cancelOwnedDrive(
 ): Promise<void> {
     return deleteRequest<void>(
         `${Endpoints.DRIVES}/${uuid}`
+    )
+}
+
+export async function finishDrive(
+    uuid: string
+): Promise<void> {
+    return postRequest<null, void>(
+        `${Endpoints.DRIVES}/${uuid}/finish`,
+        null
     )
 }

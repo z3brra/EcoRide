@@ -14,6 +14,7 @@ import { MessageBox } from "@components/common/MessageBox/MessageBox"
 import { EditDriveModal } from "@components/profile/drives/EditDriveModal"
 import { StartDriveModal } from "@components/profile/drives/StartDriveModal"
 import { CancelDriveModal } from "@components/profile/drives/CancelDriveModal"
+import { FinishDriveModal } from "@components/profile/drives/FinishDriveModal"
 
 import {
     MapPin,
@@ -35,7 +36,7 @@ import { useDriveDetail } from "@hook/drive/useDriveDetail"
 import { useUpdateDrive } from "@hook/drive/useUpdateDrive"
 import { useStartDrive } from "@hook/drive/useStartDrive"
 import { useCancelDrive } from "@hook/drive/useCancelDrive"
-
+import { useFinishDrive } from "@hook/drive/useFinishDrive"
 
 export function ProfileDriveDetail(): JSX.Element {
     const { drive, loading, error, refresh } = useDriveDetail()
@@ -43,6 +44,7 @@ export function ProfileDriveDetail(): JSX.Element {
     const [updateOpen, setUpdateOpen] = useState<boolean>(false)
     const [startOpen, setStartOpen] = useState<boolean>(false)
     const [cancelOpen, setCancelOpen] = useState<boolean>(false)
+    const [finishOpen, setFinishOpen] = useState<boolean>(false)
 
     const {
         submit: updateDrive,
@@ -70,6 +72,15 @@ export function ProfileDriveDetail(): JSX.Element {
         setError: setCancelError,
         setSuccess: setCancelSuccess
     } = useCancelDrive()
+
+    const {
+        submit: finishDrive,
+        loading: finishLoading,
+        error: finishError,
+        success: finishSuccess,
+        setError: setFinishError,
+        setSuccess: setFinishSuccess
+    } = useFinishDrive()
 
     const handleUpdateDrive = async (payload: { departAt: string; arrivedAt: string }) => {
         if (!drive) {
@@ -106,6 +117,19 @@ export function ProfileDriveDetail(): JSX.Element {
 
         if (!cancelError) {
             setCancelOpen(false)
+            refresh()
+        }
+    }
+
+    const handleFinish = async () => {
+        if (!drive) {
+            return
+        }
+        
+        await finishDrive(drive.uuid)
+
+        if (!finishError) {
+            setFinishOpen(false)
             refresh()
         }
     }
@@ -160,6 +184,14 @@ export function ProfileDriveDetail(): JSX.Element {
 
             { cancelSuccess && (
                 <MessageBox variant="success" message={cancelSuccess} onClose={() => setCancelSuccess(null)} />
+            )}
+
+            { finishError && (
+                <MessageBox variant="error" message={finishError} onClose={() => setFinishError(null)} />
+            )}
+
+            { finishSuccess && (
+                <MessageBox variant="success" message={finishSuccess} onClose={() => setFinishSuccess(null)} />
             )}
 
 
@@ -290,7 +322,7 @@ export function ProfileDriveDetail(): JSX.Element {
                                 <Button
                                     variant="secondary"
                                     icon={<BookmarkCheck size={18}/>}
-                                    onClick={() => {}}
+                                    onClick={() => setFinishOpen(true)}
                                 >
                                     Terminer le trajet
                                 </Button>
@@ -335,6 +367,13 @@ export function ProfileDriveDetail(): JSX.Element {
                 onClose={() => setCancelOpen(false)}
                 onConfirm={handleCancel}
                 loading={cancelLoading}
+            />
+
+            <FinishDriveModal
+                isOpen={finishOpen}
+                onClose={() => setFinishOpen(false)}
+                onConfirm={handleFinish}
+                loading={finishLoading}
             />
         </>
     )
