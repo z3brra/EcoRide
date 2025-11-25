@@ -39,7 +39,7 @@ export function formatTime(dateString: string | Date): string {
     return `${hours}h${minutes}`
 }
 
-export function getStatusLabel(status: ReservationStatus) {
+export function getStatusLabel(status: ReservationStatus | string) {
     switch (status) {
         case "open":
             return { text: "En attente", className: "status--open"}

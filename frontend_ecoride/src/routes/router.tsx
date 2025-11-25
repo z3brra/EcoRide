@@ -19,6 +19,7 @@ import { Login } from '@pages/auth/Login'
 import { Register } from '@pages/auth/Register'
 
 import { Profile } from '@pages/Profile/Profile'
+import { ProfileDriveDetail } from '@pages/Profile/Driver/ProfileDriveDetail'
 
 export const router = createBrowserRouter([
     {
@@ -55,6 +56,12 @@ export const router = createBrowserRouter([
                 ),
                 children: [
                     { index: true, element: <Profile /> },
+                    {
+                        path: PROFILE_ROUTES.DRIVES.REL,
+                        children: [
+                            { path: PROFILE_ROUTES.DRIVES.DETAIL_PATTERN, element: <ProfileDriveDetail /> }
+                        ]
+                    }
                 ]
             }
         ]

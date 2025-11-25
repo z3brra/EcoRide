@@ -1,0 +1,118 @@
+.driver-drive-detail {
+
+    .drive-detail__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+
+        .drive-status {
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: capitalize;
+
+            &.status--open {
+                background-color: $blue-label-bg;
+                color: $blue-label-fg;
+            }
+            &.status--in-progress {
+                background-color: $yellow-label-bg;
+                color: $yellow-label-fg;
+            }
+            &.status--finished {
+                background-color: $green-label-bg;
+                color: $green-label-fg;
+            }
+            &.status--cancelled {
+                background-color: $red-label-bg;
+                color: $red-label-fg;
+            }
+        }
+    }
+
+    .drive-detail__summary {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        background-color: $background-darker;
+        border-radius: $border-radius;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+
+        &-icon {
+            color: $primary;
+        }
+    }
+
+    .drive-detail__infos {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+        margin-bottom: 2rem;
+
+        @include tablet {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+    }
+
+    .drive-detail__infos-col {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        flex: 1;
+
+        @include mobile {
+            width: 100%;
+        }
+    }
+
+    .drive-detail__info-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .icon-primary {
+            color: $primary;
+            flex-shrink: 0;
+        }
+    }
+
+    .drive-detail__info-text {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+
+        p {
+            margin: 0;
+        }
+    }
+
+    .driver-drive-detail__actions {
+        margin-top: 1rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+
+        @include mobile {
+            flex-direction: column;
+
+            .button {
+                width: 100%;
+            }
+        }
+    }
+}
+
+.drive-participants__card {
+    margin-top: 2rem;
+
+    .drive-participants__empty {
+        padding: 1rem;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        background-color: $background-darker;
+    }
+}

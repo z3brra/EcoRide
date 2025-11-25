@@ -71,11 +71,11 @@ export function DriverDrivesFilter({
 
             <button
                 className="booking-filters__sort"
-                onClick={() => handleChange("sortDir", filters.sortDir === "asc" ? "desc" : "asc")}
+                onClick={() => handleChange("sortDir", filters.sortDir === "desc" ? "asc" : "desc")}
             >
                 <ArrowUpDown size={16} />
                 <span className="text-small">
-                    {filters.sortDir === "asc" ? "Récents" : "Anciens"}
+                    {filters.sortDir === "desc" ? "Anciens" : "Récents"}
                 </span>
             </button>
 

@@ -8,7 +8,7 @@ const DEFAULT_FILTERS: DriverOwnedFilters = {
     depart: "",
     arrived: "",
     includeCancelled: false,
-    sortDir: "asc",
+    sortDir: "desc",
     page: 1,
 }
 
