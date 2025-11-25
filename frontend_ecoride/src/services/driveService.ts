@@ -6,12 +6,13 @@ import type {
     DriveJoinedPayload,
     DriverOwnedFilters,
     DriverOwnedPayload,
-    CreateDrivePayload
+    CreateDrivePayload,
+    UpdateDrivePayload
 } from "@models/drive"
 
 import type { PaginatedResponse } from "@models/pagination"
 
-import { getRequest, postRequest } from "@api/request"
+import { getRequest, postRequest, putRequest } from "@api/request"
 import { Endpoints } from "@api/endpoints"
 
 export async function searchDrives(
@@ -128,6 +129,16 @@ export async function createDrive(
 ): Promise<Drive> {
     return postRequest<CreateDrivePayload, Drive>(
         `${Endpoints.DRIVES}`,
+        payload
+    )
+}
+
+export async function updateDrive(
+    uuid: string,
+    payload: UpdateDrivePayload
+): Promise<Drive> {
+    return putRequest<UpdateDrivePayload, Drive>(
+        `${Endpoints.DRIVES}/${uuid}`,
         payload
     )
 }

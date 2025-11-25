@@ -1,4 +1,5 @@
 import type { JSX } from "react"
+import { useState } from "react"
 
 import { Section } from "@components/common/Section/Section"
 
@@ -7,6 +8,8 @@ import { ReturnLink } from "@components/common/ReturnLink"
 import { Card } from "@components/common/Card/Card"
 import { CardContent } from "@components/common/Card/CardContent"
 import { Button } from "@components/form/Button"
+
+import { EditDriveModal } from "@components/profile/drives/EditDriveModal"
 
 import {
     MapPin,
@@ -20,12 +23,39 @@ import {
     PenSquare
 } from "lucide-react"
 
-import { useDriveDetail } from "@hook/drive/useDriveDetail"
 import { formatDate, formatTime, formatColor, getStatusLabel } from "@utils/formatters"
 import { PROFILE_ROUTES } from "@routes/paths"
 
+import { useDriveDetail } from "@hook/drive/useDriveDetail"
+import { useUpdateDrive } from "@hook/drive/useUpdateDrive"
+import { MessageBox } from "@components/common/MessageBox/MessageBox"
+
 export function ProfileDriveDetail(): JSX.Element {
-    const { drive, loading, error } = useDriveDetail()
+    const { drive, loading, error, refresh } = useDriveDetail()
+
+    const [updateOpen, setUpdateOpen] = useState<boolean>(false)
+
+    const {
+        submit: updateDrive,
+        loading: updateLoading,
+        error: updateError,
+        success: updateSuccess,
+        setError: setUpdateError,
+        setSuccess: setUpdateSuccess
+    } = useUpdateDrive()
+
+    const handleUpdateDrive = async (payload: { departAt: string; arrivedAt: string }) => {
+        if (!drive) {
+            return
+        }
+
+        await updateDrive(drive.uuid, payload)
+
+        if (!updateError) {
+            setUpdateOpen(false)
+            refresh()
+        }
+    }
 
     if (loading) {
         return (
@@ -54,6 +84,14 @@ export function ProfileDriveDetail(): JSX.Element {
 
     return (
         <>
+            { updateError && (
+                <MessageBox variant="error" message={updateError} onClose={()  => setUpdateError(null)} />
+            )}
+
+            { updateSuccess && (
+                <MessageBox variant="success" message={updateSuccess} onClose={()  => setUpdateSuccess(null)} />
+            )}
+
             <Section id="return">
                 <ReturnLink to={PROFILE_ROUTES.PROFILE} />
             </Section>
@@ -151,7 +189,7 @@ export function ProfileDriveDetail(): JSX.Element {
                                 <Button
                                     variant="white"
                                     icon={<PenSquare size={18}/>}
-                                    onClick={() => {}}
+                                    onClick={() => setUpdateOpen(true)}
                                 >
                                     Modifier le trajet
                                 </Button>
@@ -194,6 +232,14 @@ export function ProfileDriveDetail(): JSX.Element {
                     </CardContent>
                 </Card>
             </Section>
+
+            <EditDriveModal
+                drive={drive}
+                isOpen={updateOpen}
+                onClose={() => setUpdateOpen(false)}
+                onSubmit={handleUpdateDrive}
+                loading={updateLoading}
+            />
         </>
     )
 }

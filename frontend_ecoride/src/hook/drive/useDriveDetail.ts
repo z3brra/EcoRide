@@ -37,10 +37,10 @@ export function useDriveDetail() {
 
     return {
         drive,
-
         loading,
         error,
         setError,
-        notFound
+        notFound,
+        refresh: loadDrive
     }
 }

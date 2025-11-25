@@ -73,6 +73,11 @@ export interface CreateDrivePayload {
     arrived: string
     arrivedAt: string
 }
+
+export interface UpdateDrivePayload {
+    departAt?: string
+    arrivedAt?: string
+}
 // export interface DriveSearchResponse<T> {
 //     data: T[]
 //     total: number
