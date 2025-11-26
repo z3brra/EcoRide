@@ -18,7 +18,10 @@ class PendingSettlementExceptionListener
         }
 
         $response = new JsonResponse(
-            data: ['error' => $exception->getMessage()],
+            data: [
+                'error' => $exception->getMessage(),
+                'driveUuid' => $exception->getDriveUuid(),
+            ],
             status: $exception->getStatusCode()
         );
 

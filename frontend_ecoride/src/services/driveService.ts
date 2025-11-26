@@ -167,3 +167,22 @@ export async function finishDrive(
         null
     )
 }
+
+export async function confirmDrive(
+    uuid: string
+): Promise<void> {
+    return postRequest<null, void>(
+        `${Endpoints.DRIVES}/${uuid}/confirm`,
+        null
+    )
+}
+
+export async function disputeDrive(
+    uuid: string,
+    comment: string
+): Promise<void> {
+    return postRequest<{ comment: string}, void>(
+        `${Endpoints.DRIVES}/${uuid}/dispute`,
+        { comment }
+    )
+}

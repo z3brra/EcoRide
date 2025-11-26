@@ -5,6 +5,8 @@ import { PUBLIC_ROUTES, PROFILE_ROUTES } from "@routes/paths"
 import { RootLayout } from '@layout/RootLayout'
 
 import { AuthProvider } from '@provider/AuthContext'
+import { SettlementProvider } from '@provider/SettlementContext'
+
 import { RequireAuth } from "@components/auth/RequireAuth"
 
 import { Home } from '@pages/Home'
@@ -25,7 +27,9 @@ export const router = createBrowserRouter([
     {
         element: (
             <AuthProvider>
-                <Outlet />
+                <SettlementProvider>
+                    <Outlet />
+                </SettlementProvider>
             </AuthProvider>
         ),
         children: [
