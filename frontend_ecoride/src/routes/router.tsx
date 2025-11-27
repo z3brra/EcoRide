@@ -23,39 +23,86 @@ import { Register } from '@pages/auth/Register'
 import { Profile } from '@pages/Profile/Profile'
 import { ProfileDriveDetail } from '@pages/Profile/Driver/ProfileDriveDetail'
 
+// export const router = createBrowserRouter([
+//     {
+//         element: (
+//             <AuthProvider>
+//                 <SettlementProvider>
+//                     <Outlet />
+//                 </SettlementProvider>
+//             </AuthProvider>
+//         ),
+//         children: [
+//             {
+//                 path: PUBLIC_ROUTES.HOME,
+//                 element: <RootLayout />,
+//                 children: [
+//                     { index: true, element: <Home /> },
+//                     { 
+//                         path: PUBLIC_ROUTES.DRIVES.REL,
+//                         children: [
+//                             { index: true, element: <Drives /> },
+//                             { path: PUBLIC_ROUTES.DRIVES.DETAIL_PATTERN, element: <DriveDetail />}
+//                         ]
+//                     },
+
+//                     { path: PUBLIC_ROUTES.CONTACT, element: <Contact /> },
+//                     { path: PUBLIC_ROUTES.LOGIN, element: <Login /> },
+//                     { path: PUBLIC_ROUTES.REGISTER, element: <Register /> },
+//                 ]
+//             },
+//             {
+//                 path: PROFILE_ROUTES.PROFILE,
+//                 element: (
+//                     <RequireAuth>
+//                         <RootLayout />
+//                     </RequireAuth>
+//                 ),
+//                 children: [
+//                     { index: true, element: <Profile /> },
+//                     {
+//                         path: PROFILE_ROUTES.DRIVES.REL,
+//                         children: [
+//                             { path: PROFILE_ROUTES.DRIVES.DETAIL_PATTERN, element: <ProfileDriveDetail /> }
+//                         ]
+//                     }
+//                 ]
+//             }
+//         ]
+//     }
+// ])
+
 export const router = createBrowserRouter([
     {
         element: (
             <AuthProvider>
                 <SettlementProvider>
-                    <Outlet />
+                    <RootLayout />   // root unique pour tout le site
                 </SettlementProvider>
             </AuthProvider>
         ),
         children: [
-            {
-                path: PUBLIC_ROUTES.HOME,
-                element: <RootLayout />,
-                children: [
-                    { index: true, element: <Home /> },
-                    { 
-                        path: PUBLIC_ROUTES.DRIVES.REL,
-                        children: [
-                            { index: true, element: <Drives /> },
-                            { path: PUBLIC_ROUTES.DRIVES.DETAIL_PATTERN, element: <DriveDetail />}
-                        ]
-                    },
+            // PUBLIC ROUTES
+            { index: true, element: <Home /> },
 
-                    { path: PUBLIC_ROUTES.CONTACT, element: <Contact /> },
-                    { path: PUBLIC_ROUTES.LOGIN, element: <Login /> },
-                    { path: PUBLIC_ROUTES.REGISTER, element: <Register /> },
+            {
+                path: PUBLIC_ROUTES.DRIVES.REL,
+                children: [
+                    { index: true, element: <Drives /> },
+                    { path: PUBLIC_ROUTES.DRIVES.DETAIL_PATTERN, element: <DriveDetail /> }
                 ]
             },
+
+            { path: PUBLIC_ROUTES.CONTACT, element: <Contact /> },
+            { path: PUBLIC_ROUTES.LOGIN, element: <Login /> },
+            { path: PUBLIC_ROUTES.REGISTER, element: <Register /> },
+
+            // PRIVATE ROUTES
             {
                 path: PROFILE_ROUTES.PROFILE,
                 element: (
                     <RequireAuth>
-                        <RootLayout />
+                        <Outlet />
                     </RequireAuth>
                 ),
                 children: [

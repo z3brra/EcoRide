@@ -4,18 +4,31 @@ import { useNavigate } from "react-router-dom"
 import { useSettlementActions } from "@hook/drive/useSettlementActions"
 import { useSettlementLock } from "@hook/settlement/useSettlementLock"
 
+import { useCreateReview } from "@hook/review/useCreateReview"
+
+
 type SettlementContextType = {
     isOpen: boolean
     driveUuid: string | null
+    showReview: boolean
+
     loading: boolean
     error: string | null
-    success: string | null
+
+    reviewLoading: boolean
+    reviewError: string | null
+
     open: (uuid: string) => void
     close: () => void
+
     confirm: () => Promise<void>
     dispute: (comment: string) => Promise<void>
+
+    submitReview: (rate: number, comment: string) => Promise<void>
+    closeReview: () => void
+
     setError: (message: string | null) => void
-    setSuccess: (message: string | null) => void
+    setReviewError: (message: string | null) => void
 }
 
 const SettlementContext = createContext<SettlementContextType | null>(null)
@@ -24,6 +37,7 @@ export function SettlementProvider({ children }: { children: React.ReactNode }) 
     const navigate = useNavigate()
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
+    const [showReview, setShowReview] = useState<boolean>(false)
 
     const [driveUuid, setDriveUuid] = useState<string | null>(null)
 
@@ -32,18 +46,31 @@ export function SettlementProvider({ children }: { children: React.ReactNode }) 
         dispute: disputeAction,
         loading,
         error,
-        success,
         setError,
-        setSuccess
     } = useSettlementActions()
+
+    const {
+        submit: createReview,
+        loading: reviewLoading,
+        error: reviewError,
+        setError: setReviewError,
+    } = useCreateReview()
 
     const open = useCallback((uuid: string) => {
         setDriveUuid(uuid)
         setIsOpen(true)
+        setShowReview(false)
+
+        setError(null)
+        setReviewError(null)
     }, [])
 
     const close = useCallback(() => {
         setIsOpen(false)
+    }, [])
+
+    const closeReview = useCallback(() => {
+        setShowReview(false)
         setDriveUuid(null)
     }, [])
 
@@ -51,7 +78,7 @@ export function SettlementProvider({ children }: { children: React.ReactNode }) 
         open(uuid)
     })
 
-    const refreshAfterSuccess = () => {
+    const refresh = () => {
         navigate(0)
     }
 
@@ -59,37 +86,58 @@ export function SettlementProvider({ children }: { children: React.ReactNode }) 
         if (!driveUuid) {
             return
         }
-        await confirmAction(driveUuid)
-        if (!error) {
+        try {
+            await confirmAction(driveUuid)
             close()
-            refreshAfterSuccess()
-        }
+            setShowReview(true)
+        } catch {}
     }
 
     const dispute = async (comment: string) => {
         if (!driveUuid) {
             return
         }
-        await disputeAction(driveUuid, comment)
-        if (!error) {
+        try {
+            await disputeAction(driveUuid, comment)
             close()
-            refreshAfterSuccess()
+            setDriveUuid(null)
+            refresh()
+        } catch {}
+    }
+
+    const submitReview = async (rate: number, comment: string) => {
+        if (!driveUuid) {
+            return
         }
+
+        try {
+            await createReview({ driveUuid, rate, comment })
+            closeReview()
+            refresh()
+        } catch {}
     }
 
     return (
         <SettlementContext.Provider value={{
             isOpen,
             driveUuid,
+            showReview,
+
             loading,
             error,
-            success,
+
+            reviewLoading,
+            reviewError,
+
             open,
             close,
             confirm,
             dispute,
+            submitReview,
+            closeReview,
+
             setError,
-            setSuccess
+            setReviewError,
         }}>
             {children}
 

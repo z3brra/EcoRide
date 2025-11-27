@@ -82,6 +82,7 @@ export function useSettlementActions() {
             setSuccess("Votre trajet a été confirmé.")
         } catch (error: any) {
             setError("Impossible de valider le trajet.")
+            throw error
         } finally {
             setLoading(false)
         }
@@ -97,6 +98,7 @@ export function useSettlementActions() {
             setSuccess("Votre litige a été envoyé. Un employé vous contactera dans les plus brefs délais")
         } catch (error: any) {
             setError("Impossible d'ouvrir un litige")
+            throw error
         } finally {
             setLoading(false)
         }

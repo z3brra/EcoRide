@@ -4,17 +4,23 @@ import { Outlet } from "react-router-dom"
 
 import { useSettlement } from "@provider/SettlementContext"
 import { SettlementModal } from "@components/settlement/SettlementModal"
+import { CreateReviewModal } from "@components/review/CreateReviewModal"
 
 export function RootLayout() {
     const {
         isOpen,
         driveUuid,
+        showReview,
         loading,
         error,
         confirm,
         dispute,
-        close
+        submitReview,
+        close,
+        closeReview,
     } = useSettlement()
+
+    console.log("RootLayout", { showReview, driveUuid })
 
     return (
         <>
@@ -33,6 +39,14 @@ export function RootLayout() {
                     onDispute={dispute}
                     loading={loading}
                     error={error}
+                />
+            )}
+
+            { showReview && driveUuid && (
+                <CreateReviewModal
+                    isOpen={showReview}
+                    onClose={closeReview}
+                    onSubmit={(rate, comment) => submitReview(rate, comment)}
                 />
             )}
         </>
