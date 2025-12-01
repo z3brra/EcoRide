@@ -3,3 +3,8 @@ export type ReservationStatus =
     | "in_progress"
     | "finished"
     | "cancelled"
+
+export type ReviewStatus =
+    | "pending"
+    | "validated"
+    | "refused"

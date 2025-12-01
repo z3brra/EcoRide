@@ -3,8 +3,6 @@ import type { JSX } from "react"
 import { Card } from "@components/common/Card/Card"
 import { CardContent } from "@components/common/Card/CardContent"
 
-import { Star } from "lucide-react"
-
 import type { ProfileTab } from "@pages/Profile/Profile"
 
 import type { CurrentUserResponse } from "@models/user"
@@ -14,6 +12,7 @@ import { ProfileSecuritySection } from "./sections/ProfileSecuritySection"
 import { ProfileBookingSection } from "./sections/ProfileBookingsSection"
 import { ProfileVehiclesSection } from "./sections/ProfileVehiclesSection"
 import { ProfileDrivesSection } from "./sections/ProfileDrivesSection"
+import { ProfileReviewSection } from "./sections/ProfileReviewSection"
 
 export type ProfileContentProps = {
     user: CurrentUserResponse
@@ -34,8 +33,9 @@ export function ProfileContent({
             { activeTab === "bookings" && <ProfileBookingSection /> }
             { isDriver && activeTab === "vehicles" && <ProfileVehiclesSection isDriver={isDriver} /> }
             { isDriver && activeTab === "drives" && <ProfileDrivesSection /> }
+            { isDriver && activeTab === "reviews" && <ProfileReviewSection /> }
 
-            { isDriver && activeTab === "reviews" && (
+            {/* { isDriver && activeTab === "reviews" && (
                 <Card className="profile__section">
                     <CardContent gap={1}>
                         <div className="profile__reviews-header">
@@ -55,7 +55,7 @@ export function ProfileContent({
                         </div>
                     </CardContent>
                 </Card>
-            )}
+            )} */}
 
             { isDriver && activeTab === "preferences" && (
                 <div className="profile__preferences">

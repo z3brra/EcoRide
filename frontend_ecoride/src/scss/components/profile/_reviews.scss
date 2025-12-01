@@ -1,0 +1,128 @@
+.review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    &__empty,
+    &__loading {
+        padding: 1.5rem;
+        text-align: center;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        background-color: $background;
+    }
+}
+
+// .review-list__empty,
+// .review-list__loading {
+//     padding: 1.5rem;
+//     text-align: center;
+//     border: 1px solid $border-color;
+//     border-radius: $border-radius;
+//     background-color: $background;
+// }
+
+.review-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    padding: 1.2rem 1.4rem;
+
+    &:hover {
+        background-color: $background-darker;
+    }
+
+    &__top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.3rem;
+    }
+
+    &__user {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+
+        &-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba($primary, 0.15);
+            color: $primary;
+        }
+
+        &-info {
+            display: flex;
+            flex-direction: column;
+            // justify-content: flex-start;
+            align-items: flex-start;
+            gap: 0.2rem;
+        }
+    }
+
+    &__stars {
+        display: flex;
+        gap: 0.2rem;
+
+        .star--filled {
+            color: $yellow-star;
+        }
+
+        .star--empty {
+            color: $silent-text-fg;
+        }
+    }
+
+
+    &__status {
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: capitalize;
+
+        &.status--pending {
+            background-color: $blue-label-bg;
+            color: $blue-label-fg;
+        }
+
+        &.status--validated {
+            background-color: $green-label-bg;
+            color: $green-label-fg;
+        }
+
+        &.status--refused {
+            background-color: $red-label-bg;
+            color: $red-label-fg;
+        }
+    }
+}
+
+.review-item__stars {
+    display: flex;
+    gap: 0.2rem;
+
+    .star--filled {
+        color: $yellow-star;
+    }
+
+    .star--empty {
+        color: $silent-text-fg;
+    }
+}
+
+.review-item__comment {
+    margin-top: 0.5rem;
+}
