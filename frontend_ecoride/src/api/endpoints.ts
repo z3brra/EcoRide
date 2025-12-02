@@ -8,7 +8,9 @@ export const Endpoints = {
 
     VEHICLE: "/vehicle",
 
-    REVIEWS: "/reviews"
+    REVIEWS: "/reviews",
+
+    PREFERENCES: "/prefs",
 
 } as const
 

@@ -182,7 +182,7 @@ final class PreferenceController extends AbstractController
         }
     }
 
-    #[Route('', name: 'delete', methods: 'DELETE')]
+    #[Route('/delete', name: 'delete', methods: 'POST')]
     public function delete(
         Request $request,
         DeleteDriverPreferenceService $deleteCustomPrefService
