@@ -1,29 +1,42 @@
-import { useState, useCallback } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { getOwnedDrives } from "@services/driveService"
 import type { Drive, DriverOwnedFilters } from "@models/drive"
 import type { PaginatedResponse } from "@models/pagination"
 
+const DEFAULT_FILTERS: DriverOwnedFilters = {
+    status: "all",
+    depart: "",
+    arrived: "",
+    includeCancelled: false,
+    sortDir: "desc",
+    page: 1,
+}
+
 export function useOwnedDrives() {
-    const [filters, setFilters] = useState<DriverOwnedFilters>({
-        status: "all",
-        depart: "",
-        arrived: "",
-        includeCancelled: false,
-        sortDir: "asc",
-        page: 1,
-    })
+    const [draftFilters, setDraftFilters] = useState<DriverOwnedFilters>(DEFAULT_FILTERS)
+
+    const [appliedFilters, setAppliedFilters] = useState<DriverOwnedFilters>(DEFAULT_FILTERS)
+
+    // const [filters, setFilters] = useState<DriverOwnedFilters>({
+    //     status: "all",
+    //     depart: "",
+    //     arrived: "",
+    //     includeCancelled: false,
+    //     sortDir: "asc",
+    //     page: 1,
+    // })
 
     const [data, setData] = useState<Drive[]>([])
     const [totalPages, setTotalPages] = useState<number>(1)
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
 
-    const fetchDrives = useCallback(async () => {
+    const fetchOwnedDrives = useCallback(async () => {
         setLoading(true)
         setError(null)
 
         try {
-            const response: PaginatedResponse<Drive> = await getOwnedDrives(filters)
+            const response: PaginatedResponse<Drive> = await getOwnedDrives(appliedFilters)
             setData(response.data ?? [])
             setTotalPages(response.totalPages)
         } catch (error: any) {
@@ -31,42 +44,48 @@ export function useOwnedDrives() {
         } finally {
             setLoading(false)
         }
-    }, [filters])
+    }, [appliedFilters])
 
-    // useEffect(() => {
-    //     fetchDrives()
-    // }, [fetchDrives])
-
-    const search = () => {
-        setFilters((prev) => ({ ...prev, page: 1 }))
-        fetchDrives()
-    }
+    useEffect(() => {
+        fetchOwnedDrives()
+    }, [fetchOwnedDrives])
 
     const updateFilters = (newFilters: Omit<DriverOwnedFilters, "page">) => {
-        setFilters({
-            ...filters,
+        setDraftFilters((prev) => ({
+            ...prev,
             ...newFilters,
-            page: 1,
+        }))
+    }
+
+    const search = () => {
+        setAppliedFilters({
+            ...draftFilters,
+            page: 1
         })
     }
 
     const changePage = (page: number) => {
-        setFilters({
-            ...filters,
+        setAppliedFilters((prev) => ({
+            ...prev,
             page
-        })
+        }))
+
+        setDraftFilters((prev) => ({
+            ...prev,
+            page
+        }))
     }
 
     return {
         data,
         loading,
         error,
-        filters,
+        filters: draftFilters,
         totalPages,
         changePage,
         updateFilters,
         search,
-        refresh :fetchDrives,
+        refresh: fetchOwnedDrives,
         setError
     }
 }

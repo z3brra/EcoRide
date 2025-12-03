@@ -6,15 +6,17 @@ import { CornerDownLeft } from "lucide-react"
 
 export type ReturnLinkProps = {
     text?: string
+    to?: string
 }
 
 export function ReturnLink({
-    text
+    text,
+    to
 }: ReturnLinkProps): JSX.Element {
     return (
         <>
             <Link
-                to=".."
+                to={to ?? ".." }
                 relative="path"
                 className="return-link text-small text-silent"
             >

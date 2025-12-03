@@ -1,16 +1,17 @@
-// import type  { PaginatedResponse } from "@components/common/Pagination/Pagination"
 import type { 
     Drive,
     DriveSeach,
     DriveJoinedFilters,
     DriveJoinedPayload,
     DriverOwnedFilters,
-    DriverOwnedPayload
+    DriverOwnedPayload,
+    CreateDrivePayload,
+    UpdateDrivePayload
 } from "@models/drive"
 
 import type { PaginatedResponse } from "@models/pagination"
 
-import { getRequest, postRequest } from "@api/request"
+import { deleteRequest, getRequest, postRequest, putRequest } from "@api/request"
 import { Endpoints } from "@api/endpoints"
 
 export async function searchDrives(
@@ -119,5 +120,69 @@ export async function getOwnedDrives(
     return postRequest<DriverOwnedPayload, PaginatedResponse<Drive>>(
         `${Endpoints.USER}/drives/owned?page=${page}`,
         payload
+    )
+}
+
+export async function createDrive(
+    payload: CreateDrivePayload
+): Promise<Drive> {
+    return postRequest<CreateDrivePayload, Drive>(
+        `${Endpoints.DRIVES}`,
+        payload
+    )
+}
+
+export async function updateDrive(
+    uuid: string,
+    payload: UpdateDrivePayload
+): Promise<Drive> {
+    return putRequest<UpdateDrivePayload, Drive>(
+        `${Endpoints.DRIVES}/${uuid}`,
+        payload
+    )
+}
+
+export async function startDrive(
+    uuid: string
+): Promise<void> {
+    return postRequest<null, void>(
+        `${Endpoints.DRIVES}/${uuid}/start`,
+        null
+    )
+}
+
+export async function cancelOwnedDrive(
+    uuid: string
+): Promise<void> {
+    return deleteRequest<void>(
+        `${Endpoints.DRIVES}/${uuid}`
+    )
+}
+
+export async function finishDrive(
+    uuid: string
+): Promise<void> {
+    return postRequest<null, void>(
+        `${Endpoints.DRIVES}/${uuid}/finish`,
+        null
+    )
+}
+
+export async function confirmDrive(
+    uuid: string
+): Promise<void> {
+    return postRequest<null, void>(
+        `${Endpoints.DRIVES}/${uuid}/confirm`,
+        null
+    )
+}
+
+export async function disputeDrive(
+    uuid: string,
+    comment: string
+): Promise<void> {
+    return postRequest<{ comment: string}, void>(
+        `${Endpoints.DRIVES}/${uuid}/dispute`,
+        { comment }
     )
 }

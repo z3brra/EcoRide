@@ -1,0 +1,74 @@
+.pref-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    padding: 1rem;
+}
+
+.pref-tag {
+    display: inline-flex;
+    // justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: $background-darker;
+    border-radius: $border-radius;
+    padding: 0.4rem 0.8rem;
+    
+    width: auto;
+    max-width: 100%;
+
+    &__text {
+        font-size: 0.9rem;
+        word-break: break-word;
+    }
+
+    &__remove {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: $silent-text-fg;
+
+        &:hover {
+            color: $primary;
+        }
+    }
+
+    @include mobile {
+        justify-content: space-between;
+    }
+}
+
+.pref-custom__input {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+}
+
+.pref-custom__input-field {
+    flex: 1 1 auto;
+}
+
+.pref-custom__input-button {
+    flex: 0 0 auto;
+
+    .button {
+        padding-top: 0.45rem;
+        padding-bottom: 0.45rem;
+        white-space: nowrap;
+        font-size: 0.9rem;
+    }
+}
+
+.pref-custom__list {
+    display: flex;
+    // flex-direction: column;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    @include mobile {
+        flex-direction: column;
+        flex-wrap: nowrap;
+    }
+}

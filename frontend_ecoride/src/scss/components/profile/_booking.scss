@@ -134,3 +134,12 @@
         font-size: 0.9rem;
     }
 }
+
+.booking-item__link {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+    cursor: pointer;
+}

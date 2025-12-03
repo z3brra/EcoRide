@@ -6,7 +6,12 @@ export const Endpoints = {
     DRIVES: "/drives",
     SEARCH_DRIVE: "/drives/search",
 
-    VEHICLE: "/vehicle"
+    VEHICLE: "/vehicle",
+
+    REVIEWS: "/reviews",
+
+    PREFERENCES: "/prefs",
+
 } as const
 
 export type Endpoint = typeof Endpoints[keyof typeof Endpoints]

@@ -30,6 +30,7 @@
 @import 'components/form/button';
 @import 'components/form/text-input';
 @import 'components/form/select';
+@import 'components/form/switch';
 
 @import 'components/drive/drive-search-card';
 @import 'components/drive/drive-results-placeholder';
@@ -38,6 +39,8 @@
 @import 'components/profile/booking';
 @import 'components/profile/booking-filters';
 @import 'components/profile/vehicle';
+@import 'components/profile/reviews';
+@import 'components/profile/preferences';
 
 @import 'pages/contact';
 @import 'pages/auth/login';
@@ -46,6 +49,7 @@
 @import 'pages/drive/drive-detail';
 
 @import 'pages/profile/profile';
+@import 'pages/profile/user-drive-detail';
 
 * {
     margin: 0;

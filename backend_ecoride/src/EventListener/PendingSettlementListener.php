@@ -49,9 +49,11 @@ class PendingSettlementListener
         }
 
         $user = $this->accessControl->getUser();
+        $drive = $this->lockService->getBlockingDrive($user);
 
-        if ($this->lockService->hasBlocking($user)) {
-            throw new PendingSettlementException();
+        // if ($this->lockService->hasBlocking($user)) {
+        if ($drive !== null) {
+            throw new PendingSettlementException($drive->getUuid());
         }
     }
 }

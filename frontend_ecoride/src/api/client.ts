@@ -15,3 +15,28 @@ export const apiFormClient = axios.create({
     },
     withCredentials: true
 })
+
+function registerSettlementInterceptor(client: typeof apiClient) {
+    client.interceptors.response.use(
+        (response) => response,
+        (error) => {
+            const status = error.response?.status
+
+            if (status === 423) {
+                const uuid = error.response?.data?.driveUuid
+
+                if (uuid) {
+                    window.dispatchEvent(
+                        new CustomEvent("settlement-lock", {
+                            detail: uuid,
+                        })
+                    )
+                }
+            }
+            return Promise.reject(error)
+        }
+    )
+}
+
+registerSettlementInterceptor(apiClient)
+registerSettlementInterceptor(apiFormClient)

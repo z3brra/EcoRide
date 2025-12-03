@@ -17,5 +17,11 @@ export const PUBLIC_ROUTES = {
 }
 
 export const PROFILE_ROUTES = {
-    PROFILE: "/profile" as const
+    PROFILE: "/profile" as const,
+    DRIVES: {
+        TO: "/profile/drives" as const,
+        REL: "drives" as const,
+        DETAIL_PATTERN: ":uuid" as const,
+        DETAIL: (uuid: string) => `${PROFILE_ROUTES.DRIVES.TO}/${uuid}` as const,
+    }
 }

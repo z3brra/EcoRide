@@ -10,6 +10,7 @@ use App\Service\Vehicle\{
     ReadVehicleService,
     UpdateVehicleService,
     ListVehiclePaginatedService,
+    ListAllVehicleService,
 };
 
 use App\Service\Access\AccessControlService;
@@ -84,6 +85,44 @@ final class VehicleController extends AbstractController
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        }
+    }
+
+    #[Route('/all', name: 'list_all', methods: 'GET')]
+    public function listAll(
+        ListAllVehicleService $listAllVehicleService
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+            $this->accessControl->denyUnlessDriver();
+
+            $user = $this->getUser();
+
+            // var_dump('here');
+            $vehiclesDTO = $listAllVehicleService->listAllVehicle($user);
+            // var_dump($vehiclesDTO);
+            $responseData = $this->serializer->serialize(
+                data: $vehiclesDTO,
+                format: 'json',
+                context: ['groups' => ['vehicle:list']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (LogicException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
     }

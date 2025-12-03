@@ -1,4 +1,4 @@
-import type { ReservationStatus } from "@models/status"
+import type { ReservationStatus, ReviewStatus } from "@models/status"
 
 export function formatDate(dateString: string | Date): string {
     const newDate = new Date(dateString)
@@ -39,7 +39,7 @@ export function formatTime(dateString: string | Date): string {
     return `${hours}h${minutes}`
 }
 
-export function getStatusLabel(status: ReservationStatus) {
+export function getStatusLabel(status: ReservationStatus | string) {
     switch (status) {
         case "open":
             return { text: "En attente", className: "status--open"}
@@ -49,6 +49,19 @@ export function getStatusLabel(status: ReservationStatus) {
             return { text: "Terminé", className: "status--finished"}
         case "cancelled": 
             return { text: "Annulé", className: "status--cancelled"}
+        default:
+            return { text: "Inconnu", className: ""}
+    }
+}
+
+export function getReviewsLabel(status: ReviewStatus | string) {
+    switch (status) {
+        case "pending":
+            return { text: "En attente", className: "status--pending"}
+        case "validated":
+            return { text: "Validé", className: "status--validated"}
+        case "refused":
+            return { text: "Refusé", className: "status--refused"}
         default:
             return { text: "Inconnu", className: ""}
     }

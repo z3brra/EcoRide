@@ -64,6 +64,20 @@ export interface DriverOwnedPayload {
     page?: number
 }
 
+export interface CreateDrivePayload {
+    vehicleUuid: string
+    price: number
+    distance: number
+    depart: string
+    departAt: string
+    arrived: string
+    arrivedAt: string
+}
+
+export interface UpdateDrivePayload {
+    departAt?: string
+    arrivedAt?: string
+}
 // export interface DriveSearchResponse<T> {
 //     data: T[]
 //     total: number

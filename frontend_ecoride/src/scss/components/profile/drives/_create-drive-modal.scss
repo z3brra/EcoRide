@@ -1,0 +1,23 @@
+.create-drive-modal__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 0.5rem;
+
+    .modal__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    @include mobile {
+        .modal__actions {
+            flex-direction: column;
+
+            .button {
+                width: 100%;
+            }
+        }
+    }
+}

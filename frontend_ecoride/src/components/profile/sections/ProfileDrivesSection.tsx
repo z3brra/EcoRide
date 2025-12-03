@@ -1,15 +1,23 @@
 import type { JSX } from "react"
+import { useState } from "react"
 
 import { Card } from "@components/common/Card/Card"
 import { CardContent } from "@components/common/Card/CardContent"
 
 import { Pagination } from "@components/common/Pagination/Pagination"
 
+import { MessageBox } from "@components/common/MessageBox/MessageBox"
+
 import { Button } from "@components/form/Button"
 import { DriverDrivesFilter } from "../drives/DriverDrivesFilter"
 import { DriverDriveList } from "../drives/DriverDriveList"
+
 import { useOwnedDrives } from "@hook/user/useOwnedDrives"
-import { MessageBox } from "@components/common/MessageBox/MessageBox"
+import { useAllVehicle } from "@hook/vehicle/useAllVehicle"
+import { useCreateDrive } from "@hook/drive/useCreateDrive"
+
+import { CreateDriveModal } from "../drives/CreateDriveModal"
+
 
 export function ProfileDrivesSection(): JSX.Element {
     const {
@@ -24,10 +32,49 @@ export function ProfileDrivesSection(): JSX.Element {
         setError
     } = useOwnedDrives()
 
+    const {
+        data: allVehicles,
+        error: vehicleError,
+        loading: vehicleLoading,
+        setError: setVehicleError
+    } = useAllVehicle()
+
+    const {
+        submit: createDrive,
+        loading: createLoading,
+        error: createError,
+        success: createSuccess,
+        setError: setCreateError,
+        setSuccess: setCreateSuccess,
+    } = useCreateDrive()
+
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false)
+
+    const handleCreateDrive = async (payload: any) => {
+        await createDrive(payload)
+
+        if (!createError) {
+            setIsCreateModalOpen(false)
+            search()
+        }
+    }
+
     return (
         <>
             { error && (
                 <MessageBox variant="error" message={error} onClose={() => {setError(null)}} />
+            )}
+
+            { vehicleError && (
+                <MessageBox variant="error" message={vehicleError} onClose={() => {setVehicleError(null)}} />
+            )}
+
+            { createError && (
+                <MessageBox variant="error" message={createError} onClose={() => {setCreateError(null)}} />
+            )}
+
+            { createSuccess && (
+                <MessageBox variant="success" message={createSuccess} onClose={() => {setCreateSuccess(null)}} />
             )}
 
             <Card className="profile__section">
@@ -42,7 +89,7 @@ export function ProfileDrivesSection(): JSX.Element {
                     </div>
                     <Button
                         variant="primary"
-                        onClick={() => {}}
+                        onClick={() => setIsCreateModalOpen(true)}
                     >
                         Créer un trajet
                     </Button>
@@ -67,7 +114,14 @@ export function ProfileDrivesSection(): JSX.Element {
                     ) }
                 </CardContent>
             </Card>
+
+            <CreateDriveModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onSubmit={handleCreateDrive}
+                vehicles={allVehicles}
+                loading={createLoading || vehicleLoading}
+            />
         </>
-        
     )
 }
