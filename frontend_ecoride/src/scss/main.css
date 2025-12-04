@@ -1578,6 +1578,142 @@
   }
 }
 
+.moderation-review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.moderation-review-list__loading, .moderation-review-list__empty {
+  text-align: center;
+  padding: 2rem;
+  border: 1px solid #BCB8B8;
+  border-radius: 10px;
+  background-color: #F9F9F2;
+}
+
+.moderation-review-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid #BCB8B8;
+  border-radius: 10px;
+  background-color: #F9F9F2;
+}
+.moderation-review-item__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.moderation-review-item__reference {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid #BCB8B8;
+  background-color: #E5DED8;
+}
+.moderation-review-item__date {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.moderation-review-item__users {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+@media (min-width: 668px) and (max-width: 1024px) {
+  .moderation-review-item__users {
+    flex-direction: column;
+  }
+}
+@media (max-width: 667px) {
+  .moderation-review-item__users {
+    flex-direction: column;
+  }
+}
+.moderation-review-item__user {
+  flex: 1;
+}
+.moderation-review-item__user-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.moderation-review-item__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+}
+.moderation-review-item__avatar--driver {
+  background-color: #5A7C17;
+  color: #FFFFFF;
+}
+.moderation-review-item__avatar--author {
+  background-color: #D97734;
+  color: #FFFFFF;
+}
+.moderation-review-item__user-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.moderation-review-item__user-line {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.moderation-review-item__rating {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+.moderation-review-item__stars {
+  display: flex;
+  gap: 0.2rem;
+}
+.moderation-review-item__comment {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.moderation-review-item__comment-box {
+  background-color: #E5DED8;
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+}
+.moderation-review-item__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
+@media (max-width: 667px) {
+  .moderation-review-item__actions {
+    flex-direction: column;
+  }
+  .moderation-review-item__actions .button {
+    width: 100%;
+  }
+}
+
+.star--filled {
+  color: #FACC15;
+}
+
+.star--empty {
+  color: #ECECEC;
+}
+
+.icon-secondary {
+  color: #D97734;
+}
+
 .contact-infos {
   display: flex;
   width: 100%;
@@ -1873,11 +2009,21 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  background-color: rgba(217, 119, 52, 0.2);
-  color: #D97734;
   border-radius: 0.5rem;
   padding: 0.1rem 0.4rem;
   font-size: 0.75rem;
+}
+.profile__user-tag--driver {
+  background-color: rgba(217, 119, 52, 0.2);
+  color: #D97734;
+}
+.profile__user-tag--employee {
+  background-color: rgba(30, 64, 175, 0.2);
+  color: #1E40AF;
+}
+.profile__user-tag--admin {
+  background-color: rgba(153, 27, 27, 0.2);
+  color: #991B1B;
 }
 .profile__credit-header {
   display: flex;

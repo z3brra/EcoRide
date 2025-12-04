@@ -2,7 +2,7 @@ import type { JSX } from "react"
 
 import { Card } from "@components/common/Card/Card"
 import { CardContent } from "@components/common/Card/CardContent"
-import { User, Car, Wallet, Coins } from "lucide-react"
+import { User, Car, Wallet, Coins, Shield } from "lucide-react"
 
 import type { ProfileTab } from "@pages/Profile/Profile"
 
@@ -21,6 +21,9 @@ export function ProfileSidebar({
     setActiveTab,
     isDriver
 }: ProfileSidebarProps): JSX.Element {
+    const isEmployee = user.roles.includes("ROLE_EMPLOYEE")
+    const isAdmin = user.roles.includes("ROLE_ADMIN")
+
     return (
         <div className="profile__sidebar">
             <Card className="profile__user-card">
@@ -32,9 +35,21 @@ export function ProfileSidebar({
                         <h3 className="text-content text-primary">{user.pseudo}</h3>
                         <p className="text-small text-silent">{user.email}</p>
                         { isDriver && (
-                            <div className="profile__user-tag text-small">
+                            <div className="profile__user-tag profile__user-tag--driver text-small">
                                 <Car size={14} />
                                 <span>Chauffeur</span>
+                            </div>
+                        )}
+                        { isEmployee && (
+                            <div className="profile__user-tag profile__user-tag--employee text-small">
+                                <User size={14} />
+                                <span>Employé</span>
+                            </div>
+                        )}
+                        { isAdmin && (
+                            <div className="profile__user-tag profile__user-tag--admin text-small">
+                                <Shield size={14} />
+                                <span>Admin</span>
                             </div>
                         )}
                     </div>
@@ -115,6 +130,17 @@ export function ProfileSidebar({
                             onClick={() => setActiveTab("preferences")}
                         >
                             Préférences
+                        </button>
+                    </>
+                )}
+
+                { (isEmployee || isAdmin) && (
+                    <>
+                        <button
+                            className={`text-small ${activeTab === "review_moderation" ? "active" : ""}`}
+                            onClick={() => setActiveTab("review_moderation")}
+                        >
+                            Modération avis
                         </button>
                     </>
                 )}

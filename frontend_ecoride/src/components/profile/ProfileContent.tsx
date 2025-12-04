@@ -11,6 +11,7 @@ import { ProfileVehiclesSection } from "./sections/ProfileVehiclesSection"
 import { ProfileDrivesSection } from "./sections/ProfileDrivesSection"
 import { ProfileReviewSection } from "./sections/ProfileReviewSection"
 import { ProfilePreferencesSection } from "./sections/ProfilePreferencesSection"
+import { ProfileReviewModerationSection } from "./sections/employee/ProfileReviewModerationSection"
 
 export type ProfileContentProps = {
     user: CurrentUserResponse
@@ -23,6 +24,8 @@ export function ProfileContent({
     activeTab,
     isDriver
 }: ProfileContentProps): JSX.Element {
+    const isEmployee = user.roles.includes("ROLE_EMPLOYEE")
+    const isAdmin = user.roles.includes("ROLE_ADMIN")
 
     return (
         <div className="profile__content">
@@ -33,6 +36,7 @@ export function ProfileContent({
             { isDriver && activeTab === "drives" && <ProfileDrivesSection /> }
             { isDriver && activeTab === "reviews" && <ProfileReviewSection /> }
             { isDriver && activeTab === "preferences" && <ProfilePreferencesSection /> }
+            { (isEmployee || isAdmin) && activeTab === "review_moderation" && <ProfileReviewModerationSection /> }
         </div>
     )
 }

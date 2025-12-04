@@ -1,10 +1,17 @@
+import { useEffect } from "react"
+import { Outlet, useMatches } from "react-router-dom"
+
 import { Footer } from "@components/common/Footer/Footer"
 import { NavBar } from "@components/common/Navbar/NavBar"
-import { Outlet } from "react-router-dom"
+
 
 import { useSettlement } from "@provider/SettlementContext"
 import { SettlementModal } from "@components/settlement/SettlementModal"
 import { CreateReviewModal } from "@components/review/CreateReviewModal"
+
+type RouteHandle = {
+    title?: string
+}
 
 export function RootLayout() {
     const {
@@ -20,7 +27,18 @@ export function RootLayout() {
         closeReview,
     } = useSettlement()
 
-    console.log("RootLayout", { showReview, driveUuid })
+    const rawMatches = useMatches()
+    const matches = rawMatches as Array<typeof rawMatches[number] & { handle?: RouteHandle}>
+
+    useEffect(() => {
+        const matchWithTitle = [...matches]
+        .reverse()
+        .find((m) => m.handle?.title)
+
+        if (matchWithTitle?.handle?.title) {
+            document.title = matchWithTitle.handle.title
+        }
+    }, [matches])
 
     return (
         <>

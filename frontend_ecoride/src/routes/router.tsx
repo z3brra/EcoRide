@@ -77,25 +77,64 @@ export const router = createBrowserRouter([
         element: (
             <AuthProvider>
                 <SettlementProvider>
-                    <RootLayout />   // root unique pour tout le site
+                    <RootLayout />
                 </SettlementProvider>
             </AuthProvider>
         ),
+        handle: {
+            title: "EcoRide - Plateforme de covoiturage écologique"
+        },
         children: [
             // PUBLIC ROUTES
-            { index: true, element: <Home /> },
+            { 
+                index: true,
+                element: <Home />,
+                handle: {
+                    title: "EcoRide - Acceuil",
+                },
+            },
 
             {
                 path: PUBLIC_ROUTES.DRIVES.REL,
                 children: [
-                    { index: true, element: <Drives /> },
-                    { path: PUBLIC_ROUTES.DRIVES.DETAIL_PATTERN, element: <DriveDetail /> }
+                    {
+                        index: true,
+                        element: <Drives />,
+                        handle: {
+                            title: "EcoRide - Rechercher un trajet"
+                        }
+                    },
+                    {
+                        path: PUBLIC_ROUTES.DRIVES.DETAIL_PATTERN,
+                        element: <DriveDetail />,
+                        handle: {
+                            title: "EcoRide - Détail du trajet"
+                        }
+                    }
                 ]
             },
 
-            { path: PUBLIC_ROUTES.CONTACT, element: <Contact /> },
-            { path: PUBLIC_ROUTES.LOGIN, element: <Login /> },
-            { path: PUBLIC_ROUTES.REGISTER, element: <Register /> },
+            {
+                path: PUBLIC_ROUTES.CONTACT,
+                element: <Contact />,
+                handle: {
+                    title: "EcoRide - Contact"
+                },
+            },
+            {
+                path: PUBLIC_ROUTES.LOGIN,
+                element: <Login />,
+                handle: {
+                    title: "EcoRide - Connexion"
+                }
+            },
+            {
+                path: PUBLIC_ROUTES.REGISTER,
+                element: <Register />,
+                handle: {
+                    title: "EcoRide - Inscription"
+                }
+            },
 
             // PRIVATE ROUTES
             {
@@ -105,12 +144,27 @@ export const router = createBrowserRouter([
                         <Outlet />
                     </RequireAuth>
                 ),
+                handle: {
+                    title: "EcoRide - Mon espace"
+                },
                 children: [
-                    { index: true, element: <Profile /> },
+                    {
+                        index: true,
+                        element: <Profile />,
+                        handle: {
+                            title: "EcoRide - Mon profil"
+                        }
+                    },
                     {
                         path: PROFILE_ROUTES.DRIVES.REL,
                         children: [
-                            { path: PROFILE_ROUTES.DRIVES.DETAIL_PATTERN, element: <ProfileDriveDetail /> }
+                            {
+                                path: PROFILE_ROUTES.DRIVES.DETAIL_PATTERN,
+                                element: <ProfileDriveDetail />,
+                                handle: {
+                                    title: "EcoRide - Détail de mon covoiturage"
+                                }
+                            }
                         ]
                     }
                 ]

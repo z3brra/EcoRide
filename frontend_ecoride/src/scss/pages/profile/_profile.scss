@@ -68,11 +68,24 @@
         display: inline-flex;
         align-items: center;
         gap: 0.3rem;
-        background-color: rgba($secondary, 0.2);
-        color: $secondary;
         border-radius: 0.5rem;
         padding: 0.1rem 0.4rem;
         font-size: 0.75rem;
+
+        &--driver {
+            background-color: rgba($secondary, 0.2);
+            color: $secondary;
+        }
+
+        &--employee {
+            background-color: rgba($blue-label-fg, 0.2);
+            color: $blue-label-fg;
+        }
+
+        &--admin {
+            background-color: rgba($red-label-fg, 0.2);
+            color: $red-label-fg;
+        }
     }
 
     &__credit-header {
