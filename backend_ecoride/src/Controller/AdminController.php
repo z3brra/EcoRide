@@ -5,7 +5,8 @@ namespace App\Controller;
 use App\DTO\User\{UserDTO, UserReadDTO};
 use App\Service\Admin\{
     CreateUserService,
-    BanUserService
+    BanUserService,
+    ListEmployeeService
 };
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -122,6 +123,37 @@ final class AdminController extends AbstractController
                 data: ['error' => $e->getMessage()],
                 status: JsonResponse::HTTP_NOT_FOUND
             );
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        }
+    }
+
+    #[Route('/employee', name: 'list_employee', methods: 'GET')]
+    public function listEmployee(
+        Request $request,
+        ListEmployeeService $listEmployeeService
+    ): JsonResponse {
+        try {
+            $page = max(1, (int) $request->query->get('page', 1));
+            $limit = max(1, (int) $request->query->get('limit', 10));
+
+            $employeePaginated = $listEmployeeService->listEmployeePaginated($page, $limit);
+
+            $responseData = $this->serializer->serialize(
+                data: $employeePaginated,
+                format: 'json',
+                context: ['grous' => ['user:list']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+
         } catch (BadRequestHttpException $e) {
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
