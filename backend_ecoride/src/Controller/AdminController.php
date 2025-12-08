@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
-use App\DTO\User\{UserDTO, UserReadDTO};
+use App\DTO\User\{UserDTO, UserSearchDTO};
 use App\Service\Admin\{
     CreateUserService,
     BanUserService,
-    ListEmployeeService
+    ListEmployeeService,
+    SearchUserService
 };
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,8 +16,11 @@ use Symfony\Component\HttpFoundation\{Request, JsonResponse};
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-use Symfony\Component\HttpKernel\Exception\{NotFoundHttpException, BadRequestHttpException, ConflictHttpException};
-use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\HttpKernel\Exception\{
+    NotFoundHttpException,
+    BadRequestHttpException,
+    ConflictHttpException
+};
 
 #[Route('/api/admin', name: 'app_api_admin_')]
 final class AdminController extends AbstractController
@@ -118,6 +122,48 @@ final class AdminController extends AbstractController
                 status: JsonResponse::HTTP_OK
             );
 
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        }
+    }
+
+    #[Route('/search-user', name: 'search_user', methods: 'POST')]
+    public function searchUser(
+        Request $request,
+        SearchUserService $searchUserService
+    ): JsonResponse {
+        try {
+            try {
+                $searchUserDTO = $this->serializer->deserialize(
+                    data: $request->getContent(),
+                    type: UserSearchDTO::class,
+                    format: 'json'
+                );
+            } catch (\Exception $e) {
+                throw new BadRequestHttpException("Invalid JSON format");
+            }
+
+            $userDTO = $searchUserService->searchUser($searchUserDTO);
+
+            $responseData = $this->serializer->serialize(
+                data: $userDTO,
+                format: 'json',
+                context: ['groups' => 'user:read']
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
         } catch (NotFoundHttpException $e) {
             return new JsonResponse(
                 data: ['error' => $e->getMessage()],
