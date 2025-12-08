@@ -19,7 +19,12 @@ class BecomeDriverService
 
     public function becomeDriver(User $user): UserReadDTO
     {
-        $user->setRoles(['ROLE_DRIVER']);
+        $roles = $user->getRoles();
+        if (!in_array('ROLE_DRIVER', $roles, true)) {
+            $roles[] = 'ROLE_DRIVER';
+        }
+        $roles = array_values(array_unique($roles));
+        $user->setRoles($roles);
             //  ->setUpdatedAt(new DateTimeImmutable());
 
         if ($user->getFixedDriverPreference() === null) {

@@ -48,6 +48,55 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $this->findOneByEmail($email) !== null;
     }
 
+    public function findEmployeePaginated(int $page = 1, int $limit = 10): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $total = (int) $conn->executeQuery(
+            'SELECT COUNT(*) 
+            FROM user 
+            WHERE JSON_CONTAINS(roles, :needle) = 1',
+            ['needle' => json_encode('ROLE_EMPLOYEE')]
+        )->fetchOne();
+
+        $offset = max(0, ($page - 1) * $limit);
+        $ids = $conn->executeQuery(
+            'SELECT id
+            FROM user
+            WHERE JSON_CONTAINS(roles, :needle) = 1
+            ORDER BY created_at DESC
+            LIMIT :offset, :limit',
+            [
+                'needle' => json_encode('ROLE_EMPLOYEE'),
+                'offset' => $offset,
+                'limit'  => $limit,
+            ],
+            [
+                'needle' => \PDO::PARAM_STR,
+                'offset' => \PDO::PARAM_INT,
+                'limit'  => \PDO::PARAM_INT,
+            ]
+        )->fetchFirstColumn();
+
+        $users = [];
+        if ($ids) {
+            $users = $this->createQueryBuilder('user')
+                ->where('user.id IN (:ids)')
+                ->setParameter('ids', $ids)
+                ->orderBy('user.createdAt', 'DESC')
+                ->getQuery()
+                ->getResult();
+        }
+
+        return [
+            'data'        => $users,
+            'total'       => $total,
+            'totalPages'  => (int) ceil($total / $limit),
+            'currentPage' => $page,
+            'perPage'     => $limit,
+        ];
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */
