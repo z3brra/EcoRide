@@ -20,7 +20,11 @@ use Symfony\Component\HttpFoundation\{Request, JsonResponse};
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-use Symfony\Component\HttpKernel\Exception\{AccessDeniedHttpException, BadRequestHttpException};
+use Symfony\Component\HttpKernel\Exception\{
+    AccessDeniedHttpException,
+    BadRequestHttpException,
+    NotFoundHttpException,
+};
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
 use App\Security\Attribute\BypassSettlementLock;
@@ -107,7 +111,6 @@ final class UserController extends AbstractController
                 status: JsonResponse::HTTP_OK,
                 json: true
             );
-
 
         } catch (BadCredentialsException $e) {
             return new JsonResponse(
@@ -199,7 +202,46 @@ final class UserController extends AbstractController
                 status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
+    }
 
+    #[Route('/{uuid}', name: 'read_user', methods: 'GET')]
+    public function readUser(
+        string $uuid,
+        ReadUserProfileService $readUserProfileService
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+
+            $userReadDTO = $readUserProfileService->getProfileByUuid($uuid);
+
+            $responseData = $this->serializer->serialize(
+                data: $userReadDTO,
+                format: 'json',
+                context: ['groups' => ['public:read']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+        } catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                data: ['error' => "An internal server error as occured"],
+                status: JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }
 
