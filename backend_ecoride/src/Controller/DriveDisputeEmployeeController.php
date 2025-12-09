@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\Drive\Dispute\{
     ResolveDisputeService,
+    ListDisputeService
 };
 
 use App\Service\Access\AccessControlService;
@@ -17,13 +18,60 @@ use Symfony\Component\HttpKernel\Exception\{
     AccessDeniedHttpException,
     BadRequestHttpException,
 };
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/employee/drives', name: 'app_api_employee_drives_disputes_')]
 final class DriveDisputeEmployeeController extends AbstractController
 {
     public function __construct(
         private AccessControlService $accessControl,
+        private SerializerInterface $serializer,
     ) {}
+
+    #[Route('/dispute', name: 'list_dispute', methods: 'GET')]
+    public function listDispute(
+        Request $request,
+        ListDisputeService $listDisputeService,
+    ): JsonResponse {
+        try {
+            $this->accessControl->denyUnlessLogged();
+            $this->accessControl->denyIfBanned();
+            $this->accessControl->denyUnlessEmployee();
+
+            $page = max(1, (int) $request->query->get('page', 1));
+            $limit = max(1, (int) $request->query->get('limit', 10));
+
+            $disputePaginated = $listDisputeService->listDisputePaginated($page, $limit);
+
+            $responseData = $this->serializer->serialize(
+                data: $disputePaginated,
+                format: 'json',
+                context: ['groups' => ['credit:list', 'drive:list', 'user:list']]
+            );
+
+            return new JsonResponse(
+                data: $responseData,
+                status: JsonResponse::HTTP_OK,
+                json: true
+            );
+
+        }catch (AccessDeniedHttpException $e) {
+            return new JsonResponse(
+                ['error' => $e->getMessage()],
+                JsonResponse::HTTP_FORBIDDEN
+            );
+        } catch (NotFoundHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (BadRequestHttpException $e) {
+            return new JsonResponse(
+                data: ['error' => $e->getMessage()],
+                status: JsonResponse::HTTP_BAD_REQUEST
+            );
+        } 
+    }
 
     #[Route('/{identifier}/disputes/{participantUuid}/resolve', name: 'resolve', requirements: ['identifier' => '.+'], methods: 'POST')]
     public function resolve(
