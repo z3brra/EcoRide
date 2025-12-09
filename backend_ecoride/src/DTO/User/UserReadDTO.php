@@ -19,6 +19,7 @@ class UserReadDTO
         'review:author',
         'review:driver',
         'review:employee',
+        'public:read'
     ])]
     public string $uuid;
 
@@ -31,6 +32,7 @@ class UserReadDTO
         'review:author',
         'review:driver',
         'review:employee',
+        'public:read'
     ])]
     public string $pseudo;
 
@@ -52,8 +54,8 @@ class UserReadDTO
     #[Groups(['user:read'])]
     public ?DateTimeImmutable $updatedAt;
 
-    // #[Groups(['user:read'])]
-    // public string $apiToken;
+    // #[Groups(['user:internal'])]
+    public string $apiToken;
 
     #[Groups(['user:create'])]
     public ?string $plainPassword;
@@ -67,7 +69,7 @@ class UserReadDTO
         bool $isBanned,
         DateTimeImmutable $createdAt,
         ?DateTimeImmutable $updatedAt = null,
-        // string $apiToken,
+        string $apiToken,
         ?string $plainPassword,
     )
     {
@@ -79,7 +81,7 @@ class UserReadDTO
         $this->isBanned = $isBanned;
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
-        // $this->apiToken = $apiToken;
+        $this->apiToken = $apiToken;
         $this->plainPassword = $plainPassword;
     }
 
@@ -94,7 +96,7 @@ class UserReadDTO
             isBanned: $user->isBanned(),
             createdAt: $user->getCreatedAt(),
             updatedAt: $user->getUpdatedAt(),
-            // apiToken: $user->getApiToken(),
+            apiToken: $user->getApiToken(),
             plainPassword: $plainPassword,
         );
 

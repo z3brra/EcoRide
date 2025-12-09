@@ -9,6 +9,8 @@ use Doctrine\Bundle\MongoDBBundle\Repository\ServiceDocumentRepository;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 
 use Doctrine\ODM\MongoDB\Aggregation\Builder;
+
+
 use InvalidArgumentException;
 
 /** #######################################################################
@@ -134,11 +136,40 @@ class CreditRepository extends ServiceDocumentRepository
             ->field('total')->sum(
                 $aggregateBuilder->expr()->ifNull('$fee', 0)
             );
-        
+
         $iterator = $aggregateBuilder->getAggregation()->getIterator();
         $result = iterator_to_array($iterator, false);
 
         return isset($result[0]['total']) ? (int) $result[0]['total'] : 0;
+    }
+
+    public function findDisputePaginated(int $page = 1, int $limit = 10): array
+    {
+        $total = (int) $this->createQueryBuilder()
+            ->field('status')->equals(CreditStatusEnum::PENDING->value)
+            ->count()
+            ->getQuery()
+            ->execute();
+
+        $cursor = $this->createQueryBuilder()
+            ->field('status')->equals(CreditStatusEnum::PENDING->value)
+            ->sort('occurredAt', 'desc')
+            ->skip(($page - 1) * $limit)
+            ->limit($limit)
+            ->getQuery()
+            ->execute();
+
+        $items = iterator_to_array($cursor, false);
+
+        $totalPages = (int) ceil($total / $limit);
+
+        return [
+            'data' => $items,
+            'total' => $total,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
+            'perPage' => $limit
+        ];
     }
 }
 
