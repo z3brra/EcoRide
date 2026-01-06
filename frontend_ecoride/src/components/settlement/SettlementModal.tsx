@@ -14,7 +14,8 @@ export type SettlementModalProps = {
     onClose: () => void
     driveUuid: string
     onConfirm: (uuid: string) => void
-    onDispute: (uuid: string, comment: string) => void
+    // onDispute: (uuid: string, comment: string) => void
+    onDispute: (comment: string) => void
     loading?: boolean
     error?: string | null
 }
@@ -35,7 +36,9 @@ export function SettlementModal({
         if (!comment.trim()) {
             return
         }
-        onDispute(driveUuid, comment.trim())
+        console.log(`Modal : ${comment}`)
+        // onDispute(driveUuid, comment.trim())
+        onDispute(comment.trim())
     }
 
     return (

@@ -7,7 +7,6 @@ export interface CurrentUserResponse {
     isBanned: boolean
     createdAt: Date
     updatedAt: Date | null
-    apiToken: string
 }
 
 export interface LoginResponse {
@@ -36,7 +35,6 @@ export interface RegisterUserResponse {
     isBanned: boolean
     createdAt: string
     updatedAt?: string
-    apiToken: string
 }
 
 export interface UpdateUserPayload {

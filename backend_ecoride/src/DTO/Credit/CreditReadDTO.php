@@ -29,7 +29,7 @@ class CreditReadDTO
     #[Groups(['credit:read', 'credit:list'])]
     public DateTimeImmutable $occurredAt;
 
-    #[Groups(['credit:read'])]
+    #[Groups(['credit:read', 'credit:list'])]
     public ?string $comment;
 
     #[Groups(['credit:read', 'credit:list'])]

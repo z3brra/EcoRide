@@ -12,6 +12,7 @@ import { ProfileDrivesSection } from "./sections/ProfileDrivesSection"
 import { ProfileReviewSection } from "./sections/ProfileReviewSection"
 import { ProfilePreferencesSection } from "./sections/ProfilePreferencesSection"
 import { ProfileReviewModerationSection } from "./sections/employee/ProfileReviewModerationSection"
+import { ProfileDisputeModerationSection } from "./sections/employee/ProfileDisputeModerationSection"
 
 export type ProfileContentProps = {
     user: CurrentUserResponse
@@ -37,6 +38,7 @@ export function ProfileContent({
             { isDriver && activeTab === "reviews" && <ProfileReviewSection /> }
             { isDriver && activeTab === "preferences" && <ProfilePreferencesSection /> }
             { (isEmployee || isAdmin) && activeTab === "review_moderation" && <ProfileReviewModerationSection /> }
+            { (isEmployee || isAdmin) && activeTab === "dispute_moderation" && <ProfileDisputeModerationSection/> }
         </div>
     )
 }
