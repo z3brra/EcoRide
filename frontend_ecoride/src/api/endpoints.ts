@@ -4,6 +4,7 @@ export const Endpoints = {
 
     USER: "/user",
     EMPLOYEE: "/employee",
+    ADMIN: "/admin",
 
     DRIVES: "/drives",
     SEARCH_DRIVE: "/drives/search",

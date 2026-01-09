@@ -1832,6 +1832,131 @@
   color: #D97734;
 }
 
+.admin-user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.admin-user-list__empty, .admin-user-list__loading {
+  text-align: center;
+  padding: 2rem;
+  border: 1px solid #BCB8B8;
+  border-radius: 10px;
+  background-color: #F9F9F2;
+}
+
+.admin-user-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.2rem;
+  border: 1px solid #BCB8B8;
+  border-radius: 10px;
+  background-color: #F9F9F2;
+}
+.admin-user-item__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+@media (min-width: 668px) and (max-width: 1024px) {
+  .admin-user-item__top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+.admin-user-item__identity {
+  display: flex;
+  gap: 0.8rem;
+  flex: 1;
+}
+.admin-user-item__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(90, 124, 23, 0.2);
+  color: #5A7C17;
+}
+.admin-user-item__main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.admin-user-item__line {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.admin-user-item__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+@media (min-width: 668px) and (max-width: 1024px) {
+  .admin-user-item__meta {
+    align-items: flex-start;
+  }
+}
+.admin-user-item__status {
+  padding: 0.25rem 0.6rem;
+  border-radius: 1rem;
+  border: 1px solid #BCB8B8;
+}
+.admin-user-item__status--banned {
+  background-color: #FEE2E2;
+  color: #991B1B;
+  border-color: transparent;
+}
+.admin-user-item__credits {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 1rem;
+  background-color: #E5DED8;
+  color: #5A7C17;
+}
+.admin-user-item__roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.admin-user-item__role-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.75rem;
+}
+.admin-user-item__role-tag--driver {
+  background-color: rgba(217, 119, 52, 0.2);
+  color: #D97734;
+}
+.admin-user-item__role-tag--employee {
+  background-color: rgba(30, 64, 175, 0.2);
+  color: #1E40AF;
+}
+.admin-user-item__role-tag--admin {
+  background-color: rgba(153, 27, 27, 0.2);
+  color: #991B1B;
+}
+.admin-user-item__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+@media (max-width: 667px) {
+  .admin-user-item__actions .button {
+    width: 100%;
+  }
+}
+
 .contact-infos {
   display: flex;
   width: 100%;

@@ -191,7 +191,7 @@ final class AdminController extends AbstractController
             $responseData = $this->serializer->serialize(
                 data: $employeePaginated,
                 format: 'json',
-                context: ['grous' => ['user:list']]
+                context: ['groups' => ['user:list']]
             );
 
             return new JsonResponse(

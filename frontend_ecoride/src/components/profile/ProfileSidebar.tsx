@@ -93,7 +93,24 @@ export function ProfileSidebar({
                             Modération litiges
                         </button>
                     </>
+                )}
 
+                { (isAdmin || isEmployee) && (
+                    <>
+                        <button
+                            className={`text-small ${activeTab === "manage_employee" ? "active" : ""}`}
+                            onClick={() => setActiveTab("manage_employee")}
+                        >
+                            Gestion des employés
+                        </button>
+
+                        <button
+                            className={`text-small ${activeTab === "manage_users" ? "active" : ""}`}
+                            onClick={() => setActiveTab("manage_users")}
+                        >
+                            Gestion des utilisateurs
+                        </button>
+                    </>
                 )}
 
                 <button
