@@ -2,7 +2,7 @@ import { Endpoints } from "@api/endpoints"
 import { getRequest, postRequest } from "@api/request"
 
 import type { PaginatedResponse } from "@models/pagination"
-import type { CreateEmployee, CreateEmployeeResponse, ReadUserResponse } from "@models/user"
+import type { CreateEmployee, CreateEmployeeResponse, ReadUserResponse, SearchUser } from "@models/user"
 
 export function getEmployees(
     page: number = 1
@@ -36,5 +36,14 @@ export function unbanUser(
     return postRequest(
         `${Endpoints.ADMIN}/unban-user?userUuid=${userUuid}`,
         null
+    )
+}
+
+export function searchUser(
+    payload: SearchUser
+): Promise<ReadUserResponse> {
+    return postRequest<SearchUser, ReadUserResponse>(
+        `${Endpoints.ADMIN}/search-user`,
+        payload
     )
 }

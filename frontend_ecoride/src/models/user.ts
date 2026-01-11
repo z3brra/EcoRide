@@ -51,6 +51,10 @@ export interface CreateEmployee {
     pseudo: string
 }
 
+export interface SearchUser {
+    email: string
+}
+
 export interface ReadUserResponse {
     uuid: string
     pseudo: string

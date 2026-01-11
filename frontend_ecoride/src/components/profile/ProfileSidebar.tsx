@@ -95,7 +95,7 @@ export function ProfileSidebar({
                     </>
                 )}
 
-                { (isAdmin || isEmployee) && (
+                { isAdmin && (
                     <>
                         <button
                             className={`text-small ${activeTab === "manage_employee" ? "active" : ""}`}
