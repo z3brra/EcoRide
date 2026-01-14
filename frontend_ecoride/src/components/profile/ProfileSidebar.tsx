@@ -110,6 +110,13 @@ export function ProfileSidebar({
                         >
                             Gestion des utilisateurs
                         </button>
+
+                        <button
+                            className={`text-small ${activeTab === "admin_stats" ? "active" : ""}`}
+                            onClick={() => setActiveTab("admin_stats")}
+                        >
+                            Statistiques
+                        </button>
                     </>
                 )}
 

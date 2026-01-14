@@ -15,6 +15,7 @@ import { ProfileReviewModerationSection } from "./sections/employee/ProfileRevie
 import { ProfileDisputeModerationSection } from "./sections/employee/ProfileDisputeModerationSection"
 import { ProfileManageEmployeeSection } from "./sections/admin/employees/ProfileManageEmployeeSection"
 import { ProfileManageUsersSection } from "./sections/admin/users/ProfileManageUsersSection"
+import { ProfileAdminStatsSection } from "./sections/admin/stats/ProfileAdminStatsSection"
 
 export type ProfileContentProps = {
     user: CurrentUserResponse
@@ -43,6 +44,7 @@ export function ProfileContent({
             { (isEmployee || isAdmin) && activeTab === "dispute_moderation" && <ProfileDisputeModerationSection/> }
             { isAdmin && activeTab === "manage_employee" && <ProfileManageEmployeeSection/> }
             { isAdmin && activeTab === "manage_users" && <ProfileManageUsersSection /> }
+            { isAdmin && activeTab === "admin_stats" && <ProfileAdminStatsSection /> }
         </div>
     )
 }

@@ -18,6 +18,7 @@ export type ProfileTab =
     | "dispute_moderation"
     | "manage_employee"
     | "manage_users"
+    | "admin_stats"
 
 export function Profile() {
     const { user } = useAuth()

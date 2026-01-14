@@ -1,0 +1,197 @@
+// .admin-stats {
+//     display: flex;
+//     flex-direction: column;
+//     gap: 1.5rem;
+
+//     &__header {
+//         display: flex;
+//         justify-content: space-between;
+//         align-items: flex-start;
+//         gap: 1rem;
+//     }
+
+//     &__controls {
+//         display: flex;
+//         flex-wrap: wrap;
+//         gap: 1rem;
+//         align-items: flex-end;
+//     }
+
+//     &__control {
+//         display: flex;
+//         flex-direction: column;
+//         gap: 0.4rem;
+//         min-width: 220px;
+
+//         &--year {
+//             min-width: 180px;
+//         }
+
+//         &--actions {
+//             min-width: auto;
+//             margin-left: auto;
+
+//             @include mobile {
+//                 margin-left: 0;
+//                 width: 100%;
+
+//                 .button {
+//                     width: 100%;
+//                 }
+//             }
+//         }
+//     }
+
+//     &__select {
+//         border: 1px solid $border-color;
+//         border-radius: $border-radius;
+//         background-color: $background;
+//         padding: 0.55rem 0.8rem;
+//         color: $primary-text-fg;
+//     }
+
+//     &__summary {
+//         display: flex;
+//         justify-content: space-between;
+//         gap: 1rem;
+//         border-top: 1px solid $border-color;
+//         padding-top: 1rem;
+
+//         @include mobile {
+//             flex-direction: column;
+//         }
+//     }
+
+//     &__summary-item {
+//         display: flex;
+//         flex-direction: column;
+//         gap: 0.3rem;
+//         flex: 1;
+//     }
+
+//     &__total {
+//         display: flex;
+//         align-items: center;
+//         gap: 0.5rem;
+//     }
+
+//     // &__chart-card {}
+
+//     &__chart {
+//         display: flex;
+//         flex-direction: column;
+//         gap: 0.8rem;
+//     }
+
+//     &__chart-inner {
+//         display: flex;
+//         width: 100%;
+//         border: 1px solid $border-color;
+//         border-radius: $border-radius;
+//         background-color: $background;
+//         padding: 1rem;
+
+//         color: $primary;
+//     }
+// }
+
+.admin-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    &__controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: flex-end;
+    }
+
+    &__control {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        min-width: 260px;
+
+        &--year {
+            min-width: 180px;
+        }
+
+        &--actions {
+            min-width: auto;
+            margin-left: auto;
+
+            @include mobile {
+                margin-left: 0;
+                width: 100%;
+
+                .button {
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+    &__summary {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        border-top: 1px solid $border-color;
+        padding-top: 1rem;
+
+        @include mobile {
+            flex-direction: column;
+        }
+    }
+
+    &__granularities {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    &__granularity {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid $border-color;
+        border-radius: 1rem;
+        padding: 0.15rem 0.55rem;
+        background-color: $background-darker;
+        color: $primary;
+    }
+
+    &__chart-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    &__chart-block {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    &__chart-block-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+
+        @include mobile {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.2rem;
+        }
+    }
+
+    &__chart-inner {
+        display: flex;
+        width: 100%;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        background-color: $background;
+        padding: 1rem;
+        color: $primary;
+    }
+}
