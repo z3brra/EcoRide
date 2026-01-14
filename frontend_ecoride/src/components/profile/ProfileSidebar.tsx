@@ -77,6 +77,49 @@ export function ProfileSidebar({
             </Card>
 
             <nav className="profile__menu">
+                { (isEmployee || isAdmin) && (
+                    <>
+                        <button
+                            className={`text-small ${activeTab === "review_moderation" ? "active" : ""}`}
+                            onClick={() => setActiveTab("review_moderation")}
+                        >
+                            Modération avis
+                        </button>
+
+                        <button
+                            className={`text-small ${activeTab === "dispute_moderation" ? "active" : ""}`}
+                            onClick={() => setActiveTab("dispute_moderation")}
+                        >
+                            Modération litiges
+                        </button>
+                    </>
+                )}
+
+                { isAdmin && (
+                    <>
+                        <button
+                            className={`text-small ${activeTab === "manage_employee" ? "active" : ""}`}
+                            onClick={() => setActiveTab("manage_employee")}
+                        >
+                            Gestion des employés
+                        </button>
+
+                        <button
+                            className={`text-small ${activeTab === "manage_users" ? "active" : ""}`}
+                            onClick={() => setActiveTab("manage_users")}
+                        >
+                            Gestion des utilisateurs
+                        </button>
+
+                        <button
+                            className={`text-small ${activeTab === "admin_stats" ? "active" : ""}`}
+                            onClick={() => setActiveTab("admin_stats")}
+                        >
+                            Statistiques
+                        </button>
+                    </>
+                )}
+
                 <button
                     className={`text-small ${activeTab === "infos" ? "active" : ""}`}
                     onClick={() => setActiveTab("infos")}
@@ -97,9 +140,8 @@ export function ProfileSidebar({
                 >
                     Mes réservations
                 </button>
-                
+
                 {/* { isDriver && (
-                    
                 )} */}
 
                 { isDriver && (
@@ -130,17 +172,6 @@ export function ProfileSidebar({
                             onClick={() => setActiveTab("preferences")}
                         >
                             Préférences
-                        </button>
-                    </>
-                )}
-
-                { (isEmployee || isAdmin) && (
-                    <>
-                        <button
-                            className={`text-small ${activeTab === "review_moderation" ? "active" : ""}`}
-                            onClick={() => setActiveTab("review_moderation")}
-                        >
-                            Modération avis
                         </button>
                     </>
                 )}

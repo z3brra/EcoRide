@@ -98,6 +98,7 @@ export function SettlementProvider({ children }: { children: React.ReactNode }) 
             return
         }
         try {
+            console.log(`comment ${comment}`)
             await disputeAction(driveUuid, comment)
             close()
             setDriveUuid(null)

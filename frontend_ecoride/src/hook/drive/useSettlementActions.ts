@@ -94,6 +94,7 @@ export function useSettlementActions() {
         setSuccess(null)
 
         try {
+            console.log(`hook : ${comment}`)
             await disputeDrive(uuid, comment)
             setSuccess("Votre litige a été envoyé. Un employé vous contactera dans les plus brefs délais")
         } catch (error: any) {

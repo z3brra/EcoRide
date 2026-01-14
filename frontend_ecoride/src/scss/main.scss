@@ -43,6 +43,10 @@
 @import 'components/profile/preferences';
 
 @import 'components/profile/employee/review-moderation';
+@import 'components/profile/employee/dispute-moderation';
+
+@import 'components/profile/admin/admin-users';
+@import 'components/profile/admin/admin-stats';
 
 @import 'pages/contact';
 @import 'pages/auth/login';

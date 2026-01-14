@@ -15,6 +15,10 @@ export type ProfileTab =
     | "reviews"
     | "preferences"
     | "review_moderation"
+    | "dispute_moderation"
+    | "manage_employee"
+    | "manage_users"
+    | "admin_stats"
 
 export function Profile() {
     const { user } = useAuth()

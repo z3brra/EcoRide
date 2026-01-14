@@ -7,7 +7,6 @@ export interface CurrentUserResponse {
     isBanned: boolean
     createdAt: Date
     updatedAt: Date | null
-    apiToken: string
 }
 
 export interface LoginResponse {
@@ -36,7 +35,6 @@ export interface RegisterUserResponse {
     isBanned: boolean
     createdAt: string
     updatedAt?: string
-    apiToken: string
 }
 
 export interface UpdateUserPayload {
@@ -47,4 +45,27 @@ export interface UpdateUserPayload {
 
 export interface UpdateUserResponse {
     message: string
+}
+
+export interface CreateEmployee {
+    pseudo: string
+}
+
+export interface SearchUser {
+    email: string
+}
+
+export interface ReadUserResponse {
+    uuid: string
+    pseudo: string
+    email: string
+    roles: string[]
+    credits: number | null
+    isBanned: boolean
+    createdAt: string
+    updatedAt: string | null
+}
+
+export interface CreateEmployeeResponse extends ReadUserResponse {
+    plainPassword: string
 }

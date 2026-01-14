@@ -32,18 +32,121 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
-        - { path: ^/api/auth/register, roles: PUBLIC_ACCESS }
-        - { path: ^/api/auth/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/auth/logout, roles: ROLE_USER }
-        - { path: ^/api/user, roles: ROLE_USER }
+        ##############################################
+        # PUBLIC_ACCESS (auth, public user and drives)
+        ##############################################
 
-        - { path: ^/api/vehicle, roles: [ROLE_ADMIN, ROLE_DRIVER], methods: [DELETE, PUT, POST] }
-        - { path: ^/api/prefs, roles: [ROLE_ADMIN, ROLE_DRIVER], methods: [DELETE, PUT, POST] }
+        # Auth
+        - { path: '^/api/auth/register', roles: PUBLIC_ACCESS, methods: [POST] }
+        - { path: '^/api/auth/login', roles: PUBLIC_ACCESS, methods: [POST] }
 
-        - { path: ^/api/admin, roles: ROLE_ADMIN }
-        - { path: ^/api, roles: PUBLIC_ACCESS }
+        # Drives (public access)
+        - { path: '^/api/drives/[-\w]+$', roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: '^/api/drives/search$', roles: PUBLIC_ACCESS, methods: [POST] }
+
+        # Public reviews
+        - { path: '^/api/reviews/[-\w]+$', roles: PUBLIC_ACCESS, methods: [GET] }
+
+        # Public user profile
+        - { path: '^/api/user/[-\w]+$', roles: PUBLIC_ACCESS, methods: [GET] }
+
+
+        ################################
+        # AUTHENTICATED USER (ROLE_USER)
+        ################################
+
+        # Logout
+        - { path: '^/api/auth/logout', roles: ROLE_USER, methods: [POST] }
+
+        # User base information
+        - { path: '^/api/user$', roles: ROLE_USER, methods: [GET, PUT, DELETE] }
+        - { path: '^/api/user/driver$', roles: ROLE_USER, methods: [POST] }
+
+        # User drives history
+        - { path: '^/api/user/drives/owned$', roles: ROLE_DRIVER, methods: [POST] }
+        - { path: '^/api/user/drives/joined$', roles: ROLE_USER, methods: [POST] }
+
+        # User drive dispute
+        - { path: '^/api/drives/[-\w]+/dispute', roles:  ROLE_USER, methods: [POST] }
+
+
+        #########
+        # REVIEWS
+        #########
+
+        # Create review
+        - { path: '^/api/reviews$', roles: ROLE_USER, methods: [POST] }
+
+        # User reviews history
+        - { path: '^/api/user/reviews/author$', roles: ROLE_USER, methods: [GET] }
+        - { path: '^/api/user/reviews/driver$', roles: ROLE_DRIVER, methods: [GET] }
+
+
+        ################
+        # DRIVES ACTIONS
+        ################
+
+        # Only drivers
+        - { path: '^/api/drives$', roles: ROLE_DRIVER, methods: [POST] }
+        - { path: '^/api/drives/[-\w]+$', roles: ROLE_DRIVER, methods: [PUT, DELETE] }
+        - { path: '^/api/drives/[-\w]+/finish$', roles: ROLE_DRIVER, methods: [POST] }
+        - { path: '^/api/drives/[-\w]+/start$', roles: ROLE_DRIVER, methods: [POST] }
+
+        # Only participants user
+        - { path: '^/api/drives/[-\w]+/join$', roles: ROLE_USER, methods: [POST] }
+        - { path: '^/api/drives/[-\w]+/leave$', roles: ROLE_USER, methods: [POST] }
+        - { path: '^/api/drives/[-\w]+/confirm$', roles: ROLE_USER, methods: [POST] }
+        - { path: '^/api/drives/[-\w]+/dispute$', roles: ROLE_USER, methods: [POST] }
+
+
+        ##############
+        # DRIVER PREFS
+        ##############
+
+        - { path: '^/api/prefs/delete$', roles: ROLE_DRIVER, methods: [POST] }
+        - { path: '^/api/prefs$', roles: ROLE_DRIVER, methods: [GET, POST, PUT] }
+
+
+        #########################
+        # VEHICULES (driver only)
+        #########################
+
+        - { path: '^/api/vehicle/all$', roles: ROLE_DRIVER, methods: [GET] }
+        - { path: '^/api/vehicle/[-\w]+$', roles: ROLE_DRIVER, methods: [GET, PUT, DELETE] }
+        - { path: '^/api/vehicle$', roles: ROLE_DRIVER, methods: [POST, GET] }
+
+
+        #######################################
+        # EMPLOYEE (ROLE_EMPLOYEE + ROLE_ADMIN)
+        #######################################
+
+        # Disputes moderation
+        - { path: '^/api/employee/drives/dispute$', roles: [ROLE_EMPLOYEE, ROLE_ADMIN], methods: [GET] }
+        - { path: '^/api/employee/drives/[-\w]+/disputes/[-\w]+/resolve$', roles: [ROLE_EMPLOYEE, ROLE_ADMIN], methods: [POST] }
+
+        # Reviews moderation
+        - { path: '^/api/employee/reviews/[-\w]+$', roles: [ROLE_EMPLOYEE, ROLE_ADMIN], methods: [POST] }
+        - { path: '^/api/employee/reviews$', roles: [ROLE_EMPLOYEE, ROLE_ADMIN], methods: [GET] }
+
+
+        ############
+        # ROLE_ADMIN
+        ############
+
+        - { path: '^/api/admin/stats/platform-fee$', roles: ROLE_ADMIN, methods: [GET] }
+        - { path: '^/api/admin/create-user$', roles: ROLE_ADMIN, methods: [POST] }
+        - { path: '^/api/admin/ban-user$', roles: ROLE_ADMIN, methods: [POST] }
+        - { path: '^/api/admin/unban-user$', roles: ROLE_ADMIN, methods: [POST] }
+        - { path: '^/api/admin/search-user$', roles: ROLE_ADMIN, methods: [POST] }
+        - { path: '^/api/admin/employee$', roles: ROLE_ADMIN, methods: [GET] }
+
+
+        ##################
+        # DEFAULT FALLBACK
+        ##################
+
+        - { path: '^/api', roles: PUBLIC_ACCESS }
+
 
 when@test:
     security:

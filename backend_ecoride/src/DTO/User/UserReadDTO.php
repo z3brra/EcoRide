@@ -48,10 +48,10 @@ class UserReadDTO
     #[Groups(['user:read', 'user:list'])]
     public bool $isBanned;
 
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:list'])]
     public DateTimeImmutable $createdAt;
 
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:list'])]
     public ?DateTimeImmutable $updatedAt;
 
     // #[Groups(['user:internal'])]
