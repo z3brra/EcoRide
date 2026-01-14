@@ -21,15 +21,4 @@ export default defineConfig({
       // "@form": fileURLToPath(new URL('./src/components/form', import.meta.url)),
     }
   },
-
-  server: {
-    host: true,
-    port: 5173,
-    proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:8080',
-        changeOrigin: true,
-      }
-    }
-  }
 })
