@@ -269,6 +269,12 @@
   border-bottom: 2px solid #5A7C17;
   padding-bottom: 0.2rem;
 }
+.navlink--action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
 
 .section {
   margin-bottom: 1.5rem;
@@ -2175,7 +2181,7 @@
   gap: 1rem;
 }
 
-.login {
+.login, .register {
   display: flex;
   flex-direction: column;
   align-self: center;
@@ -2183,24 +2189,38 @@
   min-width: 30%;
 }
 @media (min-width: 668px) and (max-width: 1024px) {
-  .login {
+  .login, .register {
     width: 50%;
   }
 }
 @media (max-width: 667px) {
-  .login {
+  .login, .register {
     width: 100%;
   }
 }
-.login__card {
+.login__card, .register__card {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
-.login__card .card__form {
+.login__card .card__form, .register__card .card__form {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+}
+
+.auth__footer {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.auth__link {
+  color: #D97734;
+  text-decoration: none;
+  font-weight: 600;
+}
+.auth__link:hover {
+  text-decoration: underline;
 }
 
 .drive-detail__title {
