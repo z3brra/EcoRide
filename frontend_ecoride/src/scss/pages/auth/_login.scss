@@ -1,4 +1,4 @@
-.login {
+.login, .register {
     display: flex;
     flex-direction: column;
     align-self: center;
@@ -27,6 +27,19 @@
             gap: 2rem;
         }
     }
+}
 
+.auth__footer {
+    text-align: center;
+    margin-top: 0.5rem;
+}
 
+.auth__link {
+    color: $secondary;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover {
+        text-decoration: underline;
+    }
 }

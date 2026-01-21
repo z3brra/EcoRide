@@ -3,6 +3,8 @@ import { useState } from "react"
 
 import { useAuth } from "@provider/AuthContext"
 
+import { Link } from "react-router-dom"
+
 import { Input } from "@components/form/Input"
 import { Button } from "@components/form/Button"
 
@@ -13,6 +15,8 @@ import { CardContent } from "@components/common/Card/CardContent"
 import { CardIcon } from "@components/common/Card/CardIcon"
 import { SectionHeader } from "@components/common/Section/SectionHeader"
 import { MessageBox } from "@components/common/MessageBox/MessageBox"
+
+import { PUBLIC_ROUTES } from "@routes/paths"
 
 export function Login(): JSX.Element {
     const { login } = useAuth()
@@ -120,6 +124,15 @@ export function Login(): JSX.Element {
                         >
                             { isLoading ? "Connexion..." : "Se connecter"}
                         </Button>
+
+                        <div className="auth__footer">
+                            <p className="text-small text-silent">
+                                Pas encore de compte ?{" "}
+                                <Link to={PUBLIC_ROUTES.REGISTER} className="auth__link text-small">
+                                    Créer un compte
+                                </Link>
+                            </p>
+                        </div>
 
                     </form>
                 </CardContent>
