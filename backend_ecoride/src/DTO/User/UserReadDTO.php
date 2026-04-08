@@ -65,24 +65,24 @@ class UserReadDTO
         string $pseudo,
         string $email,
         array $roles,
-        ?int $credits = null,
         bool $isBanned,
         DateTimeImmutable $createdAt,
-        ?DateTimeImmutable $updatedAt = null,
         string $apiToken,
         ?string $plainPassword,
+        ?int $credits = null,
+        ?DateTimeImmutable $updatedAt = null,
     )
     {
         $this->uuid = $uuid;
         $this->pseudo = $pseudo;
         $this->email = $email;
         $this->roles = $roles;
-        $this->credits = $credits;
         $this->isBanned = $isBanned;
         $this->createdAt = $createdAt;
-        $this->updatedAt = $updatedAt;
         $this->apiToken = $apiToken;
         $this->plainPassword = $plainPassword;
+        $this->credits = $credits;
+        $this->updatedAt = $updatedAt;
     }
 
     public static function fromEntity(User $user, ?string $plainPassword = null): self
@@ -92,12 +92,12 @@ class UserReadDTO
             pseudo: $user->getPseudo(),
             email: $user->getEmail(),
             roles: $user->getRoles(),
-            credits: $user->getCredits(),
             isBanned: $user->isBanned(),
             createdAt: $user->getCreatedAt(),
-            updatedAt: $user->getUpdatedAt(),
             apiToken: $user->getApiToken(),
             plainPassword: $plainPassword,
+            credits: $user->getCredits(),
+            updatedAt: $user->getUpdatedAt(),
         );
 
         return $userDTO;

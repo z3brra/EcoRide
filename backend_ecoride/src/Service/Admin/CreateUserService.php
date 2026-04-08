@@ -2,17 +2,28 @@
 
 namespace App\Service\Admin;
 
-use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Entity\{
+    User,
+    MailAccount
+};
+use App\Repository\{
+    UserRepository,
+    MailAccountRepository
+};
 
-use App\Service\{ValidationService, Utils, StringHelper};
+use App\Enum\MailAccountTypeEnum;
 
 use App\DTO\User\{UserDTO, UserReadDTO};
+use App\DTO\Mcs\CreateMcsUserDTO;
+
+use App\Service\{ValidationService, Utils, StringHelper};
+use App\Service\Mcs\McsUserService;
+
+use App\Exception\McsException;
 
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 use DateTimeImmutable;
@@ -26,6 +37,7 @@ class CreateUserService
         private ValidationService $validationService,
 
         private StringHelper $stringHelper,
+        private McsUserService $mcsUserService
     ) {}
 
     public function createUser(UserDTO $userCreateDTO): UserReadDTO
@@ -48,8 +60,42 @@ class CreateUserService
             //  ->setCreatedAt(new DateTimeImmutable())
              ->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $this->entityManager->beginTransaction();
+
+        try {
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+
+            $mcsUser = $this->mcsUserService->create(
+                new CreateMcsUserDTO(
+                    email: $email,
+                    plainPassword: $plainPassword,
+                    active: true,
+                )
+            );
+
+            $mailAccount = new MailAccount();
+            $mailAccount->setUser($user)
+                ->setMcsUuid($mcsUser->uuid)
+                ->setDomainUuid($mcsUser->domainUuid)
+                ->setEmail($mcsUser->email)
+                ->setType(MailAccountTypeEnum::MAILBOX)
+                ->setActive($mcsUser->active);
+            
+            $this->entityManager->persist($mailAccount);
+            $this->entityManager->flush();
+
+            $this->entityManager->commit();
+        } catch (McsException $e) {
+            $this->entityManager->rollback();
+
+            throw new ConflictHttpException(
+                sprintf('MCS mailbox creation failed : %s', $e->getMessage())
+            );
+        } catch (\Throwable $e) {
+            $this->entityManager->rollback();
+            throw $e;
+        }
 
         return UserReadDTO::fromEntity($user, $plainPassword);
     }

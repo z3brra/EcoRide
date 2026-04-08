@@ -74,7 +74,7 @@ final class DriverReviewUserController extends AbstractController
                 $sortDir = 'ASC';
             }
 
-            $reviewPaginated = $listReviewService->listForUser('author', $status, $sortDir, $page, $limit);
+            $reviewPaginated = $listReviewService->listForUser('author', $sortDir, $page, $limit, $status);
 
             $responseData = $this->serializer->serialize(
                 data: $reviewPaginated,
@@ -156,7 +156,7 @@ final class DriverReviewUserController extends AbstractController
                 $sortDir = 'ASC';
             }
 
-            $reviewPaginated = $listReviewService->listForUser('driver', $status, $sortDir, $page, $limit);
+            $reviewPaginated = $listReviewService->listForUser('driver', $sortDir, $page, $limit, $status);
 
             $responseData = $this->serializer->serialize(
                 data: $reviewPaginated,

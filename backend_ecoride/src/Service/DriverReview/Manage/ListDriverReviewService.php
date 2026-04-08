@@ -51,7 +51,7 @@ class ListDriverReviewService
         ];
     }
 
-    public function listForUser(string $role, ?string $status = null, string $sortDir, int $page, int $limit): array
+    public function listForUser(string $role, string $sortDir, int $page, int $limit, ?string $status = null): array
     {
         if ($status !== null) {
             if (!DriverReviewEnum::isValid($status)) {

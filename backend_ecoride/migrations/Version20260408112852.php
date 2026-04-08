@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250623022557 extends AbstractMigration
+final class Version20260408112852 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -30,7 +30,13 @@ final class Version20250623022557 extends AbstractMigration
             CREATE TABLE drive_user (drive_id INT NOT NULL, user_id INT NOT NULL, INDEX IDX_EB62B60886E5E0C4 (drive_id), INDEX IDX_EB62B608A76ED395 (user_id), PRIMARY KEY(drive_id, user_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
         SQL);
         $this->addSql(<<<'SQL'
+            CREATE TABLE driver_review (id INT AUTO_INCREMENT NOT NULL, driver_id INT NOT NULL, author_id INT NOT NULL, drive_id INT NOT NULL, uuid VARCHAR(36) NOT NULL, rate INT NOT NULL, comment LONGTEXT DEFAULT NULL, status VARCHAR(20) NOT NULL, created_at DATETIME NOT NULL COMMENT '(DC2Type:datetime_immutable)', UNIQUE INDEX UNIQ_3C1C5F7ED17F50A6 (uuid), INDEX IDX_3C1C5F7EC3423909 (driver_id), INDEX IDX_3C1C5F7EF675F31B (author_id), INDEX IDX_3C1C5F7E86E5E0C4 (drive_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+        SQL);
+        $this->addSql(<<<'SQL'
             CREATE TABLE fixed_driver_preference (id INT AUTO_INCREMENT NOT NULL, owner_id INT NOT NULL, animals TINYINT(1) DEFAULT 0 NOT NULL, smoke TINYINT(1) DEFAULT 0 NOT NULL, created_at DATETIME NOT NULL COMMENT '(DC2Type:datetime_immutable)', updated_at DATETIME DEFAULT NULL COMMENT '(DC2Type:datetime_immutable)', UNIQUE INDEX UNIQ_6D3937087E3C61F9 (owner_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE TABLE mail_account (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, uuid VARCHAR(36) NOT NULL, mcs_uuid VARCHAR(36) NOT NULL, domain_uuid VARCHAR(36) NOT NULL, email VARCHAR(255) NOT NULL, type VARCHAR(20) NOT NULL, active TINYINT(1) NOT NULL, created_at DATETIME NOT NULL COMMENT '(DC2Type:datetime_immutable)', updated_at DATETIME DEFAULT NULL COMMENT '(DC2Type:datetime_immutable)', INDEX IDX_A78BD7CBA76ED395 (user_id), UNIQUE INDEX uniq_mail_account_uuid (uuid), UNIQUE INDEX uniq_mail_account_mcs_uuid (mcs_uuid), UNIQUE INDEX uniq_mail_account_email (email), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
         SQL);
         $this->addSql(<<<'SQL'
             CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, uuid VARCHAR(36) NOT NULL, email VARCHAR(180) NOT NULL, pseudo VARCHAR(64) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, credits INT DEFAULT NULL, is_banned TINYINT(1) NOT NULL, api_token VARCHAR(255) NOT NULL, created_at DATETIME NOT NULL COMMENT '(DC2Type:datetime_immutable)', updated_at DATETIME DEFAULT NULL COMMENT '(DC2Type:datetime_immutable)', deleted_at DATETIME DEFAULT NULL COMMENT '(DC2Type:datetime_immutable)', UNIQUE INDEX UNIQ_8D93D649D17F50A6 (uuid), UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL (email), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
@@ -54,7 +60,19 @@ final class Version20250623022557 extends AbstractMigration
             ALTER TABLE drive_user ADD CONSTRAINT FK_EB62B608A76ED395 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
         SQL);
         $this->addSql(<<<'SQL'
+            ALTER TABLE driver_review ADD CONSTRAINT FK_3C1C5F7EC3423909 FOREIGN KEY (driver_id) REFERENCES user (id)
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE driver_review ADD CONSTRAINT FK_3C1C5F7EF675F31B FOREIGN KEY (author_id) REFERENCES user (id)
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE driver_review ADD CONSTRAINT FK_3C1C5F7E86E5E0C4 FOREIGN KEY (drive_id) REFERENCES drive (id)
+        SQL);
+        $this->addSql(<<<'SQL'
             ALTER TABLE fixed_driver_preference ADD CONSTRAINT FK_6D3937087E3C61F9 FOREIGN KEY (owner_id) REFERENCES user (id) ON DELETE CASCADE
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE mail_account ADD CONSTRAINT FK_A78BD7CBA76ED395 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE vehicle ADD CONSTRAINT FK_1B80E4867E3C61F9 FOREIGN KEY (owner_id) REFERENCES user (id)
@@ -80,7 +98,19 @@ final class Version20250623022557 extends AbstractMigration
             ALTER TABLE drive_user DROP FOREIGN KEY FK_EB62B608A76ED395
         SQL);
         $this->addSql(<<<'SQL'
+            ALTER TABLE driver_review DROP FOREIGN KEY FK_3C1C5F7EC3423909
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE driver_review DROP FOREIGN KEY FK_3C1C5F7EF675F31B
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE driver_review DROP FOREIGN KEY FK_3C1C5F7E86E5E0C4
+        SQL);
+        $this->addSql(<<<'SQL'
             ALTER TABLE fixed_driver_preference DROP FOREIGN KEY FK_6D3937087E3C61F9
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE mail_account DROP FOREIGN KEY FK_A78BD7CBA76ED395
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE vehicle DROP FOREIGN KEY FK_1B80E4867E3C61F9
@@ -95,7 +125,13 @@ final class Version20250623022557 extends AbstractMigration
             DROP TABLE drive_user
         SQL);
         $this->addSql(<<<'SQL'
+            DROP TABLE driver_review
+        SQL);
+        $this->addSql(<<<'SQL'
             DROP TABLE fixed_driver_preference
+        SQL);
+        $this->addSql(<<<'SQL'
+            DROP TABLE mail_account
         SQL);
         $this->addSql(<<<'SQL'
             DROP TABLE user
