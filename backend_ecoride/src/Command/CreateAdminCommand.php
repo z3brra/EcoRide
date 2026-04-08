@@ -124,6 +124,11 @@ final class CreateAdminCommand extends Command
                 $output->writeln(sprintf('Request ID : %s', $e->getRequestId()));
             }
 
+            if ($e->getDetails() !== null) {
+                $output->writeln('Details :');
+                $output->writeln(json_encode($e->getDetails(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            }
+
             return Command::FAILURE;
         } catch (\Throwable $e) {
             $this->entityManager->rollback();
