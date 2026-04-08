@@ -108,6 +108,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: DriverReview::class, mappedBy: 'author', orphanRemoval: true)]
     private Collection $authorReviews;
 
+    /**
+     * @var Collection<int, MailAccount>
+     */
+    #[ORM\OneToMany(targetEntity: MailAccount::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $mailAccounts;
 
 
     /** @throws Exception */
@@ -122,6 +127,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->joinedDrives = new ArrayCollection();
         $this->driverReviews = new ArrayCollection();
         $this->authorReviews = new ArrayCollection();
+        $this->mailAccounts = new ArrayCollection();
     }
 
     /*** Anonymisation ***/
@@ -501,6 +507,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
 
+        return $this;
+    }
+
+        /**
+     * @return Collection<int, MailAccount>
+     */
+    public function getMailAccounts(): Collection
+    {
+        return $this->mailAccounts;
+    }
+
+    public function addMailAccount(MailAccount $mailAccount): static
+    {
+        if (!$this->mailAccounts->contains($mailAccount)) {
+            $this->mailAccounts->add($mailAccount);
+            $mailAccount->setUser($this);
+        }
+
+        return $this;
+    }
+
+    // public function removeMailAccount(MailAccount $mailAccount): static
+    // {
+    //     if ($this->mailAccounts->removeElement($mailAccount)) {
+    //         if ($mailAccount->getUser() === $this) {
+    //             $mailAccount->setUser(null);
+    //         }
+    //     }
+
+    //     return $this;
+    // }
+    public function removeMailAccount(MailAccount $mailAccount): static
+    {
+        $this->mailAccounts->removeElement($mailAccount);
         return $this;
     }
 }

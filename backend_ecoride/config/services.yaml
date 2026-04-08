@@ -7,6 +7,11 @@ parameters:
     email_domain: '%env(USER_EMAIL_DOMAIN)%'
     admin_default_password: '%env(ADMIN_DEFAULT_PASSWORD)%'
 
+    mcs.base_url: '%env(MCS_BASE_URL)%'
+    mcs.api_prefix: '%env(MCS_API_PREFIX)%'
+    mcs.api_token: '%env(MCS_API_TOKEN)%'
+    mcs.domain_uuid: '%env(MCS_DOMAIN_UUID)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -50,6 +55,18 @@ services:
     App\Service\StringHelper:
         arguments:
             $emailDomain: '%email_domain%'
+
+
+    # MCS Client configuration
+    App\Service\Mcs\McsClient:
+        arguments:
+            $mcsBaseUrl: '%mcs.base_url%'
+            $mcsApiPrefix: '%mcs.api_prefix%'
+            $mcsApiToken: '%mcs.api_token%'
+
+    App\Service\Mcs\McsUserService:
+        arguments:
+            $mcsDomainUuid: '%mcs.domain_uuid%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

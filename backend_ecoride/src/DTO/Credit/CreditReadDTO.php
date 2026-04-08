@@ -41,16 +41,16 @@ class CreditReadDTO
         int $amount,
         int $fee,
         DateTimeImmutable $occurredAt,
+        string $status,
         ?string $comment = null,
-        string $status
     ) {
         $this->drive = $drive;
         $this->participant = $participant;
         $this->amount = $amount;
         $this->fee = $fee;
         $this->occurredAt = $occurredAt;
-        $this->comment = $comment;
         $this->status = $status;
+        $this->comment = $comment;
     }
 
     public static function fromDocument(Credit $credit, Drive $drive, User $participant): self
@@ -61,8 +61,8 @@ class CreditReadDTO
             amount: $credit->getAmount(),
             fee: $credit->getFee(),
             occurredAt: $credit->getOccurredAt(),
-            comment: $credit->getComment(),
             status: $credit->getStatus(),
+            comment: $credit->getComment(),
         );
     }
 }

@@ -43,9 +43,9 @@ class DriverReviewReadDTO
         UserReadDTO $author,
         DriveReadDTO $drive,
         int $rate,
-        ?string $comment = null,
         string $status,
         DateTimeImmutable $createdAt,
+        ?string $comment = null,
     )
     {
         $this->uuid = $uuid;
@@ -53,9 +53,9 @@ class DriverReviewReadDTO
         $this->author = $author;
         $this->drive = $drive;
         $this->rate = $rate;
-        $this->comment = $comment;
         $this->status = $status;
         $this->createdAt = $createdAt;
+        $this->comment = $comment;
     }
 
     public static function fromEntity(DriverReview $driverReview): self
@@ -66,9 +66,9 @@ class DriverReviewReadDTO
             author: UserReadDTO::fromEntity($driverReview->getAuthor()),
             drive: DriveReadDTO::fromEntity($driverReview->getDrive()),
             rate: $driverReview->getRate(),
-            comment: $driverReview->getComment(),
             status: $driverReview->getStatus(),
-            createdAt: $driverReview->getCreatedAt()
+            createdAt: $driverReview->getCreatedAt(),
+            comment: $driverReview->getComment(),
         );
 
         return $driverReviewDTO;

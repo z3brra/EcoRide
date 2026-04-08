@@ -48,9 +48,9 @@ class VehicleReadDTO
         string $color,
         int $seats,
         DateTimeImmutable $createdAt,
-        ?DateTimeImmutable $updatedAt = null,
         string $ownerUuid,
         string $ownerPseudo,
+        ?DateTimeImmutable $updatedAt = null,
     )
     {
         $this->uuid = $uuid;
@@ -75,9 +75,9 @@ class VehicleReadDTO
             color: $vehicle->getColor(),
             seats: $vehicle->getSeats(),
             createdAt: $vehicle->getCreatedAt(),
-            updatedAt: $vehicle->getUpdatedAt(),
             ownerUuid: $vehicle->getOwner()->getUuid(),
             ownerPseudo: $vehicle->getOwner()->getPseudo(),
+            updatedAt: $vehicle->getUpdatedAt(),
         );
     }
 }
