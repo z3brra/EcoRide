@@ -1,5 +1,8 @@
 import type { JSX } from "react"
+import { Link } from "react-router-dom"
+
 import { Section } from "@components/common/Section/Section"
+import { PUBLIC_ROUTES } from "@routes/paths"
 
 import { Leaf } from "lucide-react"
 
@@ -14,7 +17,12 @@ export function Footer(): JSX.Element {
                     </div>
 
                     <div className="footer-links">
-                        <p className="text-small text-silent">contact</p>
+                        <Link
+                            to={PUBLIC_ROUTES.CONTACT}
+                            className="footer-links__link text-small text-silent"
+                        >
+                            Contact
+                        </Link>
                         <p className="text-small text-silent">legal</p>
                     </div>
                 </div>

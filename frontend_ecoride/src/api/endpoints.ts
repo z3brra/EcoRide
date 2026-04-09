@@ -16,6 +16,7 @@ export const Endpoints = {
 
     PREFERENCES: "/prefs",
 
+    CONTACT: "/contact",
 } as const
 
 export type Endpoint = typeof Endpoints[keyof typeof Endpoints]

@@ -1,3 +1,6 @@
+import { useState } from "react"
+import type { JSX } from "react"
+
 import { Section } from "@components/common/Section/Section"
 import { SectionHeader } from "@components/common/Section/SectionHeader"
 
@@ -8,14 +11,76 @@ import { CardContent } from "@components/common/Card/CardContent"
 import { Mail, MessageSquare } from "lucide-react"
 import { Input } from "@components/form/Input"
 import { Button } from "@components/form/Button"
+import { MessageBox } from "@components/common/MessageBox/MessageBox"
 
-export function Contact() {
+import { useContact } from "@hook/contact/useContact"
 
-    const isLoading = false
+export function Contact(): JSX.Element {
+    const [name, setName] = useState<string>("")
+    const [email, setEmail] = useState<string>("")
+    const [message, setMessage] = useState<string>("")
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const [fieldErrors, setFieldErrors] = useState<{
+        name?: string
+        email?: string
+        message?: string
+    }>({})
+
+    const {
+        submit,
+        loading,
+        error,
+        success,
+        setError,
+        setSuccess
+    } = useContact()
+
+    const validateFields = () => {
+        const errors: typeof fieldErrors = {}
+
+        if (!name.trim()) {
+            errors.name = "Le nom est requis."
+        }
+
+        if (!email.trim()) {
+            errors.email = "L'adresse email est requise."
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            errors.email = "L'adresse email est invalide."
+        }
+
+        if (!message.trim()) {
+            errors.message = "Le message est requis."
+        }
+
+        setFieldErrors(errors)
+        return Object.keys(errors).length === 0
+    }
+
+    const resestForm = () => {
+        setName("")
+        setEmail("")
+        setMessage("")
+        setFieldErrors({})
+    }
+
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
-        console.log("submit")
+        setError(null)
+        setSuccess(null)
+
+        if (!validateFields()) {
+            return
+        }
+
+        const ok = await submit({
+            name: name.trim(),
+            email: email.trim(),
+            message: message.trim(),
+        })
+
+        if (ok) {
+            resestForm()
+        }
     }
 
     return (
@@ -34,7 +99,7 @@ export function Contact() {
 
             <Section id="contact-infos" className="contact-infos">
                 <Card animate className="contact-infos__card">
-                    <CardIcon icon={<Mail size={30}/>}  />
+                    <CardIcon icon={<Mail size={30}/>} />
                     <CardContent>
                         <h3 className="card__title">
                             Envoyez-nous un email
@@ -75,39 +140,65 @@ export function Contact() {
                         </p>
                     </CardContent>
                     <CardContent>
-                        <form className="card__form" onSubmit={handleSubmit}>
+                        <form className="card__form" onSubmit={handleSubmit} noValidate>
+                            { error && (
+                                <MessageBox
+                                    variant="error"
+                                    message={error}
+                                    onClose={() => setError(null)}
+                                />
+                            )}
+
+                            { success && (
+                                <MessageBox
+                                    variant="success"
+                                    message={success}
+                                    onClose={() => setSuccess(null)}
+                                />
+                            )}
+
                             <Input
                                 label="Nom"
                                 placeholder="Votre nom"
-                                // value={from}
-                                onChange={() => console.log("nom")}
+                                value={name}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                    setName(event.currentTarget.value)
+                                }
                                 required
                                 className="text-content"
+                                errorText={fieldErrors.name}
                             />
                             <Input
                                 label="Email"
                                 placeholder="Votre email"
-                                // value={from}
-                                onChange={() => console.log("nom")}
+                                value={email}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                    setEmail(event.currentTarget.value)
+                                }
                                 required
                                 className="text-content"
+                                errorText={fieldErrors.email}
                             />
                             <Input
                                 type="textarea"
                                 label="Message"
                                 placeholder="Dites nous comment vous aider..."
-                                // value={from}
-                                onChange={() => console.log("nom")}
+                                value={message}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                    setMessage(event.currentTarget.value)
+                                }
                                 required
                                 className="text-content"
+                                errorText={fieldErrors.message}
                             />
                             <Button
                                 variant="primary"
-                                disabled={isLoading}
+                                type="submit"
+                                disabled={loading}
                                 onClick={() => console.log("submit")}
                                 className="text-content"
                             >
-                                { isLoading ? "Envoi..." : "Envoyer le message"}
+                                { loading ? "Envoi..." : "Envoyer le message"}
                             </Button>
                         </form>
                     </CardContent>
