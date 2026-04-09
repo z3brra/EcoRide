@@ -12,6 +12,12 @@ parameters:
     mcs.api_token: '%env(MCS_API_TOKEN)%'
     mcs.domain_uuid: '%env(MCS_DOMAIN_UUID)%'
 
+    mcs.contact_from_email: '%env(MCS_CONTACT_FROM_EMAIL)%'
+    mcs.contact_from_name: '%env(MCS_CONTACT_FROM_NAME)%'
+    mcs.contact_to_email: '%env(MCS_CONTACT_TO_EMAIL)%'
+    mcs.contact_to_name: '%env(MCS_CONTACT_TO_NAME)%'
+    mcs.contact_return_path: '%env(MCS_CONTACT_RETURN_PATH)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -67,6 +73,15 @@ services:
     App\Service\Mcs\McsUserService:
         arguments:
             $mcsDomainUuid: '%mcs.domain_uuid%'
+
+    # Contact MAIL
+    App\Service\Contact\ContactService:
+        arguments:
+            $mcsContactFromEmail: '%mcs.contact_from_email%'
+            $mcsContactFromName: '%mcs.contact_from_name%'
+            $mcsContactToEmail: '%mcs.contact_to_email%'
+            $mcsContactToName: '%mcs.contact_to_name%'
+            $mcsContactReturnPath: '%mcs.contact_return_path%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
